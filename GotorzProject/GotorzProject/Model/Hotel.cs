@@ -1,9 +1,12 @@
-﻿namespace GotorzProject.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GotorzProject.Model
 {
     public class Hotel
     {
         //todo: switch with paymentmodel
-
+        [Key]
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Adress { get; set; }
         public int Stars { get; set; }

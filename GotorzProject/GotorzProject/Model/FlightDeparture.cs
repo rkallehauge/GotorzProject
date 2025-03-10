@@ -1,12 +1,19 @@
-﻿namespace GotorzProject.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GotorzProject.Model
 {
     public class FlightDeparture
     {
+        [Key]
+        public int Id { get; set; }
+
         //todo: switch with paymentmodel
         public int PaymentID { get; set; }  
+
         public string Airline { get; set; }
         public string DepartureAirport { get; set; }
         public string ArrivalAirport { get; set; }
+
         public DateTime DepartureDate { get; set;}
         public DateTime ArrivalDate { get; set; }
 

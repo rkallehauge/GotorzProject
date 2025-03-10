@@ -1,11 +1,29 @@
 using GotorzProject.Client.Pages;
 using GotorzProject.Components;
 
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
+
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+    .AddJsonFile("appsettings.json")
+    .AddJsonFile("appsettings.Development.json")
+    .Build();
+
+// MSSql
+// PostgreSQL
+
+string dbType = "PostgreSQL";
+
+var connectionString = configuration.GetConnectionString(dbType);
+
+Console.Write(connectionString);
 
 var app = builder.Build();
 
