@@ -1,6 +1,5 @@
 using GotorzProject.Client.Pages;
 using GotorzProject.Components;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 
@@ -23,7 +22,6 @@ string dbType = "PostgreSQL";
 
 var connectionString = configuration.GetConnectionString(dbType);
 
-Console.Write(connectionString);
 
 var app = builder.Build();
 
