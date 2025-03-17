@@ -23,6 +23,8 @@ string dbType = "PostgreSQL";
 var connectionString = configuration.GetConnectionString(dbType);
 
 
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -46,5 +48,7 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(GotorzProject.Client._Imports).Assembly);
+
+app.MapControllers();
 
 app.Run();

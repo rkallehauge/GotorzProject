@@ -11,6 +11,13 @@ namespace GotorzProject.Model
         public string Country { get; set; }
         public string TelephoneNumber { get; set; }
 
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+
+        public string Password { get; set; }
+
         [Key]
         public int ID { get; set; } // todo: switch to unique username and password
 
