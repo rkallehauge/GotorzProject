@@ -1,0 +1,124 @@
+﻿@page "/Kundeside"
+@rendermode InteractiveWebAssembly
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<PageTitle>Personal details</PageTitle>
+
+<h3>Update your info here</h3>
+
+<div id="Startside">
+    <div class="form-control" id="nav">
+        <div class ="form-control">
+            <i class="fa fa-user-circle-o" id="fafa"> Personal details</i>
+        </div>
+        <div class="form-control">
+            <i class="fa fa-history" id="fafa"> Order history</i>
+        </div>
+        <div class="form-control">
+            <i class="fa fa-credit-card" id="fafa"> Credit card details</i>
+        </div>
+        <div class="form-control">
+            <i class="fa fa-comment" id="fafa"> Support</i>
+        </div>
+        <div class="form-control">
+            <i class="fa fa-users" id="fafa"> About us</i>
+        </div>
+    </div>
+    <div>
+        <div class="input-group mb-3">
+            <div>
+                <label>First Name</label>
+                <input type="text" class="form-control" id="Space" placeholder="FirstName">
+            </div>
+            <div style="margin-left:50px;">
+                <label>Last Name</label>
+                <input type="text" class="form-control" id="Space" placeholder="LastName">
+            </div>
+        </div>
+
+        <div>
+            <label>Address</label>
+            <input type="text" class="form-control" id="Space" placeholder="Address">
+        </div>
+
+        <div>
+            <label>Phone Number</label>
+            <input type="text" class="form-control" id="Space" placeholder="Phone number">
+        </div>
+
+        <div>
+            <label id="Space">E-Mail</label>
+            <input type="text" class="form-control" id="Space" placeholder="Insert E-Mail">
+        </div>
+
+        <div>
+            <label id="Space">Repeat E-Mail</label>
+            <input type="text" class="form-control" id="Space" placeholder="Repeat E-Mail">
+        </div>
+
+        <div class="input-group mb-3">
+            <input type="submit" value="Submit" class="submit" />
+        </div>
+        
+    </div>
+    @if (!string.IsNullOrEmpty(uploadedImage))
+    {
+        <img src="@uploadedImage" alt="Profilbilled" class="profile-img" />
+    }
+    <InputFile OnChange="UploadImage" id="img" />
+</div>
+
+@code {
+    private string? uploadedImage;
+
+    private async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        var buffer = new byte[file.Size];
+        await file.OpenReadStream().ReadAsync(buffer);
+        uploadedImage = $"data:image/png;base64,{Convert.ToBase64String(buffer)}";
+        Console.WriteLine(Convert.ToBase64String(buffer));
+    }
+
+}
+
+<style>
+    #Startside{
+        display:flex;
+    }
+
+    #Space {
+        margin-top: 5px;
+    }
+
+    #fafa {
+        margin: 5px;
+        margin-top: 15px;
+    }
+
+    #nav{
+        background-color:cornflowerblue;
+        width:230px;
+        height:270px; 
+        margin-right: 20px;
+        margin-top:5px;
+    }
+
+    #img{
+        margin:auto;
+    }
+
+    .submit {
+        margin-top:10px;
+        margin-left:auto;
+    }
+
+    .profile-img {
+        margin:auto;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+</style>
