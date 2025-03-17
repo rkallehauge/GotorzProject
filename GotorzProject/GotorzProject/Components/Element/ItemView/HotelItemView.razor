@@ -1,0 +1,22 @@
+﻿@using GotorzProject.Model
+
+
+@if (hotel != null){
+	<div class="itemview">
+		<img src="@hotel.Image" />
+
+		<div class="itemview-hotel-stars">
+		@for (int i = 0; i<hotel.Stars; i++){
+			<img src="./StarIcon.png"/>
+		}
+		</div>
+		<p>@hotel.Name</p>
+		<p>@hotel.Address</p>
+		<p>@hotel.Price</p>
+		<p>@hotel.NumberOfRooms</p>
+	</div>
+}
+@code {
+
+	Hotel? hotel;
+}

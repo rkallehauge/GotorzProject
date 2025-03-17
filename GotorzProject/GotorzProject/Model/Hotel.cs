@@ -8,15 +8,17 @@ namespace GotorzProject.Model
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Adress { get; set; }
+        public string Address { get; set; }
         public int Stars { get; set; }
         public int Price { get; set; }
         public int NumberOfRooms { get; set; }
 
-        public Hotel(string name, string adress, int stars, int price, int numberOfRooms)
+        public string? Image {  get; set; }
+
+        public Hotel(string name, string address, int stars, int price, int numberOfRooms)
         {
             Name = name;
-            Adress = adress;
+            Address = address;
             Stars = stars;
             Price = price;
             NumberOfRooms = numberOfRooms;

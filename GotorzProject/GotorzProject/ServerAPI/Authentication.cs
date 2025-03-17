@@ -18,7 +18,6 @@ namespace GotorzProject.ServerAPI
         [HttpPost("Login")]
         public IActionResult Login([FromBody] AuthRequest loginRequest)
         {
-
             // username is email
             // todo : change all places to say email instead of username
             var user = _context.Customers.First((usr) => usr.Email == loginRequest.Username);
@@ -49,7 +48,6 @@ namespace GotorzProject.ServerAPI
             throw new NotImplementedException();
         }
     }
-
 
     public class AuthRequest
     {
