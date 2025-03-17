@@ -1,0 +1,205 @@
+﻿@page "/search"
+@rendermode InteractiveWebAssembly
+
+<h3>Searchpage</h3>
+<PageTitle>Search for a trip</PageTitle>
+<div class="container">
+	<div class="search-section">
+	<label>Country:</label>
+	<InputText @bind-Value="Country" class="form-control"/>
+	<InputSelect @bind-Value="Country" class="form-control">		@* dropdown *@
+		@foreach (var country in AvailableCountry)
+		{
+			<option value="@country">@country</option>
+		}
+	</InputSelect>
+
+
+	<label>Number of people:</label>
+	<InputText @bind-Value="NumberOfPeople" class="form-control" />
+	<InputSelect @bind-Value="NumberOfPeople" class="form-control">		@* dropdown *@
+
+		@foreach (var numberOfPeople in AvailableNumberOfPeople)
+		{
+			<option value="@numberOfPeople">@numberOfPeople</option>
+		}
+	</InputSelect>
+
+
+	<label>Price:</label>
+	<InputText @bind-Value="Price" class="form-control"/>
+	<InputSelect @bind-Value="Price" class="form-control">				@* dropdown *@
+
+		@foreach (var price in AvailablePrice)
+		{
+			<option value="@price">@price</option>
+		}
+	</InputSelect>
+
+
+	<label>Start Date:</label>
+	<InputDate @bind-Value="StartDate" class="form-control" />
+	<InputSelect @bind-Value="StartDate" class="form-control">			@* dropdown *@
+
+		@foreach (var startDate in AvailableStartDates)
+		{
+			<option value="@startDate">@startDate</option>
+		}
+	</InputSelect>
+
+
+	<label>End Date:</label>
+	<InputDate @bind-Value="EndDate" class="form-control" />
+	<InputSelect @bind-Value="EndDate" class="form-control">			@* dropdown *@
+
+		@foreach (var endDate in AvailableEndDates)
+		{
+			<option value="@endDate">@endDate</option>
+		}
+	</InputSelect>
+
+
+	<button @onclick="SearchTrips" class="btn btn-primary">Search</button>
+
+		<div class="right-section">
+				<div class="info-box">
+					<img src="billedehjemmeside" alt="image1" >
+					<p>Tekstinformation</p>
+				</div>
+
+		<div class="infor-box"
+			<img src="tekstside" alt="tekst">
+			<img src="billedehjemmeside" alt="image2" >
+				<p>Tekstinformation</p>
+		</div>
+
+
+
+		</div>
+	</div>
+
+</div>
+<style>
+	.container
+	{
+		display: flex;
+		justify-content: space-between;
+		gap: 20px;
+	}
+
+	.search-section 
+	{
+		width: 60%;
+	}
+
+	.right-section 
+	{
+		width: 35%;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.info-box 
+	{
+		display: flex;
+		align-items: center;
+		background: #f0f0f0;
+		padding: 15px;
+		border-radius: 8px;
+		box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+	}
+
+	.info-box img 
+	{
+		width: 100px;
+		height: auto;
+		margin-right: 15px;
+		border-radius: 5px;
+	}
+
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+@code
+{
+	private string Country{ get; set; }
+	private string Price{ get; set; }
+	private DateTime StartDate{ get; set; }
+	private DateTime EndDate{ get; set; }
+	private string NumberOfPeople{ get; set; }
+	private Decimal MaxPrice{ get; set; }
+	private DateTime AvailableStartDate { get; set; }
+	private DateTime AvailableEndDate{ get; set; }
+
+
+	private List<string> AvailableCountry { get; set; } = new()
+	{
+		"",
+		"Japan",
+		"America",
+		"Thailand",
+		"Iran"
+	};
+
+	private List<int> AvailableNumberOfPeople { get; set; } = new()
+	{
+		',',
+		1,
+		2,
+		3,
+		4
+	};
+
+
+	private List<int> AvailablePrice { get; set; } = new()
+	{
+		',',
+		1000,
+		2000,
+		3000,
+		4000
+	};
+
+	private List<string> AvailableStartDates { get; set; } = new()
+	{
+		"",
+		"January",
+		"May",
+		"October",
+		"November"
+	};
+
+
+
+	private List<string> AvailableEndDates { get; set; } = new()
+	{
+		"",
+		"Februry",
+		"June",
+		"November",
+		"December"
+	};
+
+
+
+
+
+	private void SearchTrips()
+	{
+		Console.WriteLine($"Searching for trips to {Country} on {StartDate} for {NumberOfPeople} people with a max price of {MaxPrice}");	
+
+	}
+
+}
+
