@@ -1,11 +1,31 @@
-﻿    @using GotorzProject.Client.Pages;
+﻿@using GotorzProject.Client.Pages;
 
 @page "/"
 
-<PageTitle>Home</PageTitle>
+    <PageTitle>GoTorz</PageTitle>
 
-<h1>Hello, world!</h1>
+    <div class="Startheader"><img src="https://gotorz.ae/assets/img/logo-medium.png" alt="GoTorz.logo" class="GoTorz" /></div>
 
-Welcome to your new app.
+    <Login />
 
-<Login />
+    <div>
+        
+    </div>
+
+
+
+@code{
+
+}
+
+<style>
+    .GoTorz {
+        height: 100px;
+        width: 200px;
+    }
+
+    .Startheader{
+        background-color: #4287f5;
+    }
+
+</style>
