@@ -6,8 +6,6 @@ namespace GotorzProject.Model
     {
         [Key]
         public int Id { get; set; }
-
-        public int PaymentID { get; set; }
         public string DestinationCity { get; set; }
         public string DestinationCountry { get; set; }
         public string Hotel { get; set; }
@@ -17,7 +15,6 @@ namespace GotorzProject.Model
 
         public TravelPackage(int paymentID, string destinationCity, string destinationCountry, string hotel, double price, DateTime departure, DateTime @return)
         {
-            PaymentID = paymentID;
             DestinationCity = destinationCity;
             DestinationCountry = destinationCountry;
             Hotel = hotel;
