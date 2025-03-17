@@ -1,7 +1,13 @@
-﻿namespace GotorzProject.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GotorzProject.Model
 {
     public class Order
     {
+
+        [Key]
+        public int Id { get; set; }
+
         public enum OrderStatuses
         {
             Created,

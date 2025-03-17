@@ -1,7 +1,11 @@
-﻿namespace GotorzProject.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GotorzProject.Model
 {
     public class TravelPackage
     {
+        [Key]
+        public int Id { get; set; }
 
         public int PaymentID { get; set; }
         public string DestinationCity { get; set; }
