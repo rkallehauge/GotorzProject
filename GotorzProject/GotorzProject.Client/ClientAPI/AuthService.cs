@@ -29,7 +29,7 @@ namespace GotorzProject.Client.ClientAPI
                 var token = await response.Content.ReadAsStringAsync();
 
                 // todo : store token
-
+                
                 return true;
             }
             else

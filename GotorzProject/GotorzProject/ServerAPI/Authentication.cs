@@ -1,5 +1,6 @@
 ﻿using GotorzProject.Model.ObjectRelationMapping;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
 
 namespace GotorzProject.ServerAPI
 {
@@ -20,31 +21,39 @@ namespace GotorzProject.ServerAPI
 
             // username is email
             // todo : change all places to say email instead of username
-            var users = _context.Customers.First((usr) => usr.Email == loginRequest.Username);
+            var user = _context.Customers.First((usr) => usr.Email == loginRequest.Username);
 
-            
+            if (user != null)
+            {
+                // verify password matches stored password
+                bool correctPassword = BCrypt.Net.BCrypt.Verify(loginRequest.Password, user.Password);
+                if (correctPassword)
+                {
+                    // Todo : generate token here
+                    string token = "";
 
+                    return Ok(token);
+                }
 
-            return BadRequest("Lol");
+                return BadRequest("Invalid login.");
+            }
+            else
+            {
+                return BadRequest("Invalid login.");
+            }
         }
-
-
+        
         [HttpPost("Register")]
         public IActionResult Register([FromBody] AuthRequest loginRequest)
         {
-
-            //var users = _context.
-
-
-
-            return BadRequest("Lol");
+            throw new NotImplementedException();
         }
     }
 
 
     public class AuthRequest
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string? Username { get; set; }
+        public string? Password { get; set; }
     }
 }
