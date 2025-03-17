@@ -1,0 +1,80 @@
+﻿@page "/medarbejder"
+@rendermode InteractiveWebAssembly
+
+<h3>Medarbejder</h3>
+
+<PageTitle>Medarbejder</PageTitle>
+
+
+    <h4>Rediger Profil</h4>
+    <div id="Startside">
+        <div>
+            <div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">Fornavn</label>
+                        <input type="text" name="Fornavn" value="" />
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">Efternavn</label>
+                        <input type="text" name="Efternavn" value="" />
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">E-Mail</label>
+                        <input type="text" name="E-mail" value="" />
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">Telefon</label>
+                        <input type="text" name="Telefon" value="" />
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <label>&nbsp;</label>
+                    <input type="submit" value="Submit" class="submit" />
+                </div>
+            </div>
+            <InputFile OnChange="UploadImage" />
+        </div>
+
+        @if (!string.IsNullOrEmpty(uploadedImage))
+        {
+            <img src="@uploadedImage" alt="Profilbilled" class="profile-img" />
+        }
+    </div>
+
+
+@code {
+    private string? uploadedImage;
+
+    private async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        var buffer = new byte[file.Size];
+        await file.OpenReadStream().ReadAsync(buffer);
+        uploadedImage = $"data:image/png;base64,{Convert.ToBase64String(buffer)}";
+        Console.WriteLine(Convert.ToBase64String(buffer));
+    }
+}
+
+<style>
+
+    .profile-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    #Startside {
+        display: flex;
+        flex-direction:row;
+
+    }
+
+</style>
