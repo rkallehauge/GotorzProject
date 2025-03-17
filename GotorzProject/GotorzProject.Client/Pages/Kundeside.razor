@@ -28,44 +28,44 @@
         <div class="input-group mb-3">
             <div>
                 <label>First Name</label>
-                <input type="text" class="form-control" id="Space" placeholder="FirstName">
+                <input type="text" class="form-control" id="space" placeholder="FirstName">
             </div>
-            <div style="margin-left:50px;">
+            <div style="margin-left:100px;">
                 <label>Last Name</label>
-                <input type="text" class="form-control" id="Space" placeholder="LastName">
+                <input type="text" class="form-control" id="space" placeholder="LastName">
             </div>
         </div>
 
         <div>
             <label>Address</label>
-            <input type="text" class="form-control" id="Space" placeholder="Address">
+            <input type="text" class="form-control" id="space" placeholder="Address">
         </div>
 
         <div>
             <label>Phone Number</label>
-            <input type="text" class="form-control" id="Space" placeholder="Phone number">
+            <input type="text" class="form-control" id="space" placeholder="Phone number">
         </div>
 
         <div>
             <label id="Space">E-Mail</label>
-            <input type="text" class="form-control" id="Space" placeholder="Insert E-Mail">
+            <input type="text" class="form-control" id="space" placeholder="Insert E-Mail">
         </div>
 
         <div>
-            <label id="Space">Repeat E-Mail</label>
-            <input type="text" class="form-control" id="Space" placeholder="Repeat E-Mail">
+            <label id="Space">Repeat</label>
+            <input type="text" class="form-control" id="space" placeholder="Repeat E-Mail">
         </div>
-
-        <div class="input-group mb-3">
-            <input type="submit" value="Submit" class="submit" />
-        </div>
-        
+        <div class="button">
+            <InputFile OnChange="UploadImage"/>
+            <input type="submit" value="Submit"/>
+        </div>  
     </div>
-    @if (!string.IsNullOrEmpty(uploadedImage))
-    {
-        <img src="@uploadedImage" alt="Profilbilled" class="profile-img" />
-    }
-    <InputFile OnChange="UploadImage" id="img" />
+        <div>
+        @if (!string.IsNullOrEmpty(uploadedImage))
+        {
+            <img src="@uploadedImage" alt="Profilbilled" class="profile-img" />
+        }
+        </div>
 </div>
 
 @code {
@@ -83,11 +83,16 @@
 }
 
 <style>
+
+    label {
+        margin-top: 5px;
+    }
+
     #Startside{
         display:flex;
     }
 
-    #Space {
+    #space {
         margin-top: 5px;
     }
 
@@ -98,27 +103,23 @@
 
     #nav{
         background-color:cornflowerblue;
-        width:230px;
-        height:270px; 
+        width:220px;
+        height:265px; 
         margin-right: 20px;
         margin-top:5px;
     }
 
-    #img{
-        margin:auto;
-    }
-
-    .submit {
+    .button {
         margin-top:10px;
-        margin-left:auto;
+        margin-left:150px;
     }
 
     .profile-img {
-        margin:auto;
+        margin-left:50px ;
         width: 100px;
         height: 100px;
         border-radius: 50%;
-        object-fit: cover;
+        object-fit: scale-down;
     }
 
 </style>
