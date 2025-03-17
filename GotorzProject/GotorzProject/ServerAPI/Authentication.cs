@@ -1,5 +1,6 @@
 ﻿using GotorzProject.Model.ObjectRelationMapping;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.Configuration;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
 
 namespace GotorzProject.ServerAPI
@@ -18,6 +19,11 @@ namespace GotorzProject.ServerAPI
         [HttpPost("Login")]
         public IActionResult Login([FromBody] AuthRequest loginRequest)
         {
+
+            if (_context == null)
+            {
+                throw new InvalidConfigurationException("Bad configuration, code is ass, terminating session.");
+            }
 
             // username is email
             // todo : change all places to say email instead of username
@@ -46,7 +52,20 @@ namespace GotorzProject.ServerAPI
         [HttpPost("Register")]
         public IActionResult Register([FromBody] AuthRequest loginRequest)
         {
-            throw new NotImplementedException();
+            if(_context == null)
+            {
+                throw new InvalidConfigurationException("Bad configuration, code is ass, terminating session.");
+            }
+
+            var user = _context.Customers.First((usr) => usr.Email == loginRequest.Username);
+            if (user != null)
+            {
+
+            }
+            else
+            {
+                
+            }
         }
     }
 
