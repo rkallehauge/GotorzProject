@@ -11,6 +11,9 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddControllers();
 
+//bootstrap initialzxiton
+builder.Services.AddBlazorBootstrap();
+
 var configuration = new ConfigurationBuilder()
     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
     .AddJsonFile("appsettings.json")

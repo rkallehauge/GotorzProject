@@ -6,6 +6,7 @@
 @* @rendermode InteractiveWebAssembly *@
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
+@if (!isLoading){
 <div class="form-group-prepend">
     <label class="input-group-text" for="Login">Username</label>
     <input type="text" name="Username" @bind-value="Username" />
@@ -20,10 +21,14 @@
     <label>&nbsp;</label>
     <input type="button" value="Login" class="submit" @onclick="AttemptLogin" />
 </div>
+} 
+else{
+    <Spinner />
+}
 
 @code {
+    public bool isLoading = true;
 
-    
 
     public string? Username { get; set; }
     public string? Password { get; set; }
@@ -35,7 +40,20 @@
         }
 
         bool result = await AuthService.AsyncLogin(Username, Password);
-        Console.WriteLine(result);
     }
 
+
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        if (firstRender)
+        {
+            // Simulate a loading process (e.g., fetching data)
+            await Task.Delay(1000); // Adjust delay as necessary
+
+            // Once loading is done, set isLoading to false
+            isLoading = false;
+
+            // Trigger a re-render
+            StateHasChanged();
+        }
+    }
 }

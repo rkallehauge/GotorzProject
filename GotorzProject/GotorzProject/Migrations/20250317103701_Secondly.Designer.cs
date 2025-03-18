@@ -4,6 +4,7 @@ using GotorzProject.Model.ObjectRelationMapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GotorzProject.Migrations
 {
     [DbContext(typeof(PrimaryDbContext))]
-    partial class PrimaryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250317103701_Secondly")]
+    partial class Secondly
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
