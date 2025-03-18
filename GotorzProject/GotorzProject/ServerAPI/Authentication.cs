@@ -3,6 +3,8 @@ using GotorzProject.Model.ObjectRelationMapping;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.Configuration;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
+using System.Buffers.Text;
+using System.Security.Cryptography;
 
 namespace GotorzProject.ServerAPI
 {
@@ -37,7 +39,8 @@ namespace GotorzProject.ServerAPI
                 if (correctPassword)
                 {
                     // Todo : generate token here
-                    string token = "";
+                    string token = GenerateToken();
+                    Console.WriteLine(token);
 
                     return Ok(token);
                 }
@@ -75,6 +78,17 @@ namespace GotorzProject.ServerAPI
 
                 return Ok();
             }
+        }
+
+        private static string GenerateToken()
+        {
+                
+            byte[] buffer = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(buffer);
+            }
+            return Convert.ToBase64String(buffer);
         }
     }
 

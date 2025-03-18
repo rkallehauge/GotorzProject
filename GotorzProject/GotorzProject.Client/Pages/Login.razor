@@ -1,6 +1,10 @@
-﻿@rendermode InteractiveWebAssembly
+﻿@page "/Login"
 
-
+@using GotorzProject.Client.ClientAPI
+@inject AuthService AuthService
+@* This apparently breaks injection because of code fuckery, do not use below rendermode whenever injection is required. *@
+@* @rendermode InteractiveWebAssembly *@
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
 <div class="form-group-prepend">
     <label class="input-group-text" for="Login">Username</label>
@@ -19,12 +23,19 @@
 
 @code {
 
+    
+
     public string? Username { get; set; }
     public string? Password { get; set; }
 
     private async void AttemptLogin()
     {
-        
+        if(string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password)){
+            return;
+        }
+
+        bool result = await AuthService.AsyncLogin(Username, Password);
+        Console.WriteLine(result);
     }
 
 }

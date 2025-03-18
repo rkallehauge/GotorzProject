@@ -1,15 +1,27 @@
+using GotorzProject.Client.ClientAPI;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using System.Reflection.Metadata.Ecma335;
+using System.Diagnostics;
+using System.Net.Http;
+using System.Text;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 
-// todo : fix / make this better pls
-string hardcodedLocalUrl = "https://localhost:7097";
+// Define backend API URL, either from config or fallback
+string backendUrl = builder.Configuration["FrontendUrl"] ?? "https://localhost:7097";
 
-builder.Services.AddScoped(sp => new HttpClient
+// Register HttpClient
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(backendUrl) });
+
+builder.Services.AddScoped<AuthService>();
+
+var services = builder.Services.ToList();
+
+Console.WriteLine("Registered services:");
+foreach (var service in services)
 {
-    BaseAddress = new Uri(builder.Configuration["FrontendUrl"] ?? hardcodedLocalUrl)
-});
+    Console.WriteLine($"{service.ServiceType} {service.ServiceKey}");
+}
+
 
 await builder.Build().RunAsync();

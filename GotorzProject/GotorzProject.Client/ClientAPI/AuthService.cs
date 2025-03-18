@@ -4,13 +4,17 @@ namespace GotorzProject.Client.ClientAPI
 {
     public class AuthService
     {
-        HttpClient _httpClient;
+        HttpClient? _httpClient;
 
         public AuthService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
+        //public AuthService()
+        //{
+
+        //}
 
         public async Task<bool> AsyncLogin(string username, string password)
         {
@@ -29,7 +33,7 @@ namespace GotorzProject.Client.ClientAPI
                 var token = await response.Content.ReadAsStringAsync();
 
                 // todo : store token
-                
+
                 return true;
             }
             else
