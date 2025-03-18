@@ -1,0 +1,123 @@
+﻿@page "/Betalingskort"
+@rendermode InteractiveWebAssembly
+@inject NavigationManager Navigation
+ 
+<PageTitle>Credit card Details</PageTitle>
+ 
+<h3>Update your Credit card info here</h3>
+ 
+<div id="Startside">
+    <div id="nav">
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToPersonalDetails"> Personal details</button>
+        </div>
+        <div class="customform">
+         <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToOrderHistory"> Order history</button>
+        </div>
+        <div class="customform">
+         <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToCard"> Credit card details</button>
+        </div>
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToSupport"> Support</button>
+        </div>
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToAbout"> About us</button>
+        </div>
+    </div>
+    <div id="Kasse">
+        <h3>Address & Payment</h3>
+        <label class="form-control">HEj</label>
+
+
+        <h3> Credit card details</h3>
+        <p> Here you can update your credit card details</p>
+        <label class="form-control">HEj</label>
+        <label class="form-control">HEj</label>
+        <label class="form-control">HEj</label>
+        <label class="form-control">HEj</label>
+    </div>
+</div>
+ 
+@code {
+ 
+    private void NavigateToPersonalDetails()
+    {
+        Navigation.NavigateTo("/Kundeside");
+    }
+ 
+    private void NavigateToOrderHistory()
+    {
+        Navigation.NavigateTo("/OrderHistory");
+    }
+ 
+    private void NavigateToCard()
+    {
+        Navigation.NavigateTo("/CreditCard");
+    }
+ 
+    private void NavigateToSupport()
+    {
+        Navigation.NavigateTo("/Support");
+    }
+ 
+    private void NavigateToAbout()
+    {
+        Navigation.NavigateTo("/AboutUs");
+    }
+ 
+ 
+}
+ 
+<style>
+ 
+    h3{
+        text-align:center;
+    }
+ 
+    button{
+        width:100%;
+        height:100%;
+    }
+ 
+    #Startside{
+        display:flex;
+        margin-top:10px;
+    }
+ 
+ 
+    #fafa {
+        margin: 5px;
+    }
+ 
+    #nav{
+        display:block;
+        width:250px;
+        height:310px; 
+        margin-right: 20px;
+        margin-top:25px;
+    }
+
+    #Kasse{
+        display: block;
+        width: 500px;
+        height: 400px;
+        margin-top: 25px;
+        text-align:center;
+        background-color: cornflowerblue;
+    }
+ 
+    .customform{
+        display: flex;
+        width: 100%;
+        margin-top:5px;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #6c757d;
+        background-color: #6c757d;
+        background-clip: padding-box;
+        border-radius: var(--bs-border-radius);
+    }
+ 
+</style>
