@@ -1,7 +1,12 @@
 using GotorzProject.Client.Pages;
 using GotorzProject.Components;
+using GotorzProject.Model.ObjectRelationMapping;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.Options;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddControllers();
 
 //bootstrap initialzxiton
 builder.Services.AddBlazorBootstrap();
@@ -23,9 +27,23 @@ var configuration = new ConfigurationBuilder()
 // MSSql
 // PostgreSQL
 
-string dbType = "PostgreSQL";
+string? curDb = (string?)configuration.GetValue(typeof(string), "CurrentUsedDB");
 
-var connectionString = configuration.GetConnectionString(dbType);
+string? connString = configuration.GetConnectionString(curDb);
+
+
+if (curDb == "MSSql")
+{
+    builder.Services.AddDbContext<PrimaryDbContext>(
+        options => options.UseSqlServer(connString)
+    );
+}
+else if (curDb == "PostgreSQL")
+{
+    builder.Services.AddDbContext<PrimaryDbContext>(
+        options => options.UseNpgsql(connString)
+    );
+}
 
 
 builder.Services.AddControllers();

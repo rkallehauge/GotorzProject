@@ -6,7 +6,7 @@ namespace GotorzProject.Client.ClientAPI
     {
         HttpClient? _httpClient;
 
-        private string apiBase = "/API/Auth/";
+        private string apiBase = "/api/authentication/";
 
         public AuthService(HttpClient httpClient)
         {
@@ -18,15 +18,15 @@ namespace GotorzProject.Client.ClientAPI
 
         //}
 
-        public async Task<bool> AsyncLogin(string username, string password)
+        public async Task<bool> AsyncLogin(string email, string password)
         {
             if (_httpClient == null)
             {
                 throw new Exception("AuthService not properly setup.");
             }
-            string apiEndpoint = apiBase + "Login";
+            string apiEndpoint = apiBase + "login";
 
-            var requestBody = new { Username = username, Password = password };
+            var requestBody = new { Username = email, Password = password };
 
             var response = await _httpClient.PostAsJsonAsync(apiEndpoint, requestBody);
 
@@ -45,15 +45,15 @@ namespace GotorzProject.Client.ClientAPI
             }
         }
 
-        public async Task<bool> AsyncRegister(string username, string password)
+        public async Task<bool> AsyncRegister(string email, string password, string firstname, string lastname, string country, string postalcode, string phonenumber, string address)
         {
             if (_httpClient == null)
             {
                 throw new Exception("AuthService not properly setup.");
             }
-            string apiEndpoint = apiBase + "Register";
+            string apiEndpoint = apiBase + "register";
 
-            var requestBody = new { Username = username, Password = password };
+            var requestBody = new { Username = email, Password = password, FirstName = firstname, LastName = lastname, Country = country, Address = address, PhoneNumber = phonenumber };
 
             var response = await _httpClient.PostAsJsonAsync(apiEndpoint, requestBody);
 

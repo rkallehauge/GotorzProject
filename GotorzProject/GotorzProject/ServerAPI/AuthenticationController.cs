@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 
 namespace GotorzProject.ServerAPI
 {
-    [Route("api/auth/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
@@ -18,12 +18,7 @@ namespace GotorzProject.ServerAPI
         public AuthenticationController(PrimaryDbContext context)
         {
             _context = context;
-            Console.WriteLine("Creating controller");
-            Console.WriteLine("Creating controller");
-            Console.WriteLine("Creating controller");
-            Console.WriteLine("Creating controller");
-            Console.WriteLine("Creating controller");
-            
+            Console.WriteLine("I am here!");
         }
 
         [HttpPost("Login")]
@@ -37,7 +32,7 @@ namespace GotorzProject.ServerAPI
 
             // username is email
             // todo : change all places to say email instead of username
-            var user = _context.Customers.First((usr) => usr.Email == loginRequest.Email);
+            var user = _context.Customers.FirstOrDefault((usr) => usr.Email == loginRequest.Email);
 
             if (user != null)
             {
@@ -47,7 +42,7 @@ namespace GotorzProject.ServerAPI
                 {
                     // Todo : generate token here
                     string token = GenerateToken();
-                    Console.WriteLine(token);
+                    Response.Cookies.Append("AuthToken", token);
 
                     return Ok(token);
                 }
@@ -61,7 +56,7 @@ namespace GotorzProject.ServerAPI
         }
         
         [HttpPost("Register")]
-        public IActionResult Register([FromBody] Customer registerRequest)
+        public IActionResult Register([FromBody] RegisterRequest registerRequest)
         {
             if(_context == null)
             {
@@ -80,6 +75,10 @@ namespace GotorzProject.ServerAPI
                 Customer customer = new();
                 customer.Email = registerRequest.Email;
                 customer.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(registerRequest.Password);
+
+                customer.FirstName = registerRequest.FirstName;
+                customer.LastName = registerRequest.LastName;
+                customer.TelephoneNumber = registerRequest.Phone
 
                 _context.Customers.Add(customer);
 
@@ -117,5 +116,17 @@ namespace GotorzProject.ServerAPI
         
         public string? Email { get; set; }
         public string? Password { get; set; }
+    }
+
+    public class RegisterRequest
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Country { get; set; }
+        public string? PostalCode{ get; set; }
+        public string? Address{ get; set; }
+        public string? PhoneNumber{ get; set; }
+        public string? Email{ get; set; }
+        public string? Password{ get; set; }
     }
 }

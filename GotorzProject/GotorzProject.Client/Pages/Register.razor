@@ -1,56 +1,112 @@
 ﻿@page "/register"
 
-<h3>Register</h3>
+@* This apparently breaks injection because of code fuckery, do not use below rendermode whenever injection is required. *@
+@* @rendermode InteractiveWebAssembly *@
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
-        <div class="form-group">
-            <label>First Name</label>
-            <input type="text" class="form-control" id="FirstName" placeholder="Insert First Name">
-        </div>
+@using ClientAPI
+@inject AuthService AuthService
 
-        <div class="form-group">
-            <label>Last Name</label>
-            <input type="text" class="form-control" id="LastName" placeholder="Insert Last Name">
-        </div>
+@if (!isLoading){
 
-        <div class="form-group">
-            <label>Address</label>
-            <input type="text" class="form-control" id="Address" placeholder="Insert Address">
-        </div>
+    <h3>Register</h3>
+    <div class="form-group">
+        <label>First Name</label>
+        <input type="text" class="form-control" id="FirstName" @bind-value="FirstName" placeholder="Insert First Name">
+    </div>
 
-        <div class="form-group">
-            <label>Postle Code</label>
-            <input type="text" class="form-control" id="PostleCode" placeholder="Insert Postal Code">
-        </div>
+    <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" class="form-control" id="LastName" @bind-value="LastName" placeholder="Insert Last Name">
+    </div>
 
-        <div class="form-group">
-            <label>Country</label>
-            <input type="text" class="form-control" id="Country" placeholder="Insert Country">
-        </div>
+    <div class="form-group">
+        <label>Address</label>
+        <input type="text" class="form-control" id="Address" @bind-value="Address" placeholder="Insert Address">
+    </div>
 
-        <div class="form-group">
-            <label>Phone number</label>
-            <input type="text" class="form-control" id="PhoneNumber" placeholder="Insert Phone number">
-        </div>
+    <div class="form-group">
+        <label>Postle Code</label>
+        <input type="text" class="form-control" id="PostleCode" @bind-value="PostalCode" placeholder="Insert Postal Code">
+    </div>
 
-        <div class="form-group">
-            <label>Email address</label>
-            <input type="email" class="form-control" id="InputEmail" aria-describedby="emailHelp" placeholder="Enter email">
-            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-        </div>
+    <div class="form-group">
+        <label>Country</label>
+        <input type="text" class="form-control" id="Country" @bind-value="Country" placeholder="Insert Country">
+    </div>
+
+    <div class="form-group">
+        <label>Phone number</label>
+        <input type="text" class="form-control" id="PhoneNumber" @bind-value="PhoneNumber" placeholder="Insert Phone number">
+    </div>
+
+    <div class="form-group">
+        <label>Email address</label>
+        <input type="email" class="form-control" id="InputEmail" @bind-value="Email" aria-describedby="emailHelp" placeholder="Enter email">
+        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    </div>
     <br />
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" class="form-control" id="InputPassword" placeholder="Password">
-        </div>
-        <div class="form-group">
-            <label>Confirm Password</label>
-            <input type="password" class="form-control" id="InputPasswordConfirm" placeholder="Confirm Password">
-        </div>
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control" id="InputPassword" @bind-value="Password" placeholder="Password">
+    </div>
+    <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" class="form-control" id="InputPasswordConfirm" @onchange="VerifyPasswordsAreSame" placeholder="Confirm Password">
+    </div>
 
     <br />
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="button" class="btn btn-primary" @onclick="AttemptSignup">Submit</button>
+} else{
+    <Spinner />
+}
 
 
 @code {
 
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? Address { get; set; }
+    public string? Country { get; set; }
+    public string? PostalCode { get; set; }
+    public string? PhoneNumber { get; set; }
+    public string? Password { get; set; }
+    public string? Email { get; set; }
+
+    public bool isLoading = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        if (firstRender)
+        {
+            // Simulate a loading process (e.g., fetching data)
+            await Task.Delay(1000); // Adjust delay as necessary
+
+            // Once loading is done, set isLoading to false
+            isLoading = false;
+
+            // Trigger a re-render
+            StateHasChanged();
+        }
+    }
+
+    private async void AttemptSignup(){
+
+        // todo : handle which one is empty and inform user
+        if (new[] {
+            FirstName,LastName,Address,Country,PostalCode,PhoneNumber,Password,Email
+        }.Any(string.IsNullOrEmpty)){
+            return;
+        }
+        // ignore null ref warning, we check for that above
+        var result = await AuthService.AsyncRegister(Email, Password, FirstName, LastName, Country, PostalCode, PhoneNumber, Address);
+
+
+    }
+
+    // validate that password and confirm pass are same
+    private void VerifyPasswordsAreSame(){
+        return;
+    }
 }
