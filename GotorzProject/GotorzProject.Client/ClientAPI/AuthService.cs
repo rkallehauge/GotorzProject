@@ -26,7 +26,7 @@ namespace GotorzProject.Client.ClientAPI
             }
             string apiEndpoint = apiBase + "login";
 
-            var requestBody = new { Username = email, Password = password };
+            var requestBody = new { Email = email, Password = password };
 
             var response = await _httpClient.PostAsJsonAsync(apiEndpoint, requestBody);
 
@@ -53,7 +53,7 @@ namespace GotorzProject.Client.ClientAPI
             }
             string apiEndpoint = apiBase + "register";
 
-            var requestBody = new { Username = email, Password = password, FirstName = firstname, LastName = lastname, Country = country, Address = address, PhoneNumber = phonenumber };
+            var requestBody = new { Email = email, Password = password, FirstName = firstname, LastName = lastname, Country = country, Address = address, PhoneNumber = phonenumber };
 
             var response = await _httpClient.PostAsJsonAsync(apiEndpoint, requestBody);
 

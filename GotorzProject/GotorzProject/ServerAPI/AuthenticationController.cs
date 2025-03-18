@@ -37,7 +37,11 @@ namespace GotorzProject.ServerAPI
             if (user != null)
             {
                 // verify password matches stored password
-                bool correctPassword = BCrypt.Net.BCrypt.Verify(loginRequest.Password, user.Password);
+
+                string hash = user.Password;
+
+                Console.WriteLine($"{loginRequest.Password} {hash} length {hash.Length}");
+                bool correctPassword = BCrypt.Net.BCrypt.Verify(loginRequest.Password, hash);
                 if (correctPassword)
                 {
                     // Todo : generate token here
@@ -47,11 +51,11 @@ namespace GotorzProject.ServerAPI
                     return Ok(token);
                 }
 
-                return BadRequest("Invalid login.");
+                return BadRequest("Invalid login. type a");
             }
             else
             {
-                return BadRequest("Invalid login.");
+                return BadRequest("Invalid login. type b");
             }
         }
         
@@ -63,8 +67,8 @@ namespace GotorzProject.ServerAPI
                 throw new InvalidConfigurationException("Bad configuration, code is ass, terminating session.");
             }
 
-            var user = _context.Customers.First((usr) => usr.Email == registerRequest.Email);
-            if (user != null)
+            bool exists = _context.Customers.Any((cust) =>  cust.Email == registerRequest.Email);
+            if (exists)
             {
                 // are we technically leaking whether a user exists by this?
                 return BadRequest("Email already in use.");
@@ -73,14 +77,19 @@ namespace GotorzProject.ServerAPI
             {
                 // TODO : Add futher fields
                 Customer customer = new();
+
+                Console.WriteLine($"Em : {registerRequest.Email} pw : {registerRequest.Password}");
+
                 customer.Email = registerRequest.Email;
-                customer.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(registerRequest.Password);
+                customer.Password = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password);
 
-                customer.FirstName = registerRequest.FirstName;
-                customer.LastName = registerRequest.LastName;
-                customer.TelephoneNumber = registerRequest.Phone
-
+                //customer.FirstName = registerRequest.FirstName;
+                //customer.LastName = registerRequest.LastName;
+                //customer.TelephoneNumber = registerRequest.Phone
+                Console.WriteLine(customer);
                 _context.Customers.Add(customer);
+
+                _context.SaveChanges();
 
                 return Ok();
             }

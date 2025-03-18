@@ -94,15 +94,19 @@
     private async void AttemptSignup(){
 
         // todo : handle which one is empty and inform user
-        if (new[] {
-            FirstName,LastName,Address,Country,PostalCode,PhoneNumber,Password,Email
-        }.Any(string.IsNullOrEmpty)){
-            return;
-        }
+
+        // todo : actually uncomment this, so we actually submit everything
+        // if (new[] {
+        //     FirstName,LastName,Address,Country,PostalCode,PhoneNumber,Password,Email
+        // }.Any(string.IsNullOrEmpty)){
+        //     return;
+        // }
+
+
         // ignore null ref warning, we check for that above
         var result = await AuthService.AsyncRegister(Email, Password, FirstName, LastName, Country, PostalCode, PhoneNumber, Address);
 
-
+        Console.WriteLine(result);
     }
 
     // validate that password and confirm pass are same
