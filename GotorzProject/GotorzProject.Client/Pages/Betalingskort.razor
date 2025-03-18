@@ -1,21 +1,21 @@
 ﻿@page "/Betalingskort"
 @rendermode InteractiveWebAssembly
 @inject NavigationManager Navigation
- 
+
 <PageTitle>Credit card Details</PageTitle>
- 
+
 <h3>Update your Credit card info here</h3>
- 
+
 <div id="Startside">
     <div id="nav">
         <div class="customform">
             <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToPersonalDetails"> Personal details</button>
         </div>
         <div class="customform">
-         <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToOrderHistory"> Order history</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToOrderHistory"> Order history</button>
         </div>
         <div class="customform">
-         <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToCard"> Credit card details</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToCard"> Credit card details</button>
         </div>
         <div class="customform">
             <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToSupport"> Support</button>
@@ -28,6 +28,13 @@
         <h3>Address & Payment</h3>
         <label class="form-control">HEj</label>
 
+        <div class="mb-3">
+            <!--Fix dette problem-->
+            <input type="radio" checked/>
+
+            <Switch @ref="switch1" @bind-Value="agree" Label="Credit Card Details Here" />
+            <Switch @ref="switch2" @bind-Value="agree" Label="Credit Card Details Here" />
+        </div>
 
         <h3> Credit card details</h3>
         <p> Here you can update your credit card details</p>
@@ -37,8 +44,16 @@
         <label class="form-control">HEj</label>
     </div>
 </div>
- 
+
 @code {
+
+    private Switch switch1 = default!;
+    private Switch switch2 = default!;
+    private bool agree = true;
+    private bool disagree = false;
+
+   
+
  
     private void NavigateToPersonalDetails()
     {
