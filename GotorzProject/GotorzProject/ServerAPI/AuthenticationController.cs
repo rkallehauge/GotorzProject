@@ -8,15 +8,22 @@ using System.Security.Cryptography;
 
 namespace GotorzProject.ServerAPI
 {
-    [Route("API/Auth/[controller]")]
-    public class Authentication : Controller
+    [Route("api/auth/[controller]")]
+    [ApiController]
+    public class AuthenticationController : ControllerBase
     {
 
         PrimaryDbContext _context;
         
-        public Authentication(PrimaryDbContext context)
+        public AuthenticationController(PrimaryDbContext context)
         {
             _context = context;
+            Console.WriteLine("Creating controller");
+            Console.WriteLine("Creating controller");
+            Console.WriteLine("Creating controller");
+            Console.WriteLine("Creating controller");
+            Console.WriteLine("Creating controller");
+            
         }
 
         [HttpPost("Login")]
@@ -78,6 +85,18 @@ namespace GotorzProject.ServerAPI
 
                 return Ok();
             }
+        }
+
+        [HttpGet("Test")]
+        public IActionResult Test()
+        {
+            return Ok("Hello mr bob.");
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return Ok("Hello");
         }
 
         private static string GenerateToken()

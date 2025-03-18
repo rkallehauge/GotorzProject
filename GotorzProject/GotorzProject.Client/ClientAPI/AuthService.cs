@@ -6,6 +6,8 @@ namespace GotorzProject.Client.ClientAPI
     {
         HttpClient? _httpClient;
 
+        private string apiBase = "/API/Auth/";
+
         public AuthService(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -22,7 +24,7 @@ namespace GotorzProject.Client.ClientAPI
             {
                 throw new Exception("AuthService not properly setup.");
             }
-            string apiEndpoint = "/api/Login";
+            string apiEndpoint = apiBase + "Login";
 
             var requestBody = new { Username = username, Password = password };
 
@@ -49,7 +51,7 @@ namespace GotorzProject.Client.ClientAPI
             {
                 throw new Exception("AuthService not properly setup.");
             }
-            string apiEndpoint = "/api/Register";
+            string apiEndpoint = apiBase + "Register";
 
             var requestBody = new { Username = username, Password = password };
 

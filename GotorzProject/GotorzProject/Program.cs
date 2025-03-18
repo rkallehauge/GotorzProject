@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
+builder.Services.AddControllers();
+
 var configuration = new ConfigurationBuilder()
     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
     .AddJsonFile("appsettings.json")
@@ -50,5 +52,7 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(GotorzProject.Client._Imports).Assembly);
 
 app.MapControllers();
+
+
 
 app.Run();
