@@ -3,7 +3,6 @@ using System.Reflection.Metadata.Ecma335;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-
 // todo : fix / make this better pls
 string hardcodedLocalUrl = "https://localhost:7097";
 
