@@ -12,9 +12,9 @@ namespace GotorzProject.Service
 {
     public class UserAuthenticationService
     {
-        private PrimaryDbContext _context;
+        private ApplicationIdentityDbContext _context;
 
-        public UserAuthenticationService(PrimaryDbContext context)
+        public UserAuthenticationService(ApplicationIdentityDbContext context)
         {
             _context = context; 
         }

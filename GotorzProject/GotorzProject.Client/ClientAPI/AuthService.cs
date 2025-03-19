@@ -6,7 +6,8 @@ namespace GotorzProject.Client.ClientAPI
     {
         HttpClient? _httpClient;
 
-        private string apiBase = "/api/authentication/";
+        //private string apiBase = "/api/authentication/";
+        private string apiBase = "";
 
         public AuthService(HttpClient httpClient)
         {
@@ -53,7 +54,7 @@ namespace GotorzProject.Client.ClientAPI
             }
             string apiEndpoint = apiBase + "register";
 
-            var requestBody = new { Email = email, Password = password, FirstName = firstname, LastName = lastname, Country = country, Address = address, PhoneNumber = phonenumber };
+            var requestBody = new { Email = email, Password = password };
 
             var response = await _httpClient.PostAsJsonAsync(apiEndpoint, requestBody);
 

@@ -8,7 +8,7 @@ namespace GotorzProject.Model.ObjectRelationMapping
     {
         public ApplicationIdentityDbContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<PrimaryDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationIdentityDbContext>();
 
             var configuration = new ConfigurationBuilder()
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
