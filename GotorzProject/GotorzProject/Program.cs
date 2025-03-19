@@ -2,8 +2,10 @@ using GotorzProject.Client.Pages;
 using GotorzProject.Components;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
+using Syncfusion.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSyncfusionBlazor();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
