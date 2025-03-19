@@ -1,0 +1,24 @@
+﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+<Modal @ref="modal" />
+
+<Button Color="ButtonColor.Primary" @onclick="ShowLogin">Login</Button>
+<Button Color="ButtonColor.Primary" @onclick="ShowRegister">Register</Button>
+
+
+@code {
+
+
+    Modal? modal { get; set; }
+
+    private async Task ShowLogin()
+    {
+        modal.ShowAsync<Login>(title: "Login");
+    }
+
+    private async Task ShowRegister()
+    {
+        modal.ShowAsync<Register>(title: "Register");
+    }
+	
+}

@@ -15,6 +15,8 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(backendU
 
 builder.Services.AddScoped<AuthService>();
 
+builder.Services.AddBlazorBootstrap();
+
 //var services = builder.Services.ToList();
 
 //Console.WriteLine("Registered services:");
