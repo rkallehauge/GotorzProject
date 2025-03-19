@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GotorzProject.Model.Auth;
+using Microsoft.EntityFrameworkCore;
 
 namespace GotorzProject.Model.ObjectRelationMapping
 {
@@ -10,6 +11,8 @@ namespace GotorzProject.Model.ObjectRelationMapping
         public DbSet<Order> Orders { get; set; }
         public DbSet<TravelPackage> TravelPackages { get; set; }
         public DbSet<Hotel> Hotels { get; set; }
+
+        public DbSet<CustomToken> CustomTokens { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -38,9 +38,11 @@ namespace GotorzProject.ServerAPI
             {
                 // verify password matches stored password
 
-                string hash = user.Password;
 
-                Console.WriteLine($"{loginRequest.Password} {hash} length {hash.Length}");
+
+                string hash = user.Password ?? "";
+
+                Console.WriteLine($"{loginRequest.Password} {loginRequest.Password.Length} {hash} length {hash.Length}");
                 bool correctPassword = BCrypt.Net.BCrypt.Verify(loginRequest.Password, hash);
                 if (correctPassword)
                 {
@@ -78,7 +80,7 @@ namespace GotorzProject.ServerAPI
                 // TODO : Add futher fields
                 Customer customer = new();
 
-                Console.WriteLine($"Em : {registerRequest.Email} pw : {registerRequest.Password}");
+                Console.WriteLine($"Em : {registerRequest.Email} pw : {registerRequest.Password} pwlength : {registerRequest.Password.Length}");
 
                 customer.Email = registerRequest.Email;
                 customer.Password = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password);
@@ -95,17 +97,19 @@ namespace GotorzProject.ServerAPI
             }
         }
 
-        [HttpGet("Test")]
-        public IActionResult Test()
+        [HttpGet("Info")]
+        public async Task<IActionResult> Info()
         {
-            return Ok("Hello mr bob.");
+            // Todo : make field variable, as to not make easier to change
+            Request.Cookies.TryGetValue("AuthToken", out string? token);
+
+            if (token == null) return BadRequest("No token provided");
+
+
+            return Ok(":)");
         }
 
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return Ok("Hello");
-        }
+        
 
         private static string GenerateToken()
         {
