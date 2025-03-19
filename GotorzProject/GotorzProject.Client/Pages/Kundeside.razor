@@ -1,0 +1,172 @@
+﻿@page "/Kundeside"
+@rendermode InteractiveWebAssembly
+@inject NavigationManager Navigation
+
+<PageTitle>Personal details</PageTitle>
+
+<h3>Update your info here</h3>
+
+<div id="Startside">
+    <div id="nav">
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToPersonalDetails"> Personal details</button>
+        </div>
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToOrderHistory"> Order history</button>
+        </div>
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToCard"> Credit card details</button>
+        </div>
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToSupport"> Support</button>
+        </div>
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToAbout"> About us</button>
+        </div>
+    </div>
+    <div>
+        <div class="input-group mb-3">
+            <div>
+                <label>First Name</label>
+                <input type="text" class="form-control" id="space" placeholder="FirstName">
+            </div>
+            <div style="margin-left:100px;">
+                <label>Last Name</label>
+                <input type="text" class="form-control" id="space" placeholder="LastName">
+            </div>
+        </div>
+
+        <div>
+            <label>Address</label>
+            <input type="text" class="form-control" id="space" placeholder="Address">
+        </div>
+
+        <div>
+            <label>Phone Number</label>
+            <input type="text" class="form-control" id="space" placeholder="Phone number">
+        </div>
+
+        <div>
+            <label id="Space">E-Mail</label>
+            <input type="text" class="form-control" id="space" placeholder="Insert E-Mail">
+        </div>
+
+        <div>
+            <label id="Space">Repeat</label>
+            <input type="text" class="form-control" id="space" placeholder="Repeat E-Mail">
+        </div>
+        <div class="button">
+            <InputFile OnChange="UploadImage" />
+            <input type="submit" value="Submit" class="btn btn-primary"/>
+        </div>  
+    </div>
+        <div>
+        @if (!string.IsNullOrEmpty(uploadedImage))
+        {
+            <img src="@uploadedImage" alt="Profilbilled" id="profile-img" />
+        }
+        </div>
+</div>
+
+@code {
+    private string? uploadedImage;
+
+    private async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        var buffer = new byte[file.Size];
+        await file.OpenReadStream().ReadAsync(buffer);
+        uploadedImage = $"data:image/png;base64,{Convert.ToBase64String(buffer)}";
+        Console.WriteLine(Convert.ToBase64String(buffer));
+    }
+
+    private void NavigateToPersonalDetails()
+    {
+        Navigation.NavigateTo("/Kundeside");
+    }
+
+    private void NavigateToOrderHistory()
+    {
+        Navigation.NavigateTo("/OrderHistory");
+    }
+
+    private void NavigateToCard()
+    {
+        Navigation.NavigateTo("/CreditCard");
+    }
+
+    private void NavigateToSupport()
+    {
+        Navigation.NavigateTo("/Support");
+    }
+
+    private void NavigateToAbout()
+    {
+        Navigation.NavigateTo("/AboutUs");
+    }
+}
+
+<style>
+
+    h3{
+        text-align:center;
+    }
+
+    button{
+        width:100%;
+        height:100%;
+    }
+
+    label {
+        margin-top: 5px;
+    }
+
+    #Startside{
+        display:flex;
+        margin-top:10px;
+    }
+
+    #space {
+        margin-top: 5px;
+    }
+
+    #fafa {
+        margin: 5px;
+    }
+
+    #nav{
+        display:block;
+        width:250px;
+        height:310px; 
+        margin-right: 20px;
+        margin-top:25px;
+    }
+
+    #profile-img {
+        margin-left: 50px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: scale-down;
+    }
+
+    .button {
+        margin-top:10px;
+        margin-left:150px;
+    }
+
+    .customform{
+        display: flex;
+        width: 100%;
+        margin-top:5px;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #6c757d;
+        background-color: #6c757d;
+        background-clip: padding-box;
+        border-radius: var(--bs-border-radius);
+    }
+
+</style>
