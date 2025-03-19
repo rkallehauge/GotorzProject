@@ -19,7 +19,7 @@ namespace GotorzProject.Model.ObjectRelationMapping
             base.OnConfiguring(optionsBuilder);
         }
 
-        public PrimaryDbContext(DbContextOptions options)
+        public PrimaryDbContext(DbContextOptions<PrimaryDbContext> options)
            : base(options) { }
 
 

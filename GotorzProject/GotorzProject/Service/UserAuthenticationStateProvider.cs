@@ -1,24 +1,16 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-
+﻿using GotorzProject.Model;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Primitives;
+using System.Security.Claims;
 namespace GotorzProject.Service
 {
     public class UserAuthenticationStateProvider : AuthenticationStateProvider
     {
-        HttpClient _httpClient;
-
-        public UserAuthenticationStateProvider(HttpClient client)
+        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-                _httpClient = client;
-        }
-
-        public override Task<AuthenticationState> GetAuthenticationStateAsync()
-        {
-            throw new NotImplementedException();   
+            throw new NotImplementedException();
         }
     }
 
-    public class UserAuthData
-    {
-        public string Email { get; set; }
-        public string Role { get; set; }
 }

@@ -15,13 +15,13 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(backendU
 
 builder.Services.AddScoped<AuthService>();
 
-var services = builder.Services.ToList();
+//var services = builder.Services.ToList();
 
-Console.WriteLine("Registered services:");
-foreach (var service in services)
-{
-    Console.WriteLine($"{service.ServiceType} {service.ServiceKey}");
-}
+//Console.WriteLine("Registered services:");
+//foreach (var service in services)
+//{
+//    Console.WriteLine($"{service.ServiceType} {service.ServiceKey}");
+//}
 
 
 await builder.Build().RunAsync();

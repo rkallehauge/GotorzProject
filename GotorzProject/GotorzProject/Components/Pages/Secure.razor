@@ -1,0 +1,21 @@
+﻿@page "/secure"
+
+@using Service
+@inject UserAuthenticationStateProvider AuthProvider
+
+
+
+<h3>Secure</h3>
+<AuthorizeView>
+	<Authorized>
+		Hello mr bob
+	</Authorized>
+	<NotAuthorized>
+		fuck you mr random
+	</NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+}

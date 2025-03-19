@@ -1,6 +1,9 @@
 using GotorzProject.Client.Pages;
 using GotorzProject.Components;
 using GotorzProject.Model.ObjectRelationMapping;
+using GotorzProject.Service;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -37,13 +40,38 @@ if (curDb == "MSSql")
     builder.Services.AddDbContext<PrimaryDbContext>(
         options => options.UseSqlServer(connString)
     );
+
+    builder.Services.AddDbContext<ApplicationIdentityDbContext>(
+        options => options.UseSqlServer(connString)
+    );
 }
 else if (curDb == "PostgreSQL")
 {
     builder.Services.AddDbContext<PrimaryDbContext>(
         options => options.UseNpgsql(connString)
     );
+
+    builder.Services.AddDbContext<ApplicationIdentityDbContext>(
+        options => options.UseNpgsql(connString)
+    );
 }
+
+builder.Services.AddIdentityCore<IdentityUser>();
+
+
+builder.Services.AddHttpClient();
+//builder.Services.AddScoped<HttpClient>(sp =>
+//    new HttpClient { BaseAddress = new Uri(builder.) });
+
+//builder.Services.AddScoped<UserAuthenticationService>();
+
+////builder.Services.AddScoped<AuthenticationStateProvider, UserAuthenticationStateProvider>();
+//builder.Services.AddScoped<UserAuthenticationStateProvider>();
+//builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<UserAuthenticationStateProvider>());
+
+
+builder.Services.AddAuthorizationCore();
+builder.Services.AddCascadingAuthenticationState();
 
 
 builder.Services.AddControllers();
@@ -75,5 +103,12 @@ app.MapRazorComponents<App>()
 app.MapControllers();
 
 
+var services = builder.Services.ToList();
+
+Console.WriteLine("Registered services:");
+foreach (var service in services)
+{
+    Console.WriteLine($"{service.ServiceType} {service.ServiceKey}");
+}
 
 app.Run();

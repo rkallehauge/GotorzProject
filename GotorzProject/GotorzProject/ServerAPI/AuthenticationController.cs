@@ -1,5 +1,6 @@
 ﻿using GotorzProject.Model;
 using GotorzProject.Model.ObjectRelationMapping;
+using GotorzProject.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.Configuration;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
@@ -14,87 +15,48 @@ namespace GotorzProject.ServerAPI
     {
 
         PrimaryDbContext _context;
+        UserAuthenticationService _authenticationService;
         
-        public AuthenticationController(PrimaryDbContext context)
+        public AuthenticationController(PrimaryDbContext context, UserAuthenticationService userAuthService)
         {
             _context = context;
-            Console.WriteLine("I am here!");
+            _authenticationService = userAuthService;
         }
 
         [HttpPost("Login")]
-        public IActionResult Login([FromBody] AuthRequest loginRequest)
+        public async Task<IActionResult> Login([FromBody] AuthRequest loginRequest)
         {
-
-            if (_context == null)
+            var result = await _authenticationService.AsyncLogin(loginRequest.Email, loginRequest.Password);
+            if (!string.IsNullOrEmpty(result))
             {
-                throw new InvalidConfigurationException("Bad configuration, code is ass, terminating session.");
+                Response.Cookies.Append("AuthToken", result);
+                return Ok();
             }
 
-            // username is email
-            // todo : change all places to say email instead of username
-            var user = _context.Customers.FirstOrDefault((usr) => usr.Email == loginRequest.Email);
-
-            if (user != null)
-            {
-                // verify password matches stored password
-
-
-
-                string hash = user.Password ?? "";
-
-                Console.WriteLine($"{loginRequest.Password} {loginRequest.Password.Length} {hash} length {hash.Length}");
-                bool correctPassword = BCrypt.Net.BCrypt.Verify(loginRequest.Password, hash);
-                if (correctPassword)
-                {
-                    // Todo : generate token here
-                    string token = GenerateToken();
-                    Response.Cookies.Append("AuthToken", token);
-
-                    return Ok(token);
-                }
-
-                return BadRequest("Invalid login. type a");
-            }
-            else
-            {
-                return BadRequest("Invalid login. type b");
-            }
+            return BadRequest("Invalid Login.");
         }
         
         [HttpPost("Register")]
-        public IActionResult Register([FromBody] RegisterRequest registerRequest)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
         {
-            if(_context == null)
+            Customer customer = new()
             {
-                throw new InvalidConfigurationException("Bad configuration, code is ass, terminating session.");
-            }
+                FirstName = registerRequest.FirstName,
+                LastName = registerRequest.LastName,
+                Email = registerRequest.Email,
+                Password = registerRequest.Password,
+                PostalCode = registerRequest.PostalCode,
+                Address = registerRequest.Address,
+                Country = registerRequest.Country,
+                TelephoneNumber = registerRequest.PhoneNumber
+            };
 
-            bool exists = _context.Customers.Any((cust) =>  cust.Email == registerRequest.Email);
-            if (exists)
+            var result = await _authenticationService.Register(customer);
+            if (result)
             {
-                // are we technically leaking whether a user exists by this?
-                return BadRequest("Email already in use.");
-            }
-            else
-            {
-                // TODO : Add futher fields
-                Customer customer = new();
-
-                Console.WriteLine($"Em : {registerRequest.Email} pw : {registerRequest.Password} pwlength : {registerRequest.Password.Length}");
-
-                customer.Email = registerRequest.Email;
-                customer.Password = BCrypt.Net.BCrypt.HashPassword(registerRequest.Password);
-
-                //customer.FirstName = registerRequest.FirstName;
-                //customer.LastName = registerRequest.LastName;
-                //customer.TelephoneNumber = registerRequest.Phone
-                Console.WriteLine(customer);
-                _context.Customers.Add(customer);
-
-                _context.SaveChanges();
-
                 return Ok();
             }
+            return BadRequest("Couldn't reigster user, try another email.");
         }
 
         [HttpGet("Info")]
@@ -103,27 +65,16 @@ namespace GotorzProject.ServerAPI
             // Todo : make field variable, as to not make easier to change
             Request.Cookies.TryGetValue("AuthToken", out string? token);
 
-            if (token == null) return BadRequest("No token provided");
+            //if (token == null) return BadRequest("No token provided");
 
-
-            return Ok(":)");
-        }
-
-        
-
-        private static string GenerateToken()
-        {
-                
-            byte[] buffer = new byte[32];
-            using (var rng = RandomNumberGenerator.Create())
+            foreach(var cookie in Request.Cookies)
             {
-                rng.GetBytes(buffer);
+                Console.WriteLine($"{cookie.Key} : {cookie.Value}");
             }
-            return Convert.ToBase64String(buffer);
+            
+            return Ok("");
         }
     }
-
-
     public class AuthRequest
     {
         
