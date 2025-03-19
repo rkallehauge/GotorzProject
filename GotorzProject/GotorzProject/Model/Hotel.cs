@@ -21,5 +21,7 @@ namespace GotorzProject.Model
             Price = price;
             NumberOfRooms = numberOfRooms;
         }
+
+     
     }
 }
