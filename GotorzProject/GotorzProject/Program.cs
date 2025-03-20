@@ -1,7 +1,6 @@
 using GotorzProject.Client.Pages;
 using GotorzProject.Components;
 using GotorzProject.Model.ObjectRelationMapping;
-using GotorzProject.Service;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -48,15 +47,7 @@ else if (curDb == "PostgreSQL")
     );
 }
 
-
-
 builder.Services.AddHttpClient();
-builder.Services.AddAuthorization();
-
-// like fucking magic
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
-
 
 builder.Services.AddControllers();
 
@@ -95,7 +86,5 @@ app.MapControllers();
 //    Console.WriteLine($"{service.ServiceType} {service.ServiceKey}");
 //}
 
-// further wizardry
-app.MapIdentityApi<IdentityUser>();
 
 app.Run();
