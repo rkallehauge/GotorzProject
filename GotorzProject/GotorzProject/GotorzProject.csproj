@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\GotorzProject.Shared\GotorzProject.Shared.csproj" />
     <ProjectReference Include="..\GotorzProject.Client\GotorzProject.Client.csproj" />
     <PackageReference Include="Blazor.Bootstrap" Version="3.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.3" />

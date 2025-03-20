@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GotorzProject", "GotorzProj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GotorzProject.Client", "GotorzProject\GotorzProject.Client\GotorzProject.Client.csproj", "{F3E12B02-BE1B-43AE-B7E9-6F889F67FF5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GotorzProject.Shared", "GotorzProject.Shared\GotorzProject.Shared.csproj", "{F875C319-EFEF-4C9C-AE05-D05982244F8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F3E12B02-BE1B-43AE-B7E9-6F889F67FF5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3E12B02-BE1B-43AE-B7E9-6F889F67FF5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3E12B02-BE1B-43AE-B7E9-6F889F67FF5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F875C319-EFEF-4C9C-AE05-D05982244F8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F875C319-EFEF-4C9C-AE05-D05982244F8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F875C319-EFEF-4C9C-AE05-D05982244F8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F875C319-EFEF-4C9C-AE05-D05982244F8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,179 @@
+﻿@page "/Orderhistorik"
+@rendermode InteractiveWebAssembly
+@inject NavigationManager Navigation
+@using GotorzProject.Shared
+
+<PageTitle>Order Historik</PageTitle>
+
+<h3>Here you can get an overview over your Order history</h3>
+
+<div id="Startside">
+    <div id="nav">
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToPersonalDetails"> Personal details</button>
+        </div>
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToOrderHistory"> Order history</button>
+        </div>
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToCard"> Credit card details</button>
+        </div>
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToSupport"> Support</button>
+        </div>
+        <div class="customform">
+            <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToAbout"> About us</button>
+        </div>
+    </div>
+    <div>
+        <Grid TItem="Order"
+              AllowRowClick="true"
+              AllowSorting="true"
+              Class="table table-hover"
+              DataProvider="OrderDataProvider"
+              HeaderRowCssClass="bg-primary text-white border-bottom-0"
+              OnRowClick="OnRowClick"
+              Responsive="true">
+
+            <GridColumn TItem="Order" HeaderText="ID" SortKeySelector="item => item.ID">
+                @context.ID
+            </GridColumn>
+
+            <GridColumn TItem="Order" HeaderText="Destination" SortKeySelector="item => item.Destination">
+                @context.Destination
+            </GridColumn>
+
+            <GridColumn TItem="Order" HeaderText="OrderStatus" SortKeySelector="item => item.OrderStatus">
+                @context.OrderStatus
+            </GridColumn>
+
+        </Grid>
+    </div>
+</div>
+
+    @code {
+
+        [Inject] ModalService ModalService { get; set; } = default!;
+
+        private IEnumerable<Order> orders = default!;
+
+        private async Task<GridDataProviderResult<Order>> OrderDataProvider(GridDataProviderRequest<Order> request)
+        {
+            if (orders is null) // pull employees only one time for client-side filtering, sorting, and paging
+                orders = Getorders(); // call a service or an API to pull the employees
+
+            return await Task.FromResult(request.ApplyTo(orders));
+        }
+
+        private IEnumerable<Order> Getorders()
+        {
+            return new List<Order>
+            {
+                new Order { ID = 103, Date = "18-03", DateYear = "2025", Destination = "Spain", Hotel = "Hotel Este", PaymentMethod = "Credit Card", Price = 100.50, OrderStatus = Order.OrderStatuses.Created },
+                new Order { ID = 106, PaymentMethod = "PayPal", Price = 200.75, OrderStatus = Order.OrderStatuses.Processing },
+                new Order { ID = 104, PaymentMethod = "Credit Card", Price = 150.00, OrderStatus = Order.OrderStatuses.Finalized },
+                new Order { ID = 105, PaymentMethod = "Bank Transfer", Price = 300.20, OrderStatus = Order.OrderStatuses.Created },
+                new Order { ID = 102, PaymentMethod = "Credit Card", Price = 250.40, OrderStatus = Order.OrderStatuses.Processing },
+                new Order { ID = 101, PaymentMethod = "PayPal", Price = 350.60, OrderStatus = Order.OrderStatuses.Finalized },
+            };
+        }
+
+        private async Task OnRowClick(GridRowEventArgs<Order> args)
+        {
+            await ModalService.ShowAsync(new ModalOption { 
+                Type = ModalType.Primary, Title = "Event: Row Click", 
+                Message = $"Id: {args.Item.ID}, Name: {args.Item.Date} {args.Item.DateYear} {args.Item.Destination} {args.Item.Hotel} {args.Item.Price} {args.Item.PaymentMethod} "
+            });
+        }
+
+
+    private void NavigateToPersonalDetails()
+    {
+        Navigation.NavigateTo("/Kundeside");
+    }
+
+    private void NavigateToOrderHistory()
+    {
+        Navigation.NavigateTo("/OrderHistory");
+    }
+
+    private void NavigateToCard()
+    {
+        Navigation.NavigateTo("/Betalingskort");
+    }
+
+    private void NavigateToSupport()
+    {
+        Navigation.NavigateTo("/Support");
+    }
+
+    private void NavigateToAbout()
+    {
+        Navigation.NavigateTo("/AboutUs");
+    }
+
+
+}
+
+<style>
+
+    h3 {
+        text-align: center;
+    }
+
+    button {
+        width: 100%;
+        height: 100%;
+    }
+
+    #Startside {
+        display: flex;
+        margin-top: 10px;
+    }
+
+
+    #fafa {
+        margin: 5px;
+    }
+
+    #nav {
+        display: block;
+        width: 250px;
+        height: 310px;
+        margin-right: 20px;
+        margin-top: 25px;
+    }
+
+    #salsa {
+        width: 300px;
+        height: 400px;
+        background-color: cornflowerblue;
+
+    }
+
+    #customstyle {
+        width: 50%;
+        margin-top: 5px;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        background-color:deepskyblue;
+        background-clip: padding-box;
+        border-radius: var(--bs-border-radius);
+    }
+
+    .customform {
+        display: flex;
+        width: 100%;
+        margin-top: 5px;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #6c757d;
+        background-color: #6c757d;
+        background-clip: padding-box;
+        border-radius: var(--bs-border-radius);
+    }
+</style>

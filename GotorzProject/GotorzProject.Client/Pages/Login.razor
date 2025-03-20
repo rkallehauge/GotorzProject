@@ -1,7 +1,5 @@
 ﻿@rendermode InteractiveWebAssembly
 
-
-
 <div class="form-group-prepend">
     <label class="input-group-text" for="Login">Username</label>
     <input type="text" name="Username" @bind-value="Username" />
@@ -22,9 +20,11 @@
     public string? Username { get; set; }
     public string? Password { get; set; }
 
-    private async void AttemptLogin()
+    private async Task AttemptLogin()
     {
-        
+        // Simulate an asynchronous operation
+        await Task.Delay(1000);
     }
 
 }
+
