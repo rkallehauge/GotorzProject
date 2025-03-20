@@ -8,5 +8,7 @@
         {
             Role = role;
         }
+
+        public Employee() { }
     }
 }

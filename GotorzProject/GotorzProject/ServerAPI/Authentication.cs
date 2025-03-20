@@ -1,5 +1,7 @@
-﻿using GotorzProject.Model.ObjectRelationMapping;
+﻿using GotorzProject.Model;
+using GotorzProject.Model.ObjectRelationMapping;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.Configuration;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
 
 namespace GotorzProject.ServerAPI
@@ -19,9 +21,14 @@ namespace GotorzProject.ServerAPI
         public IActionResult Login([FromBody] AuthRequest loginRequest)
         {
 
+            if (_context == null)
+            {
+                throw new InvalidConfigurationException("Bad configuration, code is ass, terminating session.");
+            }
+
             // username is email
             // todo : change all places to say email instead of username
-            var user = _context.Customers.First((usr) => usr.Email == loginRequest.Username);
+            var user = _context.Customers.First((usr) => usr.Email == loginRequest.Email);
 
             if (user != null)
             {
@@ -44,16 +51,38 @@ namespace GotorzProject.ServerAPI
         }
         
         [HttpPost("Register")]
-        public IActionResult Register([FromBody] AuthRequest loginRequest)
+        public IActionResult Register([FromBody] Customer registerRequest)
         {
-            throw new NotImplementedException();
+            if(_context == null)
+            {
+                throw new InvalidConfigurationException("Bad configuration, code is ass, terminating session.");
+            }
+
+            var user = _context.Customers.First((usr) => usr.Email == registerRequest.Email);
+            if (user != null)
+            {
+                // are we technically leaking whether a user exists by this?
+                return BadRequest("Email already in use.");
+            }
+            else
+            {
+                // TODO : Add futher fields
+                Customer customer = new();
+                customer.Email = registerRequest.Email;
+                customer.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(registerRequest.Password);
+
+                _context.Customers.Add(customer);
+
+                return Ok();
+            }
         }
     }
 
 
     public class AuthRequest
     {
-        public string? Username { get; set; }
+        
+        public string? Email { get; set; }
         public string? Password { get; set; }
     }
 }
