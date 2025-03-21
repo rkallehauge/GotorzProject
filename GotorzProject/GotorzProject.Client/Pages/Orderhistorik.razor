@@ -25,7 +25,7 @@
             <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToAbout"> About us</button>
         </div>
     </div>
-    <div>
+    <div id="Griditems">
         <Grid TItem="Order"
               AllowRowClick="true"
               AllowSorting="true"
@@ -80,9 +80,10 @@
 
         private async Task OnRowClick(GridRowEventArgs<Order> args)
         {
-            await ModalService.ShowAsync(new ModalOption { 
-                Type = ModalType.Primary, Title = "Event: Row Click", 
-                Message = $"Id: {args.Item.ID}, Name: {args.Item.Date} {args.Item.DateYear} {args.Item.Destination} {args.Item.Hotel} {args.Item.Price} {args.Item.PaymentMethod} "
+            await ModalService.ShowAsync(new ModalOption
+            {
+                Type = ModalType.Primary, Title = "Event: Row Click",
+                Message = $"Id: {args.Item.ID}, Date: {args.Item.Date}, Year: {args.Item.DateYear}, Destination: {args.Item.Destination}, Hotel: {args.Item.Hotel}, Price: {args.Item.Price}, {args.Item.PaymentMethod} " 
             });
         }
 
@@ -161,6 +162,10 @@
         background-color:deepskyblue;
         background-clip: padding-box;
         border-radius: var(--bs-border-radius);
+    }
+
+    #Griditems {
+        margin-top:30px;
     }
 
     .customform {
