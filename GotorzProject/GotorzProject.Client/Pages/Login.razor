@@ -1,30 +1,61 @@
-﻿@rendermode InteractiveWebAssembly
+﻿@page "/login"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
 
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
+<h1>Login</h1>
 
-<div class="form-group-prepend">
-    <label class="input-group-text" for="Login">Username</label>
-    <input type="text" name="Username" @bind-value="Username" />
-</div>
+@if (ShowErrors)
+{
+    <div class="alert alert-danger" role="alert">
+        <p>@Error</p>
+    </div>
+}
 
-<div class="form-group-prepend">
-    <label class="input-group-text" for="Login">Fornavn</label>
-    <input type="Password" name="Password" @bind-value="Password" />
-</div>
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Please enter your details</h5>
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-<div class="form-group mb-3">
-    <label>&nbsp;</label>
-    <input type="button" value="Login" class="submit" @onclick="AttemptLogin" />
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <InputText Id="email" Class="form-control" @bind-Value="loginModel.Email" />
+                <ValidationMessage For="@(() => loginModel.Email)" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <InputText Id="password" type="password" Class="form-control" @bind-Value="loginModel.Password" />
+                <ValidationMessage For="@(() => loginModel.Password)" />
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>
+    </div>
 </div>
 
 @code {
 
-    public string? Username { get; set; }
-    public string? Password { get; set; }
+    private LoginModel loginModel = new LoginModel();
+    private bool ShowErrors;
+    private string Error = "";
 
-    private async void AttemptLogin()
+    private async Task HandleLogin()
     {
-        
+        ShowErrors = false;
+
+        var result = await AuthService.Login(loginModel);
+
+        if (result.Successful)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            Error = result.Error;
+            ShowErrors = true;
+        }
     }
 
 }

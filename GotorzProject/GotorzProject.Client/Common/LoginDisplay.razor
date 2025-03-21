@@ -1,0 +1,17 @@
+﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            Hello, @context.User.Identity.Name!
+            <a href="LogOut">Log out</a>
+        </Authorized>
+        <NotAuthorized>
+            <a href="Register">Register</a>
+            <a href="Login">Log in</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+@code {
+    
+}

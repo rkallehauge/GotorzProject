@@ -10,9 +10,15 @@
 
   <ItemGroup>
     <PackageReference Include="Blazor.Bootstrap" Version="3.3.1" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.3" />
     <PackageReference Include="Syncfusion.Blazor.InteractiveChat" Version="28.2.12" />
     <PackageReference Include="Syncfusion.Blazor.Themes" Version="28.2.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\GotorzProject.Shared.csproj" />
   </ItemGroup>
 
 </Project>

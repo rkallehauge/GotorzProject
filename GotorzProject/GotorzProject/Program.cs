@@ -1,8 +1,16 @@
 using GotorzProject.Client.Pages;
 using GotorzProject.Components;
+using GotorzProject.Model.ObjectRelationMapping;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Syncfusion.Blazor;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using GotorzProject.Client.Services;
+using Blazored.LocalStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSyncfusionBlazor();
@@ -23,10 +31,31 @@ var configuration = new ConfigurationBuilder()
 // MSSql
 // PostgreSQL
 
-string dbType = "PostgreSQL";
+string dbType = "MSSql";
 
 var connectionString = configuration.GetConnectionString(dbType);
 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString)
+);
+
+builder.Services.AddDefaultIdentity<IdentityUser>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = configuration["JwtIssuer"],
+            ValidAudience = configuration["JwtAudience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityKey"]))
+        };
+    });
 
 builder.Services.AddControllers();
 
@@ -46,6 +75,10 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAntiforgery();
 

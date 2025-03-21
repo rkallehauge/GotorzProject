@@ -1,0 +1,15 @@
+﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@page "/authtest"
+<CascadingAuthenticationState>
+	<AuthorizeView>
+		<Authorized>
+			Fuck you
+		</Authorized>
+		<NotAuthorized>
+			Yes fuck
+		</NotAuthorized>
+	</AuthorizeView>
+</CascadingAuthenticationState>
+@code {
+
+}
