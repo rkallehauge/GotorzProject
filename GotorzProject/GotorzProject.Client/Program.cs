@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Syncfusion.Blazor;
+using BlazorBootstrap;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddBlazorBootstrap();
+builder.Services.AddSingleton<ModalService>();
 
 // todo : fix / make this better pls
 string hardcodedLocalUrl = "https://localhost:7097";

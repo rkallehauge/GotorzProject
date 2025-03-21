@@ -9,6 +9,7 @@
             Processing,
             Finalized
         }
+
         public int ID { get; set; }
         public string? Date { get; set; }
         public string? DateYear { get; set; }

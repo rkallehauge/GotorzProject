@@ -1,3 +1,4 @@
+using BlazorBootstrap;
 using GotorzProject.Client.Pages;
 using GotorzProject.Components;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +14,10 @@ builder.Services.AddRazorComponents()
 
 //bootstrap initialzxiton
 builder.Services.AddBlazorBootstrap();
+
+// Add services to the container.
+builder.Services.AddSingleton<ModalService>();
+
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)

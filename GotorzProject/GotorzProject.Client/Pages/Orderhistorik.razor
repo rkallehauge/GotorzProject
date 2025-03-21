@@ -1,6 +1,7 @@
 ﻿@page "/Orderhistorik"
 @rendermode InteractiveWebAssembly
 @inject NavigationManager Navigation
+@inject ModalService ModalService
 @using GotorzProject.Shared
 
 <PageTitle>Order Historik</PageTitle>
@@ -43,31 +44,38 @@
                 @context.Destination
             </GridColumn>
 
-            <GridColumn TItem="Order" HeaderText="OrderStatus" SortKeySelector="item => item.OrderStatus">
+            <GridColumn TItem="Order" HeaderText="OrderStatus" SortKeySelector="@(item => item.OrderStatus)">
                 @context.OrderStatus
+                <Button Icon="bi bi-eye" Class="btn btn-primary" @onclick="() => OnRowClick(new GridRowEventArgs<Order>(context))"></Button>
             </GridColumn>
 
         </Grid>
     </div>
+
+    <BlazorBootstrap.Modal @bind-Visible="isModalVisible" Title="Order Details">
+        <div>
+            <p>@modalMessage</p>
+        </div>
+    </BlazorBootstrap.Modal>
 </div>
 
-    @code {
+@code {
+    private bool isModalVisible;
+    private string modalMessage = string.Empty;
 
-        [Inject] ModalService ModalService { get; set; } = default!;
+    private IEnumerable<Order> orders = default!;
 
-        private IEnumerable<Order> orders = default!;
+    private async Task<GridDataProviderResult<Order>> OrderDataProvider(GridDataProviderRequest<Order> request)
+    {
+        if (orders is null) // pull order only one time for client-side filtering, sorting, and paging
+            orders = Getorders(); // call a service or an API to pull the order
 
-        private async Task<GridDataProviderResult<Order>> OrderDataProvider(GridDataProviderRequest<Order> request)
-        {
-            if (orders is null) // pull employees only one time for client-side filtering, sorting, and paging
-                orders = Getorders(); // call a service or an API to pull the employees
+        return await Task.FromResult(request.ApplyTo(orders));
+    }
 
-            return await Task.FromResult(request.ApplyTo(orders));
-        }
-
-        private IEnumerable<Order> Getorders()
-        {
-            return new List<Order>
+    private IEnumerable<Order> Getorders()
+    {
+        return new List<Order>
             {
                 new Order { ID = 103, Date = "18-03", DateYear = "2025", Destination = "Spain", Hotel = "Hotel Este", PaymentMethod = "Credit Card", Price = 100.50, OrderStatus = Order.OrderStatuses.Created },
                 new Order { ID = 106, PaymentMethod = "PayPal", Price = 200.75, OrderStatus = Order.OrderStatuses.Processing },
@@ -76,17 +84,16 @@
                 new Order { ID = 102, PaymentMethod = "Credit Card", Price = 250.40, OrderStatus = Order.OrderStatuses.Processing },
                 new Order { ID = 101, PaymentMethod = "PayPal", Price = 350.60, OrderStatus = Order.OrderStatuses.Finalized },
             };
-        }
+    }
 
-        private async Task OnRowClick(GridRowEventArgs<Order> args)
+    private async Task OnRowClick(GridRowEventArgs<Order> args)
+    {
+        await Task.Run(() =>
         {
-            await ModalService.ShowAsync(new ModalOption
-            {
-                Type = ModalType.Primary, Title = "Event: Row Click",
-                Message = $"Id: {args.Item.ID}, Date: {args.Item.Date}, Year: {args.Item.DateYear}, Destination: {args.Item.Destination}, Hotel: {args.Item.Hotel}, Price: {args.Item.Price}, {args.Item.PaymentMethod} " 
-            });
-        }
-
+            modalMessage = $"Id: {args.Item.ID}, Date: {args.Item.Date}, Year: {args.Item.DateYear}, Destination: {args.Item.Destination}, Hotel: {args.Item.Hotel}, Price: {args.Item.Price}, {args.Item.PaymentMethod}";
+            isModalVisible = true;
+        });
+    }
 
     private void NavigateToPersonalDetails()
     {
@@ -112,9 +119,8 @@
     {
         Navigation.NavigateTo("/AboutUs");
     }
-
-
 }
+
 
 <style>
 
