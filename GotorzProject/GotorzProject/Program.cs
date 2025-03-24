@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using GotorzProject.Client.Services;
 using Blazored.LocalStorage;
+using GotorzProject.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSyncfusionBlazor();
@@ -27,6 +28,11 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .AddJsonFile("appsettings.Development.json")
     .Build();
+
+
+// todo : refactor this into a class by itself, so we can use configsection for actual real purposes
+// IConfigurationSection => APIKeys
+builder.Services.AddSingleton(configuration.GetSection("APIKeys"));
 
 // MSSql
 // PostgreSQL
@@ -56,6 +62,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityKey"]))
         };
     });
+
+// internal service setup
+
+builder.Services.AddScoped<IBookingFlightProvider, BookingFlightProvider>();
 
 builder.Services.AddControllers();
 
