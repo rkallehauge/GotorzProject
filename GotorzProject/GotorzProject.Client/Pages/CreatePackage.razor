@@ -1,5 +1,8 @@
 ﻿@page "/CreatePackage"
+@* @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false)) *@
 @rendermode InteractiveWebAssembly
+
+@inject HttpClient Http
 
 <h3>Create Package</h3>
 
@@ -53,8 +56,7 @@
 	private List<string> countries = new List<string>();
 	private List<string> cities = new List<string>();
 
-	[Inject]
-	private HttpClient Http { get; set; }
+
 
 	private async Task OnCountriesChanged(ChangeEventArgs e)
 	{
@@ -97,18 +99,14 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		Console.WriteLine(Http.BaseAddress);
-
-		return;
-
-		var response = await Http.GetStringAsync("api/Location/GetCountries"); 
-		
-		if (response.IsSuccessStatusCode)
-		{
-			countries = await response.Content.ReadFromJsonAsync<List<string>>();
+		if(Http.BaseAddress!=null){
+			var response = await Http.GetAsync(Http.BaseAddress+"api/Location/GetCountries");
+			if (response.IsSuccessStatusCode)
+			{
+				countries = await response.Content.ReadFromJsonAsync<List<string>>();
+			}
 		}
 	}
-
 
 	public class TravelPackage
 	{

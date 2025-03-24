@@ -35,9 +35,9 @@ namespace GotorzProject.ServerAPI
 
             var response = await Http.SendAsync(requestMessage);
             
-            Console.WriteLine(response.Headers);
-            Console.WriteLine(response.StatusCode);
-            Console.WriteLine(await response.Content.ReadAsStringAsync());
+            //Console.WriteLine(response.Headers);
+            //Console.WriteLine(response.StatusCode);
+            //Console.WriteLine(await response.Content.ReadAsStringAsync());
 
             var result = new List<string>();
 
