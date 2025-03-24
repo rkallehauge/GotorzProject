@@ -13,7 +13,15 @@ namespace GotorzProject.Model
         public DateTime Departure { get; set; }
         public DateTime Return { get; set; }
 
-        public TravelPackage(int paymentID, string destinationCity, string destinationCountry, string hotel, double price, DateTime departure, DateTime @return)
+        //Midlertidig constructor med begrænset info
+        public TravelPackage(string destinationCity, string destinationCountry)
+        {
+            DestinationCity = destinationCity;
+            DestinationCountry = destinationCountry;
+        }
+
+        //Den egentlige constructor, når page virker
+        public void UpdatedTravelPackage(int paymentID, string destinationCity, string destinationCountry, string hotel, double price, DateTime departure, DateTime @return)
         {
             DestinationCity = destinationCity;
             DestinationCountry = destinationCountry;
