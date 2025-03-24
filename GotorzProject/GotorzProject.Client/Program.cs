@@ -16,7 +16,7 @@ builder.Services.AddScoped(sp => new HttpClient
 
 });
 
-"FrontendUrl": "https://localhost:7097"
+
 
 
 await builder.Build().RunAsync();
