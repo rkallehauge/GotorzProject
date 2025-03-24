@@ -1,9 +1,11 @@
 ﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
+@using GotorzProject.Client.Pages
+
 <CascadingAuthenticationState>
     <AuthorizeView>
         <Authorized>
-            Hello, @context.User.Identity.Name!
+            <a href="">@context.User.Identity.Name</a>
             <a href="LogOut">Log out</a>
         </Authorized>
         <NotAuthorized>
@@ -13,5 +15,5 @@
     </AuthorizeView>
 </CascadingAuthenticationState>
 @code {
-    
+
 }

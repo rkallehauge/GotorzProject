@@ -18,6 +18,7 @@ namespace GotorzProject.Service
         }
 
         // bread and butter
+        // provides authentication state based on locally stored token
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var savedToken = await _localStorage.GetItemAsync<string>("authToken");
@@ -58,6 +59,7 @@ namespace GotorzProject.Service
             NotifyAuthenticationStateChanged(authState);
         }
 
+        // somewhat self describatory, at least the overall function
         private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
         {
             var claims = new List<Claim>();
@@ -76,6 +78,7 @@ namespace GotorzProject.Service
                     foreach (var parsedRole in parsedRoles)
                     {
                         claims.Add(new Claim(ClaimTypes.Role, parsedRole));
+                        Console.WriteLine(parsedRole);
                     }
                 }
                 else

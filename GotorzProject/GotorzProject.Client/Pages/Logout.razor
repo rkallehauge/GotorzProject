@@ -1,4 +1,6 @@
-﻿@page "/logout"
+﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@page "/logout"
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
