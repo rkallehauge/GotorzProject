@@ -88,11 +88,12 @@
 
     private async Task OnRowClick(GridRowEventArgs<Order> args)
     {
-        await Task.Run(() =>
-        {
-            modalMessage = $"Id: {args.Item.ID}, Date: {args.Item.Date}, Year: {args.Item.DateYear}, Destination: {args.Item.Destination}, Hotel: {args.Item.Hotel}, Price: {args.Item.Price}, {args.Item.PaymentMethod}";
-            isModalVisible = true;
-        });
+        Console.WriteLine("My debug output.");
+        await ModalService.ShowAsync(new ModalOption { Type = ModalType.Primary, Title = "Event: Row Click", Message = $"Id: da" });
+        // {
+        //     modalMessage = $"Id: {args.Item.ID}, Date: {args.Item.Date}, Year: {args.Item.DateYear}, Destination: {args.Item.Destination}, Hotel: {args.Item.Hotel}, Price: {args.Item.Price}, {args.Item.PaymentMethod}";
+        //     isModalVisible = true;
+        // });
     }
 
     private void NavigateToPersonalDetails()
