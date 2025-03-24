@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 
 using GotorzProject.Shared;
 using System.Configuration;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace GotorzProject.Service
 {
@@ -30,16 +32,17 @@ namespace GotorzProject.Service
             {
                 throw new ConfigurationErrorsException("No BookingCOM API key provided.");
             }
+
+
         }
 
-        public async Task<List<FlightDeparture>> GetFlights(string from, string to, DateOnly departureDate, DateOnly returnDate)
+        public async Task<List<FlightDeparture>> GetFlights(string from, string to, DateOnly departureDate, DateOnly? returnDate = null)
         {
 
             string airportSearchEndpoint = apiBase + "searchDestination";
             string flightSearchEndpoint = apiBase + "searchFlights";
 
-            try
-            {
+            
                 string airportFrom, airportTo, query;
 
                 const string dateFormat = "YYYY-MM-DD";
@@ -48,39 +51,65 @@ namespace GotorzProject.Service
                 // firstly we need the airport code for the [from] part of this method
                 query = airportSearchEndpoint + $"?query={from}";
 
-                // first result best result 😎
-                airportFrom = (await (await _httpClient.GetAsync(query)).Content.ReadFromJsonAsync<AirportSearchResponse>()).Data[0].Code;
+                // first result best result 😎 (await (await _httpClient.GetAsync(query)).Content.ReadFromJsonAsync<AirportSearchResponse>()).Data[0].Code;
+                var fromResponse = await _httpClient.GetAsync(query);
 
-                // secondly we need the airport code for the [to] part of this method
-                query = airportSearchEndpoint + $"?query={to}";
+                fromResponse.EnsureSuccessStatusCode();
+                var fromContent = await fromResponse.Content.ReadFromJsonAsync<AirportSearchResponse>();
+                fromResponse.Dispose();
 
-                // first result best result 😎
-                airportTo = (await (await _httpClient.GetAsync(query)).Content.ReadFromJsonAsync<AirportSearchResponse>()).Data[0].Code;
 
-                string stringDeparture, stringReturn;
-
-                stringDeparture = departureDate.ToString(dateFormat);
-                stringReturn = returnDate.ToString(dateFormat);
-
-                var parameters = new Dictionary<string, string>
+                if(fromContent == null || fromContent.Data.Count == 0 || fromContent.Status != true)
                 {
-                    {"fromId", airportFrom},
-                    {"toId", airportTo},
-                    {"departDate", stringDeparture},
-                    {"returnDate", stringReturn}
-                };
+                    // log instead?
+                    throw new Exception($"No airport found from : {from}");
+                }
 
-                Console.WriteLine(parameters); 
+                airportFrom = fromContent.Data.First().Code;
 
-                return null;
-            }
-            catch (Exception ex)
+            query = airportSearchEndpoint + $"?query={to}";
+
+            var toResponse = await _httpClient.GetAsync(query);
+            toResponse.EnsureSuccessStatusCode();
+
+            var toContent = await toResponse.Content.ReadFromJsonAsync<AirportSearchResponse>();
+            toResponse.Dispose();
+
+            if (toContent == null || toContent.Data.Count == 0 || toContent.Status != true)
             {
-                Console.Write(ex.Message);
+                throw new Exception($"No airport found from : {to}");
             }
+
+            airportTo = toContent.Data.First().Code;
+
+                
+            string stringDeparture;
+
+            stringDeparture = departureDate.ToString(dateFormat);
+                
+
+            var parameters = new Dictionary<string, string>
+            {
+                {"fromId", airportFrom},
+                {"toId", airportTo},
+                {"departDate", stringDeparture}
+            };
+
+            if (returnDate != null)
+            {
+                string returnString = returnDate?.ToString(dateFormat);
+                parameters.Add("returnDate", returnString);
+            }
+
+            Console.WriteLine(parameters); 
+
             return null;
         }
-
+        
+        public Task<List<FlightDeparture>> GetFlights(string from, string to, DateOnly departureDate)
+        {
+            return GetFlights(from, to, departureDate, null);
+        }
     }
 
 public class AirportSearchResponse

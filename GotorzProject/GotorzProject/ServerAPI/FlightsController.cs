@@ -1,5 +1,6 @@
 ﻿using GotorzProject.Service;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace GotorzProject.ServerAPI
 {
@@ -16,11 +17,13 @@ namespace GotorzProject.ServerAPI
             _flightProvider = flightProvider;
         }
 
-        public IActionResult Index()
+        [HttpGet("Single")]
+        public IActionResult SingleSearch()
         {
 
-            _flightProvider.GetFlights("Bomba", "Donka", DateOnly.Parse("24-03-2025"), DateOnly.Parse("26-03-2025"));
-
+            var result = _flightProvider.GetFlights("bonka", "donka", DateOnly.Parse("24-03-2025"));
+            StringBuilder sb = new();
+            
             return Ok();
         }
     }
