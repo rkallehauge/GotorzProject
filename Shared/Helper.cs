@@ -16,7 +16,7 @@ namespace GotorzProject.Shared
             {
                 query[param.Key] = param.Value;
             }
-            return query.ToString();
+            return "?" + query.ToString();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace GotorzProject.Service.Misc
 {
-    public class APIAuthenticationModel
+    public class BookingAPIModel
     {
         public string Host { get; set; }
         public string Key { get; set; }

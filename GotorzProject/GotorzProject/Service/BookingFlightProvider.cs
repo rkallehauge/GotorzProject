@@ -6,6 +6,10 @@ using System.Configuration;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using GotorzProject.Service.Misc;
+using Microsoft.Extensions.Options;
+using GotorzProject.Shared.DataTransfer;
+using GotorzProject.Service.Model;
+
 
 namespace GotorzProject.Service
 {
@@ -22,78 +26,50 @@ namespace GotorzProject.Service
         private readonly string apiBase;
 
 
-        public BookingFlightProvider(HttpClient httpClient, IConfigurationSection apiConfiguration)
+        public BookingFlightProvider(IHttpClientFactory factory, IOptions<BookingAPIModel> apiModel)
         {
-            _httpClient = httpClient;
+            _httpClient = factory.CreateClient("BookingCOM");
 
-            if(apiConfiguration == null)
-            {
-                throw new Exception("no config register");
-            }
-            var items = apiConfiguration.GetChildren();
-
-
-            var BookingCOMAuth = apiConfiguration.GetValue(typeof(APIAuthenticationModel), "BookingCOM");
-
-
-            //if(BookingCOMAuth == null)
-            //{
-            //    throw new Exception("Bad config, code is ass, terminating.");
-            //}
-
-            //return;
-
-
-            //_apiKey = BookingCOMAuth.Key;
-            //_hostBase = BookingCOMAuth.Host;
-
-            //if(string.IsNullOrEmpty(_apiKey))
-            //{
-            //    throw new ConfigurationErrorsException("No BookingCOM API key provided.");
-            //}
-
-            //if (string.IsNullOrEmpty(_hostBase))
-            //{
-            //    throw new ConfigurationErrorsException("No BookingCOM host provider provided. Lol.");
-            //}
-
-            //// somewhat disgusting
-            //apiBase = $"{_hostBase}/api/v1/flights";
+            //somewhat disgusting
+            apiBase = "/api/v1/flights/";
         }
 
-        public async Task<List<FlightDeparture>> GetFlights(string from, string to, DateOnly departureDate, DateOnly? returnDate = null)
+        public async Task<List<BaseFlightDTO>> GetFlights(string from, string to, DateOnly departureDate, DateOnly? returnDate = null)
         {
+           
 
             string airportSearchEndpoint = apiBase + "searchDestination";
             string flightSearchEndpoint = apiBase + "searchFlights";
 
-            
-                string airportFrom, airportTo, query;
+            string airportFrom, airportTo, query;
 
-                const string dateFormat = "YYYY-MM-DD";
+            const string dateFormat = "yyyy-MM-dd";
 
-                // firstly we need the airport code for the [from] part of this method
-                query = airportSearchEndpoint + $"?query={from}";
+            // firstly we need the airport code for the [from] part of this method
+            query = airportSearchEndpoint + $"?query={from}";
 
-                // first result best result 😎 (await (await _httpClient.GetAsync(query)).Content.ReadFromJsonAsync<AirportSearchResponse>()).Data[0].Code;
-                var fromResponse = await _httpClient.GetAsync(query);
-
-                fromResponse.EnsureSuccessStatusCode();
-                var fromContent = await fromResponse.Content.ReadFromJsonAsync<AirportSearchResponse>();
-                fromResponse.Dispose();
+            // first result best result 😎 (await (await _httpClient.GetAsync(query)).Content.ReadFromJsonAsync<AirportSearchResponse>()).Data[0].Code;
+            var fromResponse = await _httpClient.GetAsync(query);
 
 
-                if(fromContent == null || fromContent.Data.Count == 0 || fromContent.Status != true)
-                {
-                    // log instead?
-                    throw new Exception($"No airport found from : {from}");
-                }
+            fromResponse.EnsureSuccessStatusCode();
+            var fromContent = await fromResponse.Content.ReadFromJsonAsync<AirportSearchResponse>();
+            fromResponse.Dispose();
 
-                airportFrom = fromContent.Data.First().Code;
+
+            if(fromContent == null || fromContent.Data.Count == 0 || fromContent.Status != true)
+            {
+                // log instead?
+                Console.WriteLine("exit a");
+                throw new Exception($"No airport found from : {from}");
+            }
+
+            airportFrom = fromContent.Data.First().Id;
 
             query = airportSearchEndpoint + $"?query={to}";
 
             var toResponse = await _httpClient.GetAsync(query);
+
             toResponse.EnsureSuccessStatusCode();
 
             var toContent = await toResponse.Content.ReadFromJsonAsync<AirportSearchResponse>();
@@ -101,10 +77,11 @@ namespace GotorzProject.Service
 
             if (toContent == null || toContent.Data.Count == 0 || toContent.Status != true)
             {
+                Console.WriteLine("exit b");
                 throw new Exception($"No airport found from : {to}");
             }
 
-            airportTo = toContent.Data.First().Code;
+            airportTo = toContent.Data.First().Id;
 
                 
             string stringDeparture;
@@ -124,12 +101,31 @@ namespace GotorzProject.Service
                 parameters.Add("returnDate", returnString);
             }
 
-            Console.WriteLine(parameters); 
 
-            return null;
+            foreach(var parameter in parameters)
+            {
+                Console.WriteLine($"{parameter.Key} : {parameter.Value}");
+            }
+
+            query = flightSearchEndpoint + Helper.ToQueryString(parameters);
+            var flightSearchResponse = await _httpClient.GetAsync(query);
+            flightSearchResponse.EnsureSuccessStatusCode();
+
+            var jsonParse = await flightSearchResponse.Content.ReadAsStringAsync();
+            //Console.WriteLine(jsonParse);
+
+            FlightSearchModel fsr = await flightSearchResponse.Content.ReadFromJsonAsync<FlightSearchModel>();
+
+            if(fsr == null)
+            {
+                // log error ?
+                return null;
+            }
+
+            return fsr.ToBaseFlightDTO();     
         }
         
-        public Task<List<FlightDeparture>> GetFlights(string from, string to, DateOnly departureDate)
+        public Task<List<BaseFlightDTO>> GetFlights(string from, string to, DateOnly departureDate)
         {
             return GetFlights(from, to, departureDate, null);
         }
@@ -732,7 +728,7 @@ namespace GotorzProject.Service
     public class UnifiedPriceBreakdown
     {
         public Price price { get; set; }
-        public List<Item> items { get; set; }
+        public List<Item> items { get; set; }   
         public List<object> addedItems { get; set; }
     }
 

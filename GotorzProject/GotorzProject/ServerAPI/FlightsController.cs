@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
+using System.Text.Json;
+using GotorzProject.Shared.DataTransfer;
 
 namespace GotorzProject.ServerAPI
 {
@@ -22,16 +24,18 @@ namespace GotorzProject.ServerAPI
         }
 
         [HttpGet("Single")]
-        public IActionResult SingleSearch()
+        public async Task<IActionResult> SingleSearch([FromQuery] string from, [FromQuery] string to, [FromQuery] string departure)
         {
-            foreach(var item in Request.Headers.Authorization)
-            {
-                Console.WriteLine(item);
-            }
-            //var result = _flightProvider.GetFlights("bonka", "donka", DateOnly.Parse("24-03-2025"));
-            StringBuilder sb = new();
-            
-            return Ok();
+
+
+
+            DateOnly dep = DateOnly.Parse(departure);
+
+            var result = await _flightProvider.GetFlights(from, to, dep);
+
+            var json = JsonSerializer.Serialize(result);
+ 
+            return Ok(json);
         }
     }
 }
