@@ -13,6 +13,9 @@ namespace GotorzProject.Service
             { "Sales", "Sales" }
         };
 
+        // todo : get from config
+        private const string secret = "{4100003d-3119-4f6c-a9d6-0f3024b9c65b}";
+
         UserManager<IdentityUser> _manager;
 
         public UserAdminstration(UserManager<IdentityUser> manager)
@@ -27,6 +30,14 @@ namespace GotorzProject.Service
             await _manager.RemoveFromRolesAsync(user, Roles.Values.Where(type => type != "Admin"));
         }
 
+        // remove specific role from user, anthing but admin at least
+        public async Task RemoveRoleFromUser(IdentityUser user, string role)
+        {
+            if(role!="Admin" || Roles.ContainsKey(role))
+                await _manager.RemoveFromRoleAsync(user, role);
+        }
+
+        // Give user single role
         public async Task SetRole(IdentityUser user, string role)
         {
             // Admins should only be set through database for security
@@ -37,22 +48,16 @@ namespace GotorzProject.Service
             }
         }
 
+        // Give user list of roles
         public async Task SetRoles(IdentityUser user, IEnumerable<string> roles)
         {
             if (roles.Any(role => role=="Admin"))
             {
-                
+                return;
             }
-            foreach (var role in roles)
-            {
-                // Admins should only be set through database for security
-                // Or with specialized method that takes a secret passphrase
-                if (Roles.ContainsKey(role))
-                {
-
-                }
-            }
+            await _manager.AddToRolesAsync(user, roles.Where(role => Roles.ContainsKey(role)));
         }
+
 
     }
 }
