@@ -1,0 +1,18 @@
+﻿@page "/flighttest"
+
+@rendermode InteractiveWebAssembly
+
+@inject HttpClient httpClient
+
+<h3>GetFlightAPITest</h3>
+
+<button @onclick="Check">Lets suck this dick</button>
+
+@code {
+
+	private async Task Check(){
+		var response = await httpClient.GetAsync("api/Flights/Single");
+	}
+
+
+}

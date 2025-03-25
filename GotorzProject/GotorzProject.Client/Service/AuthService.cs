@@ -10,8 +10,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using GotorzProject.Shared;
-using GotorzProject.Client.ClientAPI;
-using GotorzProject.Shared;
 using GotorzProject.Service;
 
 namespace GotorzProject.Client.Services

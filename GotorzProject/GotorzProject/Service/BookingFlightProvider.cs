@@ -5,6 +5,7 @@ using GotorzProject.Shared;
 using System.Configuration;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using GotorzProject.Service.Misc;
 
 namespace GotorzProject.Service
 {
@@ -13,27 +14,51 @@ namespace GotorzProject.Service
 
 
         HttpClient _httpClient;
+
         string _apiKey;
+        string _hostBase;
+
         // todo : Dynamically set in future
-        private const string apiBase = "https://booking-com15.p.rapidapi.com/api/v1/flights/";
+        private readonly string apiBase;
 
 
-        public BookingFlightProvider(HttpClient httpClient, IConfigurationSection APIKeys)
+        public BookingFlightProvider(HttpClient httpClient, IConfigurationSection apiConfiguration)
         {
             _httpClient = httpClient;
 
-            if(APIKeys == null)
+            if(apiConfiguration == null)
             {
                 throw new Exception("no config register");
             }
-
-            _apiKey = APIKeys.GetValue<string>("BookingCOM") ?? "";
-            if(string.IsNullOrEmpty(_apiKey))
-            {
-                throw new ConfigurationErrorsException("No BookingCOM API key provided.");
-            }
+            var items = apiConfiguration.GetChildren();
 
 
+            var BookingCOMAuth = apiConfiguration.GetValue(typeof(APIAuthenticationModel), "BookingCOM");
+
+
+            //if(BookingCOMAuth == null)
+            //{
+            //    throw new Exception("Bad config, code is ass, terminating.");
+            //}
+
+            //return;
+
+
+            //_apiKey = BookingCOMAuth.Key;
+            //_hostBase = BookingCOMAuth.Host;
+
+            //if(string.IsNullOrEmpty(_apiKey))
+            //{
+            //    throw new ConfigurationErrorsException("No BookingCOM API key provided.");
+            //}
+
+            //if (string.IsNullOrEmpty(_hostBase))
+            //{
+            //    throw new ConfigurationErrorsException("No BookingCOM host provider provided. Lol.");
+            //}
+
+            //// somewhat disgusting
+            //apiBase = $"{_hostBase}/api/v1/flights";
         }
 
         public async Task<List<FlightDeparture>> GetFlights(string from, string to, DateOnly departureDate, DateOnly? returnDate = null)
@@ -46,7 +71,6 @@ namespace GotorzProject.Service
                 string airportFrom, airportTo, query;
 
                 const string dateFormat = "YYYY-MM-DD";
-
 
                 // firstly we need the airport code for the [from] part of this method
                 query = airportSearchEndpoint + $"?query={from}";
@@ -86,7 +110,6 @@ namespace GotorzProject.Service
             string stringDeparture;
 
             stringDeparture = departureDate.ToString(dateFormat);
-                
 
             var parameters = new Dictionary<string, string>
             {
@@ -112,7 +135,7 @@ namespace GotorzProject.Service
         }
     }
 
-public class AirportSearchResponse
+    public class AirportSearchResponse
     {
         [JsonProperty("status")]
         public bool Status { get; set; }
