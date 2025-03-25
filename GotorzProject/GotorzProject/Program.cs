@@ -69,6 +69,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // internal service setup
 
+
+// HttpClientFactory skibidi
 builder.Services.AddHttpClient("BookingCOM", client =>
 {
     client.BaseAddress = new("https://"+configuration.GetValue<string>("APIKeys:BookingCOM:Host"));
