@@ -1,32 +1,163 @@
 ﻿@using GotorzProject.Client.Pages;
 
 @page "/"
+@namespace GotorzProject.Pages.Home
 
-    <PageTitle>GoTorz</PageTitle>
+<PageTitle>GoTorz</PageTitle>
+<Login />
 
-    <div class="Startheader"><img src="https://gotorz.ae/assets/img/logo-medium.png" alt="GoTorz.logo" class="GoTorz" /></div>
-
-    <Login />
-
-    <div>
-        
+<div>
+    <div class="Startheader">
+        <img src="https://gotorz.ae/assets/img/logo-medium.png" alt="GoTorz.logo" class="GoTorz" />
     </div>
+    <div>
+        <div class="scroll-container">
+            <div class="bg-img-container">
+                <div class="bg-img1"></div>
+                <div class="bg-text">Dubai</div>
+            </div>
+            <div class="bg-img-container">
+                <div class="bg-img2"></div>
+                <div class="bg-text">Malta</div>
+            </div>
+            <div class="bg-img-container">
+                <div class="bg-img3"></div>
+                <div class="bg-text">Italy</div>
+            </div>
+        </div>
+        <div id="content-con">
+            <div id="text-con">
+                <h3>Gotorz</h3>
+                <h5>Rejsen starter her</h5>
+                <p>We at Gotorz give you, besides the travel experience, the pleasure of adventure and discovering new and enjoyable tourist destinations. Life is short and the world is very wide, the sooner you start to discover it, the better. Gotorz has made achieving happiness and travel easy and convenient in addition to being cheap and accessible to everyone. Cheap prices with high services, this equation that we succeeded in achieving, and left a large imprint in the world of the travel industry.</p>
+                <p>Traveling is a culture, and it gives you money that a book or even a library would not give you, because it is a real and direct contact with life, with beauty, and with the other, consciously or unconsciously. Traveling is a great awareness that seeps so deep that it captures all of your consciousness. During travel, you may remain silent for a long time, but it later makes you a storyteller. The value of seeing once is hundreds of times better than hearing, so do not hear about what they say on travel, but go and see for yourself.</p>
+            </div>
+            <div class="textimg"></div>
+        </div>
+        <div id="con">
+            <h4>Gotorz Team</h4>
+            <h2>Lets Meet Gotorz Employees</h2>
+        </div>
+        <div class="employeeimg"><img src=~/employees.png /></div>
+    </div>
+</div>
 
-
-
-@code{
+@code{  
 
 }
 
 <style>
+    body,html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
     .GoTorz {
         height: 100px;
         width: 200px;
     }
 
-    .Startheader{
-        background-color: #4287f5;
+    h2, h4 {
+        text-align: center;
+        margin-top: 10px;
     }
 
-    
+    .Startheader{
+        background-image: url(https://en.idei.club/uploads/posts/2023-06/1687613074_en-idei-club-p-travel-background-dizain-68.jpg);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 600px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .scroll-container {
+        height: auto; 
+/*         overflow: auto; */
+    }
+
+    .bg-img-container {
+        position: relative;
+        height: 200px;
+        animation:appear 1s linear;
+
+    }
+
+    .bg-img1, .bg-img2, .bg-img3 {
+        height: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        margin-top: 5px;
+        opacity: 0.7;
+    }
+
+    .bg-img1 {
+        background-image: url("https://www.luxurylifestylemag.co.uk/wp-content/uploads/2023/09/bigstock-Dubai-United-Arab-Emirates-307909138.jpg");
+    }
+
+    .bg-img2 {
+        background-image: url("https://assets.vogue.com/photos/599365b2f0b0e21484d3436e/master/w_2560%2Cc_limit/00-lede-a-travel-guide-to-malta.jpg");
+    }
+
+    .bg-img3 {
+        background-image: url("https://static.saltinourhair.com/wp-content/uploads/2019/06/23134442/italy-travel-itinerary.jpg");
+    }
+
+    .bg-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+        color: white;
+        font-weight: bold;
+        font-size: 40px;
+        border: 10px solid #f1f1f1;
+        width: 200px;
+        padding: 20px;
+        text-align: center;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    #content-con{
+        display:flex;
+        align-items:flex-start;
+        gap:30px;
+        max-width:1200px;
+        margin:0 auto;
+    }
+
+    #text-con{
+        flex:1;
+        margin-top:20px;
+    }
+
+    .textimg{
+        flex:1;
+        background-image: url("https://start.paperoffice.com/_images/paperoffice_main_norisk.webp");
+        height: 400px;
+        width: 300px;
+        object-fit:contain;
+        background-repeat: no-repeat;
+        background-size: cover;
+        margin-top: 5px;
+        
+    }
+
+    #con{
+        width:auto;
+        height:400px;
+        background-color: cornflowerblue;
+    }
+
+    .employeeimg{
+        width: 400px;
+        height:300px;
+    }
 </style>
