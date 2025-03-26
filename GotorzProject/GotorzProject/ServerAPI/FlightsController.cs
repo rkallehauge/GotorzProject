@@ -15,10 +15,10 @@ namespace GotorzProject.ServerAPI
     public class FlightsController : ControllerBase
     {
 
-        IBookingFlightProvider _flightProvider;
+        IFlightProvider _flightProvider;
         UserManager<IdentityUser> _userManager;
 
-        public FlightsController(IBookingFlightProvider flightProvider)
+        public FlightsController(IFlightProvider flightProvider)
         {
             _flightProvider = flightProvider;
         }

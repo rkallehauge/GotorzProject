@@ -12,6 +12,9 @@ namespace GotorzProject.Shared.DataTransfer
         // Oneway / Roundtrip
         public string Type { get; set; }
 
+        public double Price { get; set; }
+        public string CabinClass { get; set; }
+
         public string StartAirport { get; set; }
         public string EndAirport { get; set; }
         public List<FlightLeg> FlightLegs { get; set; }
@@ -22,6 +25,9 @@ namespace GotorzProject.Shared.DataTransfer
     public class FlightLeg
     {
         public Airline Carrier { get; set; }
+
+        public DateTime Departure { get; set; }
+        public DateTime Landing { get; set; }
 
         public string FromAirportCode { get; set; }
         public string ToAirportCode { get; set; }
@@ -36,5 +42,6 @@ namespace GotorzProject.Shared.DataTransfer
     {
         public string Name { get; set; }
         public string Iata { get; set; }
+        public string IconWebSource { get; set; }
     }
 }

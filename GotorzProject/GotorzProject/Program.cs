@@ -78,7 +78,7 @@ builder.Services.AddHttpClient("BookingCOM", client =>
     client.DefaultRequestHeaders.Add("x-rapidapi-key", configuration.GetValue<string>("APIKeys:BookingCOM:Key"));
 });
 
-builder.Services.AddScoped<IBookingFlightProvider, BookingFlightProvider>();
+builder.Services.AddScoped<IFlightProvider, BookingFlightProvider>();
 
 builder.Services.AddControllers();
 

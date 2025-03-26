@@ -13,7 +13,7 @@ using GotorzProject.Service.Model;
 
 namespace GotorzProject.Service
 {
-    public class BookingFlightProvider : IBookingFlightProvider
+    public class BookingFlightProvider : IFlightProvider
     {
 
 
@@ -83,7 +83,6 @@ namespace GotorzProject.Service
 
             airportTo = toContent.Data.First().Id;
 
-                
             string stringDeparture;
 
             stringDeparture = departureDate.ToString(dateFormat);
