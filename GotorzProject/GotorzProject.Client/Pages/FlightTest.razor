@@ -1,0 +1,52 @@
+﻿@using GotorzProject.Shared.DataTransfer
+
+@page "/TestFlight"
+
+<GotorzProject.Client.Component.FlightOffer FlightDTO="BaseFlight" />
+
+@code {
+
+
+	public BaseFlightDTO BaseFlight = new()
+	{
+		Price = 1400,
+		CabinClass = "Economy Standard",
+		Type = "One-way",
+		StartAirport = "Copenhagen International",
+		EndAirport = "Kyoto Kansai International",
+		FlightLegs = new() {
+			new (){
+				Carrier = new(){
+					Iata = "SK",
+					Name = "Scandinavian Airlines",
+					IconWebSource = "https://r-xx.bstatic.com/data/airlines_logo/SK.png"
+				},
+				Departure = DateTime.Parse("28-03-2025 20:15:00"),
+				Landing = DateTime.Parse("28-03-2025 23:45:00"),
+				FromAirportCode = "CPH",
+				ToAirportCode = "IST",
+				FromAirportName = "Copenhagen International",
+				ToAirportName = "Istanbul International",
+				TravelTimeMinutes = 210
+
+			},
+			new (){
+				Carrier = new(){
+					Iata = "U2",
+					Name = "Easyjet",
+					IconWebSource = "https://r-xx.bstatic.com/data/airlines_logo/U2.png"
+				},
+				Departure = DateTime.Parse("29-03-2025 01:15:00"),
+				Landing = DateTime.Parse("29-03-2025 05:30:00"),
+				FromAirportCode = "IST",
+				ToAirportCode = "KIX", // Kyoto international
+				FromAirportName = "Istanbul International",
+				ToAirportName = "Kyoto International",
+				TravelTimeMinutes = 255
+			}
+		}
+
+	};
+
+	
+}
