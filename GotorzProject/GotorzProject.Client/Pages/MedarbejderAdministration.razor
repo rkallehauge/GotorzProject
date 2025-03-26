@@ -1,70 +1,12 @@
-﻿@page "/medarbejderadministration"
+﻿@page "/MedarbejderAdministration"
 @rendermode InteractiveWebAssembly
+@inject EmployeeService EmployeeService
+@using GotorzProject.Client.Models
 
-<h3>Medarbejderadministration</h3>
+<h3>Medarbejder Administration</h3>
 
-@if (brugerRolle == Rolle.Admin)
-{
-    <h4>Tilføj ny medarbejder:</h4>
-    <input @bind="nyMedarbejder.Navn" placeholder="Navn" />
-    <select @bind="nyMedarbejder.Rolle">
-        <option value="@Rolle.Admin">Admin</option>
-        <option value="@Rolle.Medarbejder">Medarbejder</option>
-    </select>
-    <button @onclick="TilføjMedarbejder">Tilføj</button>
-}
+<h4>Opret ny medarbejder</h4>
+<div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Navn</th>
-            <th>Rolle</th>
-            @if (brugerRolle == Rolle.Admin)
-            {
-                <th>Handlinger</th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var medarbejder in FiltreredeMedarbejdere)
-        {
-            <tr>
-                <td>@medarbejder.Navn</td>
-                <td>@medarbejder.Rolle</td>
-                @if (brugerRolle == Rolle.Admin)
-                {
-                    <td>
-                        <button @onclick="() => SletMedarbejder(medarbejder.Id)">Slet</button>
-                    </td>
-                }
-            </tr>
-        }
-    </tbody>
-</table>
+</div>
 
-@code {
-    private Rolle brugerRolle = Rolle.Admin; // Simuleret bruger – hentes normalt fra autentificering
-
-    private Medarbejder nyMedarbejder = new();
-    private List<Medarbejder> medarbejdere = new();
-
-    private MedarbejderService medarbejderService = new();
-
-    private IEnumerable<Medarbejder> FiltreredeMedarbejdere => brugerRolle == Rolle.Admin
-        ? medarbejderService.HentAlle()
-        : medarbejderService.HentAlle().Where(m => m.Rolle == Rolle.Medarbejder);
-
-    private void TilføjMedarbejder()
-    {
-        if (!string.IsNullOrWhiteSpace(nyMedarbejder.Navn))
-        {
-            medarbejderService.TilføjMedarbejder(nyMedarbejder);
-            nyMedarbejder = new();
-        }
-    }
-
-    private void SletMedarbejder(int id)
-    {
-        medarbejderService.SletMedarbejder(id);
-    }
-}
