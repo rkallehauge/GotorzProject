@@ -11,6 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using GotorzProject.Client.Services;
 using Blazored.LocalStorage;
+using GotorzProject.Service;
+using GotorzProject.Service.Misc;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSyncfusionBlazor();
@@ -27,6 +29,14 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .AddJsonFile("appsettings.Development.json")
     .Build();
+
+
+// todo : refactor this into a class by itself, so we can use configsection for actual real purposes
+// IConfigurationSection => APIKeys
+//builder.Services.AddSingleton(configuration.GetSection("APIKeys"));
+
+// Change this if we change booking / flight api provider
+builder.Services.Configure<BookingAPIModel>(builder.Configuration.GetSection("APIKeys:BookingCOM"));
 
 // MSSql
 // PostgreSQL
@@ -56,6 +66,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityKey"]))
         };
     });
+
+// internal service setup
+
+
+// HttpClientFactory skibidi
+builder.Services.AddHttpClient("BookingCOM", client =>
+{
+    client.BaseAddress = new("https://"+configuration.GetValue<string>("APIKeys:BookingCOM:Host"));
+    client.DefaultRequestHeaders.Add("x-rapidapi-host", configuration.GetValue<string>("APIKeys:BookingCOM:Host"));
+    client.DefaultRequestHeaders.Add("x-rapidapi-key", configuration.GetValue<string>("APIKeys:BookingCOM:Key"));
+});
+
+
+
 
 builder.Services.AddControllers();
 
