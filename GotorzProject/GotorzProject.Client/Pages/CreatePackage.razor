@@ -6,9 +6,10 @@
 
 <h3>Create Package</h3>
 
-<div class="Choose country">
-	<label for="country">Choose a country:</label>
-	<select id="country" @bind="selectedCountry">
+<div class="Choose depature country">
+	<label for="country">Choose departure country:</label>
+	<select id="country"  @onchange="LoadCitiesFromCountry">
+		<option value="">Select a country</option>
 		@foreach (var country in countries)
 		{
 			<option value="@country">@country</option>
@@ -16,10 +17,10 @@
 	</select>
 </div>
 
-<div class="Choose city">
-	<label for="city">Choose a city:</label>
+<div class="Choose departure city">
+	<label for="city">Choose departure city:</label>
 	<select id="city" @bind="selectedCity">
-		<option value="">Select a ciyt</option>"
+		<option value="">Select a city</option>"
 		@foreach (var city in cities)
 		{
 			<option value="@city">@city</option>
@@ -55,17 +56,18 @@
 	private string packageInfo;
 	private List<string> countries = new List<string>();
 	private List<string> cities = new List<string>();
+	private string errorMessage;
 
 
 
 	private async Task OnCountriesChanged(ChangeEventArgs e)
 	{
 		selectedCountry = e.Value.ToString();
-		await LoadCitiesForCountry(selectedCountry);
+		await LoadCountries(selectedCountry);
 	}
 
-	//Hent byer for et givent land
-	private async Task LoadCitiesForCountry(string country)
+	//Henter en liste af lande
+	private async Task LoadCountries(string country)
 	{
 		var response = await Http.GetFromJsonAsync<List<string>>($"https://country-state-city-search-rest-api.p.rapidapi.com/allcountries={country}");
 
@@ -75,6 +77,44 @@
 		}
 		else
 		{
+			cities.Clear();
+		}
+
+	}
+
+	//Henter byer baseret på valg af land
+	private async Task LoadCitiesFromCountry(ChangeEventArgs e)
+	{
+		string country = e.Value.ToString();
+		Console.WriteLine(country);
+
+		if (string.IsNullOrEmpty(country))
+		{
+			cities.Clear();
+			return;
+		}
+
+		try
+		{
+			var requestData = new CountryRequest { Country = country };
+			var response = await Http.PostAsJsonAsync("https://countriesnow.space/api/v0.1/countries/cities", requestData);
+
+			if (response.IsSuccessStatusCode)
+			{
+				
+				var result = await response.Content.ReadFromJsonAsync<CitiesResponse>();
+				cities = result?.Data ?? new List<string>();
+				errorMessage = "";
+			}
+			else
+			{
+				errorMessage = $"Fejl ved hentning af byer: {response.ReasonPhrase}";
+				cities.Clear();
+			}
+		}
+		catch (Exception ex)
+		{
+			errorMessage = $"Fejl ved hentning af byer: {ex.Message}";
 			cities.Clear();
 		}
 
@@ -137,4 +177,18 @@
 			Return = @return;
 		}
 	}
+
+	public class CitiesResponse
+	{
+		public bool Error { get; set; }  // Hvis API'et returnerer en fejl
+		public string Msg { get; set; }   // Fejlmeddelelse (hvis relevant)
+		public List<string> Data { get; set; }   // Liste af byer
+	}
+
+	public class CountryRequest
+	{
+		public string Country { get; set; }
+	}
+
+
 }
