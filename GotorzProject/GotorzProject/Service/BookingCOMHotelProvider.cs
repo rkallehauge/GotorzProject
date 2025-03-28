@@ -1,4 +1,5 @@
-﻿using GotorzProject.Service.Model;
+﻿using GotorzProject.Service.Model.Hotel;
+using GotorzProject.Service.Model.Location;
 using GotorzProject.Shared;
 using GotorzProject.Shared.DataTransfer;
 //using Newtonsoft.Json;

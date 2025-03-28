@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using GotorzProject.Service.Misc;
 using Microsoft.Extensions.Options;
 using GotorzProject.Shared.DataTransfer;
-using GotorzProject.Service.Model;
+using GotorzProject.Service.Model.Flight;
 
 
 namespace GotorzProject.Service

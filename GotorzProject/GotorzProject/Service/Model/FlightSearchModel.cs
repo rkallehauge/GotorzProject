@@ -1,6 +1,6 @@
 ﻿using GotorzProject.Shared.DataTransfer;
 
-namespace GotorzProject.Service.Model
+namespace GotorzProject.Service.Model.Flight
 {
 
 

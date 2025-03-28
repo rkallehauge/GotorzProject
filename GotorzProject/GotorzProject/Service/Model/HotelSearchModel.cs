@@ -1,4 +1,4 @@
-﻿namespace GotorzProject.Service.Model
+﻿namespace GotorzProject.Service.Model.Hotel
 {
     
     public class HotelSearchModel

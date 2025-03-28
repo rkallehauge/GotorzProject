@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace GotorzProject.Service.Model
+namespace GotorzProject.Service.Model.Location
 {
     public class LocationSearchModel
     {
