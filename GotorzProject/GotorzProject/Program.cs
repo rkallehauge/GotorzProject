@@ -38,6 +38,8 @@ var configuration = new ConfigurationBuilder()
 // Change this if we change booking / flight api provider
 builder.Services.Configure<BookingAPIModel>(builder.Configuration.GetSection("APIKeys:BookingCOM"));
 
+
+builder.Services.AddScoped<IHotelProvider, BookingCOMHotelProvider>();
 // MSSql
 // PostgreSQL
 
