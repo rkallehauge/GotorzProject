@@ -79,6 +79,7 @@ builder.Services.AddHttpClient("BookingCOM", client =>
 });
 
 builder.Services.AddScoped<IFlightProvider, BookingFlightProvider>();
+builder.Services.AddScoped<IHotelProvider, BookingCOMHotelProvider>();
 
 builder.Services.AddControllers();
 
