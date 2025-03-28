@@ -46,6 +46,7 @@ namespace GotorzProject.Service
             string checkIn = checkin.ToString(dateFormat);
             string checkOut = checkout.ToString(dateFormat);
 
+
             Dictionary<string, string> param = new Dictionary<string, string>()
             {
                 {"dest_id", destId},
