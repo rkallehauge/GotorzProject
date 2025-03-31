@@ -35,7 +35,7 @@ namespace GotorzProject.Client.Services
         public async Task<RegisterResult> Register(RegisterModel registerModel)
         {
             var response = await _httpClient.PostAsJsonAsync("api/accounts", registerModel);
-            return await response.Content.ReadFromJsonAsync<RegisterResult>();
+            return await response.Content.ReadFromJsonAsync<RegisterResult>();  
         }
 
         public async Task<LoginResult> Login(LoginModel loginModel)

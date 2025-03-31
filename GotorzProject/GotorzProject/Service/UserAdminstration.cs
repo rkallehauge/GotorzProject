@@ -58,6 +58,35 @@ namespace GotorzProject.Service
             await _manager.AddToRolesAsync(user, roles.Where(role => Roles.ContainsKey(role)));
         }
 
+        public List<IdentityUser> GetUsersByRole(string role)
+        {
+            throw new NotImplementedException();
+        }
 
+
+        
+        public Dictionary<string, List<IdentityUser>> GetAllUsersDict()
+        {
+            Dictionary<string, List<IdentityUser>> result = new();
+
+            foreach(string role in Roles.Keys)
+            {
+                List<IdentityUser> idenUsers = GetUsersByRole(role);
+                result.Add(role, idenUsers);
+            }
+
+            return result;
+        }
+
+        public List<IdentityUser> GetAllUsersList()
+        {
+            List<IdentityUser> result = new();
+            foreach(string role in Roles.Keys)
+            {
+                result.Concat(GetUsersByRole(role));
+            }
+
+            return result;
+        }
     }
 }

@@ -34,5 +34,14 @@ namespace GotorzProject.ServerAPI
 
             return Ok(new RegisterResult { Successful = true });
         }
+
+        [HttpPost("Employee")]
+        public async Task<IActionResult> EmployeeCreation([FromBody] EmployeeRegisterModel model)
+        {
+            RegisterModel registerModel = (RegisterModel)model;
+            var result = await Post(registerModel);
+
+            return Ok(new RegisterResult { Successful = true });
+        }
     }
 }
