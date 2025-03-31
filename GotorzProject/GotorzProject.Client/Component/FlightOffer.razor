@@ -4,68 +4,51 @@
 
 @if(BaseFlightDTO != null)
 {
-	@using GotorzProject.Shared.DataTransfer
 
 	@* <GotorzProject.Client.Component.FlightOffer FlightDTO="BaseFlight" /> *@
 
-	<h2>Flight offer</h2>
 
-
-
-	@foreach (var leg in BaseFlightDTO.FlightLegs)
-	{
-
-		<div class="flight-card">
-			@* Flylogo *@
-			<img class="airline-logo" src="@leg.Carrier.IconWebSource" alt="@leg.Carrier.Name" />
-
-			@* Afgangstid + Lufthavn + Dato*@
-			<div class="time departure-info">
-				<div class="time">@leg.Departure.ToString("HH:mm")</div>
-				<div class="airport">@leg.FromAirportName (@leg.FromAirportCode)</div>
-				<div class="date">@leg.Departure.ToString("dd-MM-yyyy")</div>
-			</div>
-
-
-			@* Rejsetid *@
-			<div class="travel-time">@leg.TravelTimeMinutes min</div>
+		<div class="flight-card row">
+			
 
 			@* Ankomsttid *@
-			<div class="time arrival-info">
-				<div class="time">@leg.Landing.ToString("HH:mm")</div>
-				<div class="airport">@leg.ToAirportName (@leg.ToAirportCode)</div>
-				<div class="date">@leg.Landing.ToString("dd-MM-yyy")</div>
+			<div class="row">
 
-				<div>
-					<h4>@leg.Carrier.Name</h4>
 
-					<img src="@leg.Carrier.IconWebSource"/>
-					<div class="row">
-						<h4 class="col">@leg.FromAirportCode</h4>
-						<h4 class="col">--></h4>
-						<h4 class="col">@leg.ToAirportCode</h4>
+				@foreach (var leg in BaseFlightDTO.FlightLegs){
+					<div class="flight-leg row">
+
+						<div class="flight-airport col-sm">
+								<h4>@leg.FromAirportName</h4>
+								<small>@leg.Departure</small>
+						</div>
+
+						<div class="col-sm">
+							<Icon Name="IconName.ArrowUpRightCircleFill" Size="IconSize.x2"/>
+
+							<span>@leg.TravelTimeMinutes min</span>
+
+						<Icon Name="IconName.ArrowDownRightCircleFill" Size="IconSize.x2" />
+						</div>
+
+						<div class="flight-airport col-sm">
+							<h4>@leg.ToAirportName</h4>
+							<small>@leg.Landing</small>
+						</div>
+
 					</div>
-
-
-				</div>
-
-
-				@*Pris*@
-				@if(BaseFlightDTO != null)
-				{
-					<div class="price">@BaseFlightDTO.Price DKK</div>
-					<button class="btn" @onclick="ShowDetails">Se oplysninger</button>
-					<button class="btn" @onclick="ShowTicketType">Se billettype</button>
 				}
-				else
-				{
-					<p>Ingen flyoplysninger tilgængelige.</p>
-				}
+			</div>
+				
+			<div class="row">
+				<div class="price">@BaseFlightDTO.Price DKK</div>
+				<button class="btn" @onclick="ShowDetails">Se oplysninger</button>
+				<button class="btn" @onclick="ShowTicketType">Se billettype</button>
 			</div>
 		</div>
 
 
-	}
+	
 
 
 	<style>
