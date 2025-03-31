@@ -65,25 +65,25 @@ namespace GotorzProject.Service
 
 
         
-        public Dictionary<string, List<IdentityUser>> GetAllUsersDict()
+        public async Task<Dictionary<string, List<IdentityUser>>> GetAllUsersDict()
         {
             Dictionary<string, List<IdentityUser>> result = new();
 
             foreach(string role in Roles.Keys)
             {
-                List<IdentityUser> idenUsers = GetUsersByRole(role);
+                List<IdentityUser> idenUsers = await GetUsersByRole(role);
                 result.Add(role, idenUsers);
             }
 
             return result;
         }
 
-        public List<IdentityUser> GetAllUsersList()
+        public async Task<List<IdentityUser>> GetAllUsersList()
         {
             List<IdentityUser> result = new();
             foreach(string role in Roles.Keys)
             {
-                result.Concat(GetUsersByRole(role));
+                result.Concat(await GetUsersByRole(role));
             }
 
             return result;
