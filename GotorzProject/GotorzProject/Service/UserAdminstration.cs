@@ -58,9 +58,9 @@ namespace GotorzProject.Service
             await _manager.AddToRolesAsync(user, roles.Where(role => Roles.ContainsKey(role)));
         }
 
-        public List<IdentityUser> GetUsersByRole(string role)
+        public async Task<List<IdentityUser>> GetUsersByRole(string role)
         {
-            throw new NotImplementedException();
+            return new(await _manager.GetUsersInRoleAsync(role));
         }
 
 
