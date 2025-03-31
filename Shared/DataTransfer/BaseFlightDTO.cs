@@ -17,7 +17,7 @@ namespace GotorzProject.Shared.DataTransfer
 
         public string StartAirport { get; set; }
         public string EndAirport { get; set; }
-        public List<FlightLeg> FlightLegs { get; set; }
+        public List<FlightLeg> FlightLegs { get; set; } = new List<FlightLeg>();
     }
     // Flight segments should maybe be added
     // Flight segment is entire trip one way, and another segment is the entire way home

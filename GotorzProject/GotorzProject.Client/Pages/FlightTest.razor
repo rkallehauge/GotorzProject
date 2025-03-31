@@ -2,67 +2,12 @@
 @page "/TestFlight"
 @* <GotorzProject.Client.Component.FlightOffer FlightDTO="BaseFlight" /> *@
 
-<h2>Flight offer</h2>
+<GotorzProject.Client.Component.FlightOffer BaseFlightDTO="BaseFlight"/>
 
-@foreach (var leg in BaseFlight.FlightLegs)
+
+
+@code 
 {
-	<div class="flight-card">
-		@* Flylogo *@
-		<img class="airline-logo" src="@leg.Carrier.IconWebSource" alt="@leg.Carrier.Name"/>
-		@* Afgangstid *@
-		<div class="time departure">@leg.Departure.ToString("HH:mm")</div>
-		@* Rejsetid *@
-		<div class="travel-time">@leg.TravelTimeMinutes min</div>
-		@* Ankomsttid *@
-		<div class="time arrival">@leg.Landing.ToString("HH:mm")</div>
-		@*Pris*@
-		<div class="price">@BaseFlight.Price DKK</div>
-	</div>	
-}
-
-<style>
-	.flight-card
-	{
-		display:flex;
-		align-items: center;
-		gap: 30px;
-		justitufy-content: space-between;
-		background: #f9f9f9;
-		padding: 10px;
-		border-radius: 8px;
-		margin-bottom: 10px;
-		box-shaddow: 0 2px 5px rgba(0, 0, 0, 0.1);
-	}
-
-	.airline.logo
-	{
-		width: 50px;
-		height: auto;
-	}
-
-	.time
-	{
-		font-weight: bold;
-	}
-
-	.travel-time
-	{
-		font-style: italic;
-		color: #555;
-	}
-
-	.price
-	{
-		font-weight: bold;
-		color: #007bff;
-	}
-
-</style>
-
-
-
-
-@code {
 
 
 	public BaseFlightDTO BaseFlight = new()
@@ -79,8 +24,8 @@
 					Name = "Scandinavian Airlines",
 					IconWebSource = "https://r-xx.bstatic.com/data/airlines_logo/SK.png"
 				},
-				Departure = DateTime.Parse("28-03-2025 20:15:00"),
-				Landing = DateTime.Parse("28-03-2025 23:45:00"),
+				Departure = DateTime.Parse("2025-03-28 20:15:00"),
+				Landing = DateTime.Parse("2025-03-28 23:45:00"),
 				FromAirportCode = "CPH",
 				ToAirportCode = "IST",
 				FromAirportName = "Copenhagen International",
@@ -94,8 +39,8 @@
 					Name = "Easyjet",
 					IconWebSource = "https://r-xx.bstatic.com/data/airlines_logo/U2.png"
 				},
-				Departure = DateTime.Parse("29-03-2025 01:15:00"),
-				Landing = DateTime.Parse("29-03-2025 05:30:00"),
+				Departure = DateTime.Parse("2025-03-29 01:15:00"),
+				Landing = DateTime.Parse("2025-03-29 05:30:00"),
 				FromAirportCode = "IST",
 				ToAirportCode = "KIX", // Kyoto international
 				FromAirportName = "Istanbul International",

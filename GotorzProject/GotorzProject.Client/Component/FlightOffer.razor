@@ -1,30 +1,156 @@
 ﻿@rendermode InteractiveWebAssembly
-
 @using GotorzProject.Shared.DataTransfer
-@if(FlightDTO!=null){
-	<div>
-		
-		<h2>From @FlightDTO.StartAirport</h2>
-		<h2>To @FlightDTO.EndAirport</h2>
-		<div>
-			@foreach (var leg in FlightDTO.FlightLegs){
+
+
+@if(BaseFlightDTO != null)
+{
+	@using GotorzProject.Shared.DataTransfer
+
+	@* <GotorzProject.Client.Component.FlightOffer FlightDTO="BaseFlight" /> *@
+
+	<h2>Flight offer</h2>
+
+
+
+	@foreach (var leg in BaseFlightDTO.FlightLegs)
+	{
+
+		<div class="flight-card">
+			@* Flylogo *@
+			<img class="airline-logo" src="@leg.Carrier.IconWebSource" alt="@leg.Carrier.Name" />
+
+			@* Afgangstid + Lufthavn + Dato*@
+			<div class="time departure-info">
+				<div class="time">@leg.Departure.ToString("HH:mm")</div>
+				<div class="airport">@leg.FromAirportName (@leg.FromAirportCode)</div>
+				<div class="date">@leg.Departure.ToString("dd-MM-yyyy")</div>
+			</div>
+
+
+			@* Rejsetid *@
+			<div class="travel-time">@leg.TravelTimeMinutes min</div>
+
+			@* Ankomsttid *@
+			<div class="time arrival-info">
+				<div class="time">@leg.Landing.ToString("HH:mm")</div>
+				<div class="airport">@leg.ToAirportName (@leg.ToAirportCode)</div>
+				<div class="date">@leg.Landing.ToString("dd-MM-yyy")</div>
+
 				<div>
 					<h4>@leg.Carrier.Name</h4>
+
+					<img src="@leg.Carrier.IconWebSource"/>
 					<div class="row">
 						<h4 class="col">@leg.FromAirportCode</h4>
-						<h4 class="col">➡</h4>
+						<h4 class="col">--></h4>
 						<h4 class="col">@leg.ToAirportCode</h4>
 					</div>
+
+
 				</div>
-			}
+
+
+				@*Pris*@
+				@if(BaseFlightDTO != null)
+				{
+					<div class="price">@BaseFlightDTO.Price DKK</div>
+					<button class="btn" @onclick="ShowDetails">Se oplysninger</button>
+					<button class="btn" @onclick="ShowTicketType">Se billettype</button>
+				}
+				else
+				{
+					<p>Ingen flyoplysninger tilgængelige.</p>
+				}
+			</div>
 		</div>
-	</div>
+
+
+	}
+
+
+	<style>
+		.flight-card {
+		display: flex;
+		align-items: center;
+		gap: 15px;
+		justify-content: space-between;
+		background: #f9f9f9;
+		padding: 10px;
+		border-radius: 8px;
+		margin-bottom: 10px;
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		white-space: nowrap;
+		}
+
+		.airline-logo {
+		width: 50px;
+		height: auto;
+		}
+
+		.departure-info, .arrival-info {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		min-width: 120px;
+		}
+
+		.time {
+		font-weight: bold;
+		font-size: 1rem;
+		padding: 3px 8px;
+		background: #e6e6e6;
+		border-radius: 5px;
+		}
+
+		.travel-time {
+		font-style: italic;
+		color: #555;
+		font-size: 1rem;
+		}
+
+		.price {
+		font-weight: bold;
+		color: #007bff;
+		font-size: 1.2rem;
+		background: #eef6ff;
+		padding: 5px 10px;
+		border-radius: 5px;
+		}
+
+		.btn
+		{
+		display: inline-block;
+		padding: 10px 20px;
+		background-color: #007bff;
+		color: white;
+		border: none;
+		cursor: pointer;
+		}
+
+		.bnt:hover
+		{
+		background-color:#0056b3;
+		}
+
+
+	</style>
 }
 
 @code {
-
 	[Parameter]
-	public BaseFlightDTO FlightDTO { get; set; }
-	
+	public BaseFlightDTO BaseFlightDTO { get; set; }
 
-}
+
+
+	private void ShowDetails()
+	{
+		Console.WriteLine("Viser detaljer");
+	}
+
+	private void ShowTicketType()
+	{
+		Console.WriteLine("Viser billettype");			
+	}
+
+}}
+
