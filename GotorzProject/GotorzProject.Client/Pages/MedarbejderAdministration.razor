@@ -1,12 +1,49 @@
 ﻿@page "/MedarbejderAdministration"
-@rendermode InteractiveWebAssembly
-@inject EmployeeService EmployeeService
-@using GotorzProject.Client.Models
+@* @rendermode InteractiveWebAssembly *@
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
-<h3>Medarbejder Administration</h3>
+@using GotorzProject.Client.Component
+@using GotorzProject.Shared.DataTransfer
+@using System.Security.Claims
 
-<h4>Opret ny medarbejder</h4>
-<div>
+@inject HttpClient http
+<CascadingAuthenticationState>
+	<AuthorizeView Roles="Admin,Manager">
+		<Authorized>
+			@if(@context != null){
+				<h3>Medarbejder Administration</h3>
 
-</div>
+				<h4>Opret ny medarbejder</h4>
+				<div>
+					@if(users != null)
+					{
+						@foreach(UserDTO user in users)
+						{
+							<UserView CurrentUser="user" />
+						}
+					}
+				</div>
+			}
+		</Authorized>
+		<NotAuthorized>
+			<Spinner />
+		</NotAuthorized>
+	</AuthorizeView>
+</CascadingAuthenticationState>
 
+
+@code{
+
+	List<UserDTO>? users = new();
+
+	protected override async Task OnInitializedAsync(){
+
+		if(http.BaseAddress != null){
+			string getUsersEndpoint = "/api/User/GetUsers";
+			var result = await http.GetAsync(getUsersEndpoint);
+
+			users = await result.Content.ReadFromJsonAsync<List<UserDTO>>();
+
+		}	
+	}
+}

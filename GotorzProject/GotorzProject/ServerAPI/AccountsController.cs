@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using GotorzProject.Shared;
+using GotorzProject.Model;
 
 
 namespace GotorzProject.ServerAPI
@@ -10,9 +11,9 @@ namespace GotorzProject.ServerAPI
     public class AccountsController : ControllerBase
     {
 
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<CustomUser> _userManager;
 
-        public AccountsController(UserManager<IdentityUser> userManager)
+        public AccountsController(UserManager<CustomUser> userManager)
         {
             _userManager = userManager;
         }
@@ -20,7 +21,7 @@ namespace GotorzProject.ServerAPI
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] RegisterModel model)
         {
-            var newUser = new IdentityUser { UserName = model.Email, Email = model.Email };
+            var newUser = new CustomUser { UserName = model.Email, Email = model.Email };
 
             var result = await _userManager.CreateAsync(newUser, model.Password);
 

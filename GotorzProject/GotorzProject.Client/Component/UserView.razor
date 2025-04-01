@@ -1,0 +1,38 @@
+﻿@using GotorzProject.Shared.DataTransfer
+
+@if (CurrentUser != null)
+{
+    if(!Editing){
+        <div class="card">
+            <img class="card-img-left" src="@CurrentUser.ProfilePicture" />
+            <div class="card-body">
+                <h5 class="card-title">@CurrentUser.FirstName @CurrentUser.LastName</h5>
+                <h5>@CurrentUser.Email</h5>
+                <h5>@CurrentUser.Address</h5>
+                <h5>@CurrentUser.Country</h5>
+
+
+                <Button Color="ButtonColor.Primary" @onclick="() => Editing=true">Edit</Button>
+            </div>
+        </div>
+    } else{
+        <UserEdit CurrentUser="CurrentUser" UserEdited="HandleUpdate"/>
+    }
+}
+else
+{
+    <Spinner />
+}
+@code {
+    [Parameter]
+    public UserDTO CurrentUser { get; set; }
+
+    private bool Editing { get; set; } = false;
+
+    public async Task HandleUpdate(bool doneEditing){
+        Editing = false;
+
+        // TODO :Send call to api to update changes in backend aswell
+    }
+
+}

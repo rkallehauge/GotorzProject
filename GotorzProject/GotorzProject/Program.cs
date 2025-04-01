@@ -11,6 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using GotorzProject.Client.Services;
 using Blazored.LocalStorage;
+using GotorzProject.Model;
+using GotorzProject.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSyncfusionBlazor();
@@ -39,7 +41,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString)
 );
 
-builder.Services.AddDefaultIdentity<IdentityUser>()
+builder.Services.AddIdentity<CustomUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -56,6 +58,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityKey"]))
         };
     });
+
+builder.Services.AddScoped<IUserAdminstration, UserAdminstration>();
 
 builder.Services.AddControllers();
 

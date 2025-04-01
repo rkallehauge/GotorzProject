@@ -1,0 +1,59 @@
+﻿@using GotorzProject.Shared.DataTransfer
+
+@if(CurrentUser != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Please enter your details</h5>
+            <EditForm Model="CurrentUser" OnValidSubmit="UpdateUser">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <InputText Id="email" class="form-control" @bind-Value="CurrentUser.Email" />
+                    <ValidationMessage For="@(() => CurrentUser.Email)" />
+                </div>
+
+                <div class="form-group">
+                    <label for="firstname">First name</label>
+                    <InputText Id="firstname" class="form-control" @bind-Value="CurrentUser.FirstName" />
+                    <ValidationMessage For="@(() => CurrentUser.FirstName)" />
+                </div>
+
+                <div class="form-group">
+                    <label for="lastname">Last name</label>
+                    <InputText Id="lastname" class="form-control" @bind-Value="CurrentUser.LastName" />
+                    <ValidationMessage For="@(() => CurrentUser.LastName)" />
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Last name</label>
+                    <InputText Id="address" class="form-control" @bind-Value="CurrentUser.Address" />
+                    <ValidationMessage For="@(() => CurrentUser.Address)" />
+                </div>
+
+                <button type="submit" class="btn btn-primary" @onclick="UpdateUser">Submit</button>
+            </EditForm>
+        </div>
+    </div>
+}
+else
+{
+    <Spinner />
+}
+@code {
+    [Parameter]
+    public UserDTO CurrentUser { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> UserEdited { get; set; }
+
+    private async Task UpdateUser()
+    {
+
+
+        await UserEdited.InvokeAsync(true);
+    }
+
+}

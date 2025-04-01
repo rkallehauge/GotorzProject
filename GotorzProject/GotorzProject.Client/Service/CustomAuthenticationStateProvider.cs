@@ -36,6 +36,8 @@ namespace GotorzProject.Service
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("bearer", savedToken);
 
+            Console.WriteLine("Bearer token set");
+
             // parse jwt token nto claims and return auth state from parsed jwt token
             return new AuthenticationState(new ClaimsPrincipal(
                 new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
@@ -50,6 +52,8 @@ namespace GotorzProject.Service
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
             NotifyAuthenticationStateChanged(authState);
         }
+
+        
 
         // removes authentication state
         public void MarkUserAsLoggedOut()
@@ -87,6 +91,10 @@ namespace GotorzProject.Service
                 }
 
                 keyValuePairs.Remove(ClaimTypes.Role);
+            }
+            else
+            {
+                Console.WriteLine("NO roles");
             }
 
             claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString())));

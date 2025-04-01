@@ -43,6 +43,9 @@ namespace GotorzProject.Client.Services
             var loginAsJson = JsonSerializer.Serialize(loginModel);
             var response = await _httpClient.PostAsync("api/Login",
                 new StringContent(loginAsJson, Encoding.UTF8, "application/json"));
+
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
+
             var loginResult = JsonSerializer.Deserialize<LoginResult>(
                 await response.Content.ReadAsStringAsync(),
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -53,8 +56,10 @@ namespace GotorzProject.Client.Services
             }
 
             await _localStorage.SetItemAsync("authToken", loginResult.Token);
+
             ((CustomAuthenticationStateProvider)_authenticationStateProvider)
                 .MarkUserAsAuthenticated(loginModel.Email);
+
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("bearer", loginResult.Token);
 

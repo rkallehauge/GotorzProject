@@ -10,12 +10,19 @@ namespace GotorzProject.Model
         public int PaymentID { get; set; }
         public string DestinationCity { get; set; }
         public string DestinationCountry { get; set; }
-        public string Hotel { get; set; }
+
+        [Required]
+        public Hotel? Hotel { get; set; }
+
         public double Price { get; set; }
         public DateTime Departure { get; set; }
         public DateTime Return { get; set; }
+        // for ef core
+        public TravelPackage()
+        {
+        }
 
-        public TravelPackage(int paymentID, string destinationCity, string destinationCountry, string hotel, double price, DateTime departure, DateTime @return)
+        public TravelPackage(int paymentID, string destinationCity, string destinationCountry, Hotel hotel, double price, DateTime departure, DateTime @return)
         {
             PaymentID = paymentID;
             DestinationCity = destinationCity;
