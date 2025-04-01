@@ -29,5 +29,12 @@ namespace GotorzProject.ServerAPI
         {
             return Ok(_travelPackages);
         }
+
+        [HttpPost("createPackage")]
+        public IActionResult CreatePackage()
+        {
+            // Create a new package
+            return Ok();
+        }
     }
 }
