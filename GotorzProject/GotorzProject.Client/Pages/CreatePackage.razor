@@ -3,6 +3,7 @@
 @rendermode InteractiveWebAssembly
 
 @using GotorzProject.Shared.DataTransfer
+@using System.Text.Json.Serialization
 
 
 @inject HttpClient Http
@@ -15,7 +16,7 @@
 		<option value="">Select a country</option>
 		@foreach (var country in countries)
 		{
-			<option value="@country">@country</option>
+			<option value="@country.Value">@country.Key</option>
 		}
 	</select>
 </div>
@@ -37,7 +38,7 @@
 		<option value="">Select a country</option>
 		@foreach (var country in countries)
 		{
-			<option value="@country">@country</option>
+			<option value="@country.Value">@country.Key</option>
 		}
 	</select>
 </div>
@@ -81,7 +82,7 @@
 	private string destinationCountry;
 	private string destinationCity;
 	private string packageInfo;
-	private List<string> countries = new List<string>();
+	private Dictionary<string, string> countries = new();
 
 
 	private List<string> departureCities = new List<string>();
@@ -105,7 +106,7 @@
 	//Henter en liste af byer fra et land
 	private async Task<List<string>> LoadCitiesFromCountry(string country)
 	{
-		var response = await Http.GetFromJsonAsync<List<string>>($"https://country-state-city-search-rest-api.p.rapidapi.com/allcountries={country}");
+		var response = await Http.GetFromJsonAsync<List<string>>($"api/Location/getCities?country={country}");
 
 		return response;
 
@@ -139,24 +140,39 @@
 			var response = await Http.GetAsync(Http.BaseAddress+"api/Location/GetCountries");
 			if (response.IsSuccessStatusCode)
 			{
-				countries = await response.Content.ReadFromJsonAsync<List<string>>();
+				var res = await response.Content.ReadFromJsonAsync<List<Country>>();
+
+				foreach(var country in res){
+					countries.Add(country.Name, country.IsoCode);
+				}
+				
 			}
 		}
 	}
 
-	
-
-	public class CitiesResponse
+	public class Country
 	{
-		public bool Error { get; set; }  // Hvis API'et returnerer en fejl
-		public string Msg { get; set; }   // Fejlmeddelelse (hvis relevant)
-		public List<string> Data { get; set; }   // Liste af byer
-	}
+		[JsonPropertyName("name")]
+		public string Name { get; set; }
 
-	public class CountryRequest
-	{
-		public string Country { get; set; }
-	}
+		[JsonPropertyName("isoCode")]
+		public string IsoCode { get; set; }
 
+		[JsonPropertyName("flag")]
+		public string Flag { get; set; }
+
+		[JsonPropertyName("phonecode")]
+		public string PhoneCode { get; set; }
+
+		[JsonPropertyName("currency")]
+		public string Currency { get; set; }
+
+		[JsonPropertyName("latitude")]
+		public string Latitude { get; set; }
+
+		[JsonPropertyName("longitude")]
+		public string Longitude { get; set; }
+
+	}
 
 }
