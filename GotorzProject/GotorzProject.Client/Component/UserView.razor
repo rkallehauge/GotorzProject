@@ -1,4 +1,9 @@
-﻿@using GotorzProject.Shared.DataTransfer
+﻿@rendermode InteractiveWebAssembly
+
+@using GotorzProject.Shared.DataTransfer
+@using System.Text.Json
+
+@inject HttpClient httpClient
 
 @if (CurrentUser != null)
 {
@@ -27,12 +32,51 @@ else
     [Parameter]
     public UserDTO CurrentUser { get; set; }
 
+    private UserDTO temp;
+
     private bool Editing { get; set; } = false;
 
-    public async Task HandleUpdate(bool doneEditing){
+    protected override async void OnInitialized()
+    {
+        Console.WriteLine(CurrentUser.Email);
+        temp = CurrentUser;
+
+    }
+
+    public async Task HandleUpdate(bool userEdited){
         Editing = false;
 
-        // TODO :Send call to api to update changes in backend aswell
+        // No user editing done, just cancel
+        if (!userEdited)
+        {
+            CurrentUser = temp;
+            return;
+        }
+
+        // annoying way to fix this without using prerendermode off 
+        int retries = 5;
+        while(httpClient.BaseAddress == null && retries > 0)
+        {
+            await Task.Delay(200);
+            retries--;
+        }
+
+        if(httpClient.BaseAddress != null)
+        {
+            var data = JsonSerializer.Serialize(CurrentUser);
+
+            var httpContent = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("api/User/UpdateUser", httpContent);
+            Console.WriteLine(response);
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
+
+
+        }
+        else
+        {
+            Console.WriteLine("Could not update user :(");
+        }
     }
 
 }

@@ -169,5 +169,9 @@ namespace GotorzProject.Service
             }
         }
 
+        public async Task<List<string>> GetRoles()
+        {
+            return await Task.FromResult(Roles.Select(r => r.Value).ToList());
+        }
     }
 }

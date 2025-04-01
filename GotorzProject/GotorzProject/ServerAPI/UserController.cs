@@ -37,28 +37,47 @@ namespace GotorzProject.ServerAPI
             {
                 List<string> roles = await _userService.GetUserRoles(user);
 
-                UserDTO current = new UserDTO()
-                {
-                    Country = user.Country,
-                    Address = user.Address,
-                    //Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    ProfilePicture = user.ProfilePictureSrc,
-                    Roles = roles,
-                    TelephoneNumber = user.TelephoneNumber
-                };
+
+                UserDTO current = new UserDTO(user.FirstName, user.LastName, user.Address, user.Country, user.TelephoneNumber, user.Email, roles, user.ProfilePictureSrc);
+                // this sadly cannot be used, as we are safeguarding e-mail with a private setter
+                // we should not, and musn't allow email to be changeable. If allowed, it will cause chaos
+                //UserDTO current = new UserDTO()
+                //{
+                //    Country = user.Country,
+                //    Address = user.Address,
+                //    FirstName = user.FirstName,
+                //    LastName = user.LastName,
+                //    ProfilePicture = user.ProfilePictureSrc,
+                //    Roles = roles,
+                //    TelephoneNumber = user.TelephoneNumber
+                //};
 
                 result.Add(current);
             }
             return Ok(JsonSerializer.Serialize(result));
         }
-
+        
         [HttpPost("UpdateUser")]
         public async Task<IActionResult> UpdateUser([FromBody] UserDTO user)
         {
             // todo : here
-            return Ok();
+
+
+            Console.WriteLine(user);
+            // 
+            var result = await _userService.UpdateUser(user, false);
+
+
+
+            return Ok(result);
+        }
+
+        [HttpGet("GetRoles")]
+        public async Task<IActionResult> GetRoles()
+        {
+            var roles = await _userService.GetRoles();
+            var content = JsonSerializer.Serialize(roles);
+            return Ok(content);
         }
     }
 }

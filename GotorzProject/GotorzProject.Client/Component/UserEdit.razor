@@ -1,5 +1,7 @@
 ﻿@using GotorzProject.Shared.DataTransfer
 
+@inject HttpClient httpClient
+
 @if(CurrentUser != null)
 {
     <div class="card">
@@ -9,11 +11,20 @@
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
+                @*   
                 <div class="form-group">
                     <label for="email">Email address</label>
                     <InputText Id="email" class="form-control" @bind-Value="CurrentUser.Email" />
                     <ValidationMessage For="@(() => CurrentUser.Email)" />
+                </div> 
+                *@
+
+                <div class="form-group">
+                    <label for="firstname">Email</label>
+                    <p>@CurrentUser.Email</p>
+                    <small>Email has to be changed by contacting IT</small>
                 </div>
+
 
                 <div class="form-group">
                     <label for="firstname">First name</label>
@@ -28,12 +39,23 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="address">Last name</label>
+                    <label for="address">Address</label>
                     <InputText Id="address" class="form-control" @bind-Value="CurrentUser.Address" />
                     <ValidationMessage For="@(() => CurrentUser.Address)" />
                 </div>
 
-                <button type="submit" class="btn btn-primary" @onclick="UpdateUser">Submit</button>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <p>TBD</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="roles">Roles for user</label>
+                    @* Create role thin here*@
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-primary">Cancel</button>
             </EditForm>
         </div>
     </div>
@@ -49,11 +71,28 @@ else
     [Parameter]
     public EventCallback<bool> UserEdited { get; set; }
 
+    private List<string> userRoles { get; set; }
+
     private async Task UpdateUser()
     {
-
-
         await UserEdited.InvokeAsync(true);
     }
 
+
+    protected override async void OnInitialized(){
+        if(httpClient.BaseAddress != null){
+            var response = await httpClient.GetAsync("api/User/GetRoles");
+            response.EnsureSuccessStatusCode();
+
+            userRoles = await response.Content.ReadFromJsonAsync<List<string>>();
+
+            Console.WriteLine(userRoles);
+            foreach(var role in userRoles)
+            {
+                Console.WriteLine(role);
+            }
+        } else{
+            Console.WriteLine("Pulling harder on lawnmower start cord...");
+        }
+    }
 }

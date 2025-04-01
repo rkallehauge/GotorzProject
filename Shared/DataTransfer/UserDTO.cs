@@ -32,7 +32,8 @@ namespace GotorzProject.Shared.DataTransfer
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
-        public string? Email { get; private set; } // email is only unique identifier here, so don't change it
+        public string? Email { get; set; } // email is only unique identifier here, so don't change it
+        // Please god do not fucking change the email
 
         [MustHaveOneElement]
         public List<string>? Roles { get; set; }

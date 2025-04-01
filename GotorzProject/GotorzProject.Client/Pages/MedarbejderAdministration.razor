@@ -22,6 +22,12 @@
 							<UserView CurrentUser="user" />
 						}
 					}
+					else
+					{
+						@* Change this to show no users loaded if that actually happens *@
+						<p>Loading Employees...</p>
+						<Spinner />
+					}
 				</div>
 			}
 		</Authorized>
@@ -36,13 +42,20 @@
 
 	List<UserDTO>? users = new();
 
+
 	protected override async Task OnInitializedAsync(){
 
 		if(http.BaseAddress != null){
 			string getUsersEndpoint = "/api/User/GetUsers";
 			var result = await http.GetAsync(getUsersEndpoint);
 
+
 			users = await result.Content.ReadFromJsonAsync<List<UserDTO>>();
+
+			foreach(var user in users)
+			{
+				Console.WriteLine(user.Email);
+			}
 
 		}	
 	}

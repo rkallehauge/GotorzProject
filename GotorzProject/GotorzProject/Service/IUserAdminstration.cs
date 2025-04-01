@@ -1,4 +1,5 @@
 ﻿using GotorzProject.Model;
+using GotorzProject.Shared.DataTransfer;
 
 namespace GotorzProject.Service
 {
@@ -13,5 +14,7 @@ namespace GotorzProject.Service
         Task SetRole(CustomUser user, string role);
         Task SetRoles(CustomUser user, IEnumerable<string> roles);
         Task SetupRoles();
+        Task<bool> UpdateUser(UserDTO user, bool isAdminChange);
+        Task<List<string>> GetRoles();
     }
 }
