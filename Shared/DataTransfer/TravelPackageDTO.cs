@@ -12,7 +12,7 @@ namespace GotorzProject.Shared.DataTransfer
         public string DestinationCountry { get; set; }
         public string Hotel { get; set; }
         public double Price { get; set; }
-        public DateTime Departure { get; set; }
-        public DateTime Return { get; set; }
+        public DateTime DepartureDate { get; set; }
+        public DateTime ReturnDate { get; set; }
     }
 }

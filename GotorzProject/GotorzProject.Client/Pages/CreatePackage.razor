@@ -10,6 +10,7 @@
 
 <h3>Create Package</h3>
 
+@*Departure Country*@
 <div class="Choose depature country">
 	<label for="country">Choose departure country:</label>
 	<select id="country" @onchange="OnDepartureCountryChanged">
@@ -21,6 +22,7 @@
 	</select>
 </div>
 
+@*Departure City*@
 <div class="Choose departure city">
 	<label for="city">Choose departure city:</label>
 	<select id="city" @bind="departureCity">
@@ -32,6 +34,13 @@
 	</select>
 </div>
 
+@*Departure Date*@
+<div class="Choose Departure date">
+	<label for="departure">Choose departure date</label>
+	<input id="departureDate" type="datetime-local" @bind="departureDate" />
+</div>
+
+@*Destination Country*@
 <div class="Choose destination country">
 	<label for="country">Choose destination country:</label>
 	<select id="country" @onchange="OnDestinationCountryChanged">
@@ -43,15 +52,46 @@
 	</select>
 </div>
 
+@*Destination City*@
 <div class="Choose destination city">
 	<label for="city">Choose destination city:</label>
-	<select id="city" @bind="destinationCity">
+	<select id="city" @onchange="OnDestinationCityChanged">
 		<option value="">Select a city</option>"
 		@foreach (var city in destinationCities)
 		{
 			<option value="@city">@city</option>
 		}
 	</select>
+</div>
+
+@*Hotel*@
+<div class="Choose Hotel">
+	<label for="hotel">Choose hotel:</label>
+	<select id="hotel" @bind="hotel">
+		<option value="">Select a hotel</option>
+		@foreach (var hotel in hotels)
+		{
+			<option value="@hotel">@hotel</option>
+		}
+	</select>
+</div>
+
+@*CheckIn*@
+<div class="Choose check in"
+	<label for="return">Choose check in</label>
+	<input id="returnDate" type="datetime-local" @bind="checkIn"/>
+</div>
+
+@*CheckOut*@
+<div class="Choose check out"
+	<label for="return">Choose check out</label>
+	<input id="returnDate" type="datetime-local" @bind="checkOut"/>
+</div>
+
+@*Return Date*@
+<div class="Choose return date"
+	<label for="return">Choose return date</label>
+	<input id="returnDate" type="datetime-local" @bind="returnDate"/>
 </div>
 
 <div>
@@ -77,31 +117,48 @@
 
 
 @code {
-	private string depatureCountry;
+	private string departureCountry;
 	private string departureCity;
+	private DateTime departureDate = DateTime.Now;
+	private string hotel;
+	private double price;
 	private string destinationCountry;
 	private string destinationCity;
+	private DateTime returnDate = DateTime.Now;
 	private string packageInfo;
+	private DateTime checkIn = DateTime.Now;
+	private DateTime checkOut = DateTime.Now;
+	
 	private Dictionary<string, string> countries = new();
-
 
 	private List<string> departureCities = new List<string>();
 	private List<string> destinationCities = new List<string>();
+	private List<string> hotels = new List<string>();
 	private string errorMessage;
 
 
-
+	//Gemmer valgt afrejseland
 	private async Task OnDepartureCountryChanged(ChangeEventArgs e)
 	{
-		depatureCountry = e.Value.ToString();
-		departureCities = await LoadCitiesFromCountry(depatureCountry);
+		departureCountry = e.Value.ToString();
+		departureCities = await LoadCitiesFromCountry(departureCountry);
 
 	}
+
+	//Gemmer valgt destinationsland
 	private async Task OnDestinationCountryChanged(ChangeEventArgs e)
 	{
 		destinationCountry = e.Value.ToString();
 		destinationCities = await LoadCitiesFromCountry(destinationCountry);
 	}
+
+	//Gemmer valgt hotel
+	private async Task OnDestinationCityChanged(ChangeEventArgs e)
+	{
+		destinationCity = e.Value.ToString();
+		hotels = await LoadHotelsFromCity(destinationCity, destinationCountry);
+	}
+
 
 	//Henter en liste af byer fra et land
 	private async Task<List<string>> LoadCitiesFromCountry(string country)
@@ -112,14 +169,38 @@
 
 	}
 
+	private async Task<List<string>> LoadHotelsFromCity(string destinationCity, string destinationCountry)
+	{
+
+		if (string.IsNullOrEmpty(destinationCity) || string.IsNullOrEmpty(destinationCountry))
+		{
+			Console.WriteLine("Godaw");
+			return new List<string>();
+		}
+
+		string formattedCheckIn = checkIn.ToString("yyyy-MM-dd");
+		string formattedCheckOut = checkOut.ToString("yyyy-MM-dd");
+
+		string encodedCity = Uri.EscapeDataString(destinationCity);
+		string encodedCountry = Uri.EscapeDataString(destinationCountry);
+
+		var response = await Http.GetFromJsonAsync<List<string>>($"api/Hotel/GetHotels?location={encodedCountry},%20{encodedCity}&checkIn={formattedCheckIn}&checkOut={formattedCheckOut}");
+
+		return response ?? new List<string>();
+	}
+
+
 	//Opret pakke
 	private async Task CreateTravelPackage()
 	{
 		var travelPackage = new TravelPackageDTO(){
-			DestinationCity = "",
-			DestinationCountry = "",
-			Departure = new()
-			// todo : tilføj resten
+			DestinationCity = destinationCity,
+			DestinationCountry = destinationCountry,
+			Hotel = hotel,
+			Price = price,
+			DepartureDate = departureDate,
+			ReturnDate = returnDate,
+			
 		};
 
 		var response = await Http.PostAsJsonAsync("api/TravelPackages/createPackage", travelPackage);
