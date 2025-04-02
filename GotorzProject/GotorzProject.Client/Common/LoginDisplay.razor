@@ -1,0 +1,19 @@
+﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@using GotorzProject.Client.Pages
+
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            <a href="">@context.User.Identity.Name</a>
+            <a href="LogOut">Log out</a>
+        </Authorized>
+        <NotAuthorized>
+            <a href="Register">Register</a>
+            <a href="Login">Log in</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+@code {
+
+}

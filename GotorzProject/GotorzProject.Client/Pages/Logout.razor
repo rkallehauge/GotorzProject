@@ -1,0 +1,22 @@
+﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@page "/logout"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<Modal @ref="modal" />
+
+@code {
+
+    Modal modal = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.Logout();
+
+        // todo : inform user they've been logged out
+
+        NavigationManager.NavigateTo("/");
+    }
+
+}

@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using System.Reflection.Metadata.Ecma335;
-using System.Net.Http;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http.Json;
+using static GotorzProject.Client.Pages.Support;
+using Syncfusion.Blazor;
+using GotorzProject.Client.Services;
+using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
+using GotorzProject.Service;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-
+builder.Services.AddSyncfusionBlazor();
 
 // todo : fix / make this better pls
 string hardcodedLocalUrl = "https://localhost:7097";
@@ -18,17 +18,9 @@ builder.Services.AddScoped(sp => new HttpClient
     BaseAddress = new Uri(builder.Configuration["FrontendUrl"] ?? hardcodedLocalUrl)
 });
 
-var httpClient = new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
-var stripeSettings = await httpClient.GetFromJsonAsync<StripeSettings>("appsettings.json");
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
-if (stripeSettings != null)
-{
-    builder.Services.AddSingleton(stripeSettings);
-}
 await builder.Build().RunAsync();
-
-    public class StripeSettings                     
-    {
-    public string SecretKey { get; set; } = string.Empty;
-    public string PublishableKey { get; set; } = string.Empty;
-    }

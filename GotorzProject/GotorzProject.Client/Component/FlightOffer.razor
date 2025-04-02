@@ -1,0 +1,38 @@
+﻿@rendermode InteractiveWebAssembly
+
+@using GotorzProject.Shared.DataTransfer
+@if(FlightDTO!=null){
+	<div>
+		
+
+		
+		<h2>From @FlightDTO.StartAirport</h2>
+		<h2>To @FlightDTO.EndAirport</h2>
+
+
+		<div>
+			@foreach (var leg in FlightDTO.FlightLegs){
+				<div>
+					<h4>@leg.Carrier.Name</h4>
+
+					<img src="@leg.Carrier.IconWebSource" />
+					<div class="row">
+						<h4 class="col">@leg.FromAirportCode</h4>
+						<h4 class="col">➡</h4>
+						<h4 class="col">@leg.ToAirportCode</h4>
+					</div>
+				</div>
+			}
+		</div>
+
+		
+	</div>
+}
+
+@code {
+
+	[Parameter]
+	public BaseFlightDTO FlightDTO { get; set; }
+	
+
+}

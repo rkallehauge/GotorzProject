@@ -6,8 +6,6 @@ namespace GotorzProject.Model
     {
         [Key]
         public int Id { get; set; }
-
-        public int PaymentID { get; set; }
         public string DestinationCity { get; set; }
         public string DestinationCountry { get; set; }
         public string Hotel { get; set; }
@@ -15,9 +13,16 @@ namespace GotorzProject.Model
         public DateTime Departure { get; set; }
         public DateTime Return { get; set; }
 
-        public TravelPackage(int paymentID, string destinationCity, string destinationCountry, string hotel, double price, DateTime departure, DateTime @return)
+        //Midlertidig constructor med begrænset info
+        public TravelPackage(string destinationCity, string destinationCountry)
         {
-            PaymentID = paymentID;
+            DestinationCity = destinationCity;
+            DestinationCountry = destinationCountry;
+        }
+
+        //Den egentlige constructor, når page virker
+        public void UpdatedTravelPackage(int paymentID, string destinationCity, string destinationCountry, string hotel, double price, DateTime departure, DateTime @return)
+        {
             DestinationCity = destinationCity;
             DestinationCountry = destinationCountry;
             Hotel = hotel;
