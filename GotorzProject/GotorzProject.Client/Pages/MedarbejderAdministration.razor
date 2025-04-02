@@ -13,8 +13,9 @@
 			@if(@context != null){
 				<h3>Medarbejder Administration</h3>
 
-				<h4>Opret ny medarbejder</h4>
+				@* <h4>Opret ny medarbejder</h4> *@
 				<div>
+					<h5>All currenlt employees.</h5>
 					@if(users != null)
 					{
 						@foreach(UserDTO user in users)
@@ -29,6 +30,17 @@
 						<Spinner />
 					}
 				</div>
+
+				<div>
+					@foreach(var role in usersByRole.Keys){
+						<div>
+							<h5>Users in @role</h5>
+							@foreach(UserDTO user in usersByRole[role]){
+								<UserView CurrentUser="user" />
+							}
+						</div>
+					}
+				</div>
 			}
 		</Authorized>
 		<NotAuthorized>
@@ -40,7 +52,13 @@
 
 @code{
 
-	List<UserDTO>? users = new();
+
+	// unique users
+	HashSet<UserDTO>? users = new();
+
+	// Users by role
+	Dictionary<string, HashSet<UserDTO>> usersByRole = new();
+
 
 
 	protected override async Task OnInitializedAsync(){
@@ -48,15 +66,31 @@
 		if(http.BaseAddress != null){
 			string getUsersEndpoint = "/api/User/GetUsers";
 			var result = await http.GetAsync(getUsersEndpoint);
+			result.EnsureSuccessStatusCode();
 
+			users = await result.Content.ReadFromJsonAsync<HashSet<UserDTO>>();
 
-			users = await result.Content.ReadFromJsonAsync<List<UserDTO>>();
+			// This might be needed at a future date
+			// var roleResult = await http.GetAsync("api/User/GetRoles");
+			// roleResult.EnsureSuccessStatusCode();
+			// List<string> roles = await roleResult.Content.ReadFromJsonAsync<List<string>>();
 
-			foreach(var user in users)
-			{
-				Console.WriteLine(user.Email);
+			// // add user lists to dictionary
+			// foreach(var role in roles){
+			// 	usersByRole.Add(role, new());
+			// }
+
+			foreach(UserDTO user in users){
+				foreach(var role in user.Roles){
+
+					// Only add roles that actually exist in system
+					if(!usersByRole.ContainsKey(role)){
+						usersByRole.Add(role, new());
+					}
+
+					usersByRole[role].Add(user);
+				}
 			}
-
 		}	
 	}
 }

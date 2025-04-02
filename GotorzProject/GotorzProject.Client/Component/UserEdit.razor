@@ -6,7 +6,7 @@
 {
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Please enter your details</h5>
+            <h5 class="card-title">Currently editing @CurrentUser.FirstName @CurrentUser.LastName</h5>
             <EditForm Model="CurrentUser" OnValidSubmit="UpdateUser">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
@@ -46,16 +46,26 @@
 
                 <div class="form-group">
                     <label for="country">Country</label>
-                    <p>TBD</p>
+                   @*  <AutoComplete 
+                        @bind-Value="CurrentUser.Country"
+                        TItem="Country"
+                        DataProvider=""
+                        
+                    
+                    > *@
                 </div>
 
-                <div class="form-group">
-                    <label for="roles">Roles for user</label>
-                    @* Create role thin here*@
-                </div>
+                @if(userRoles.Count!=0){
+                    <div class="form-group">
+                        <h4>User roles for @CurrentUser.FirstName</h4>
+                        @foreach(var role in userRoles.Keys){
+                            <label>@role</label>
+                            <Switch @bind-Value="userRoles[role]"/>
+                        }
+                    </div>
+                }
 
                 <button type="submit" class="btn btn-primary">Submit</button>
-                <button type="reset" class="btn btn-primary">Cancel</button>
             </EditForm>
         </div>
     </div>
@@ -71,28 +81,80 @@ else
     [Parameter]
     public EventCallback<bool> UserEdited { get; set; }
 
-    private List<string> userRoles { get; set; }
+
+
+    public List<Country> countries = new();
+
+    // User role selection
+    public Dictionary<string, bool> userRoles { get; set; } = new();
 
     private async Task UpdateUser()
     {
+        CurrentUser.Roles.Clear();
+
+        foreach(var role in userRoles){
+            if (role.Value) CurrentUser.Roles.Add(role.Key);
+        }
+
         await UserEdited.InvokeAsync(true);
     }
 
+    private async Task<AutoCompleteDataProviderResult<Country>> CountryDataProvider(AutoCompleteDataProviderRequest<Country> request)
+    {
+        return await Task.FromResult(request.ApplyTo(countries.OrderBy(country=> country.Name)));
+    }
 
-    protected override async void OnInitialized(){
+
+
+    protected override async Task OnInitializedAsync(){
         if(httpClient.BaseAddress != null){
-            var response = await httpClient.GetAsync("api/User/GetRoles");
-            response.EnsureSuccessStatusCode();
 
-            userRoles = await response.Content.ReadFromJsonAsync<List<string>>();
+            var countriesResponse = await httpClient.GetAsync("api/Location/GetCountries");
+            countries = await countriesResponse.Content.ReadFromJsonAsync<List<Country>>();
 
-            Console.WriteLine(userRoles);
-            foreach(var role in userRoles)
+
+
+            var rolesResponse = await httpClient.GetAsync("api/User/GetRoles");
+            rolesResponse.EnsureSuccessStatusCode();
+
+
+            var allRoles = await rolesResponse.Content.ReadFromJsonAsync<List<string>>();
+
+            foreach(var role in allRoles)
             {
-                Console.WriteLine(role);
+                bool userHasRole = CurrentUser.Roles.Contains(role);
+
+                userRoles.Add(role,userHasRole);
+                Console.WriteLine($"User:{CurrentUser.Email} Role:{role} HasRole:{userHasRole}");
             }
         } else{
             Console.WriteLine("Pulling harder on lawnmower start cord...");
         }
     }
+
+    public class Country
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("isoCode")]
+        public string IsoCode { get; set; }
+
+        [JsonPropertyName("flag")]
+        public string Flag { get; set; }
+
+        [JsonPropertyName("phonecode")]
+        public string PhoneCode { get; set; }
+
+        [JsonPropertyName("currency")]
+        public string Currency { get; set; }
+
+        [JsonPropertyName("latitude")]
+        public string Latitude { get; set; }
+
+        [JsonPropertyName("longitude")]
+        public string Longitude { get; set; }
+
+    }
+
 }

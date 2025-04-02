@@ -56,20 +56,28 @@ namespace GotorzProject.ServerAPI
             }
             return Ok(JsonSerializer.Serialize(result));
         }
-        
+
+        [Authorize]
         [HttpPost("UpdateUser")]
         public async Task<IActionResult> UpdateUser([FromBody] UserDTO user)
         {
-            // todo : here
 
+            var accessingUser = HttpContext.User;
 
-            Console.WriteLine(user);
-            // 
-            var result = await _userService.UpdateUser(user, false);
+            // check whether this was called by an admin user
+            // this safeguard might fail if user was admin, but since got removed role
+            bool isAdmin = accessingUser.IsInRole("Admin");
 
-
-
-            return Ok(result);
+            if (isAdmin)
+            {
+                var result = await _userService.UpdateUser(user, isAdmin);
+                return Ok(result);
+            }
+            else
+            {
+                var result = await _userService.UpdateUser(user, isAdmin);
+                return Ok(result);
+            }
         }
 
         [HttpGet("GetRoles")]

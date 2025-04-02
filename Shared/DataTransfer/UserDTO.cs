@@ -54,5 +54,19 @@ namespace GotorzProject.Shared.DataTransfer
         }
 
         public UserDTO() { }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is UserDTO otherUser)
+            {
+                return Email == otherUser.Email; // Or use `Id` if available
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Email.GetHashCode(); // Or use `Id` if available
+        }
     }
 }

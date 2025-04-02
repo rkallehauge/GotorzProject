@@ -38,8 +38,17 @@ string dbType = "MSSql";
 var connectionString = configuration.GetConnectionString(dbType);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString)
+    options.UseSqlServer(connectionString), ServiceLifetime.Scoped
 );
+
+
+// Location HttpClient
+builder.Services.AddHttpClient("Location", client =>
+{
+    client.BaseAddress = new("https://" + configuration.GetValue<string>("APIKeys:Location:Host"));
+    client.DefaultRequestHeaders.Add("x-rapidapi-host", configuration.GetValue<string>("APIKeys:Location:Host"));
+    client.DefaultRequestHeaders.Add("x-rapidapi-key", configuration.GetValue<string>("APIKeys:Location:Key"));
+});
 
 builder.Services.AddIdentity<CustomUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
