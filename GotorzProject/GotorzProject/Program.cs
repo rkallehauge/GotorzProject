@@ -14,6 +14,8 @@ using Blazored.LocalStorage;
 using GotorzProject.Model;
 using GotorzProject.Service;
 using GotorzProject.Service.Misc;
+using System.Diagnostics;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSyncfusionBlazor();
@@ -49,6 +51,36 @@ var connectionString = configuration.GetConnectionString(dbType);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString), ServiceLifetime.Scoped
 );
+
+// API Key Testing 
+bool apiConfigError = false;
+List<string> apiConfigErrors = new();
+var missingConfigs = new[]
+{
+    "API:Location:Key",
+    "API:Location:Host",
+    "API:BookingCOM:Host",
+    "API:BookingCOM:Host"
+}
+.Select(k => new { Key = k, Value = configuration.GetValue<string>(k) })  // Keep key-value pair
+.Where(kv => string.IsNullOrEmpty(kv.Value)) // Filter missing values
+.ToList();
+
+missingConfigs.ForEach(kv =>
+{
+    Console.WriteLine(kv.Key);
+    apiConfigError = true;
+    apiConfigErrors.Add($"{kv.Key} was not set properly.");
+});
+
+if (apiConfigError)
+{
+    throw new ConfigurationErrorsException($"Following errors occurred:\n{string.Join(Environment.NewLine, apiConfigErrors)}");
+}
+// API Key Testing
+
+
+
 
 
 // Location HttpClient
