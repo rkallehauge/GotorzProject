@@ -34,19 +34,19 @@ var configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables() // Cloud cant be fucked to use hardcoded files anymore, very sad :(
     .Build();
 
-Console.WriteLine("All config KVPS");
-Console.WriteLine("All config KVPS");
-Console.WriteLine("All config KVPS");
+//Console.WriteLine("All config KVPS");
+//Console.WriteLine("All config KVPS");
+//Console.WriteLine("All config KVPS");
 
-foreach (var kvp in configuration.AsEnumerable())
-{
-    Console.WriteLine($"{kvp.Key}: {kvp.Value}");
-}
+//foreach (var kvp in configuration.AsEnumerable())
+//{
+//    Console.WriteLine($"{kvp.Key}: {kvp.Value}");
+//}
 
-Console.WriteLine("All config KVPS");
-Console.WriteLine("All config KVPS");
-Console.WriteLine("All config KVPS");
-// todo : refactor this into a class by itself, so we can use configsection for actual real purposes
+//Console.WriteLine("All config KVPS");
+//Console.WriteLine("All config KVPS");
+//Console.WriteLine("All config KVPS");
+//// todo : refactor this into a class by itself, so we can use configsection for actual real purposes
 // IConfigurationSection => APIKeys
 //builder.Services.AddSingleton(configuration.GetSection("APIKeys"));
 
@@ -68,10 +68,10 @@ bool apiConfigError = false;
 List<string> apiConfigErrors = new();
 var missingConfigs = new[]
 {
-    "API.Location.Key",
-    "API.Location.Host",
-    "API.BookingCOM.Host",
-    "API.BookingCOM.Host"
+    "API:Location:Key",
+    "API:Location:Host",
+    "API:BookingCOM:Host",
+    "API:BookingCOM:Host"
 }
 .Select(k => new { Key = k, Value = configuration.GetValue<string>(k) })  // Keep key-value pair
 .Where(kv => string.IsNullOrEmpty(kv.Value)) // Filter missing values
@@ -123,18 +123,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // BookingCOM HttpClient
 builder.Services.AddHttpClient("BookingCOM", client =>
 {
-    client.BaseAddress = new("https://"+configuration.GetValue<string>("APIKeys.BookingCOM.Host"));
-    client.DefaultRequestHeaders.Add("x-rapidapi-host", configuration.GetValue<string>("APIKeys.BookingCOM.Host"));
-    client.DefaultRequestHeaders.Add("x-rapidapi-key", configuration.GetValue<string>("APIKeys.BookingCOM.Key"));
+    client.BaseAddress = new("https://"+configuration.GetValue<string>("APIKeys:BookingCOM:Host"));
+    client.DefaultRequestHeaders.Add("x-rapidapi-host", configuration.GetValue<string>("APIKeys:BookingCOM:Host"));
+    client.DefaultRequestHeaders.Add("x-rapidapi-key", configuration.GetValue<string>("APIKeys:BookingCOM:Key"));
 });
 
 
 // Location HttpClient
 builder.Services.AddHttpClient("Location", client =>
 {
-    client.BaseAddress = new("https://" + configuration.GetValue<string>("APIKeys.Location.Host"));
-    client.DefaultRequestHeaders.Add("x-rapidapi-host", configuration.GetValue<string>("APIKeys.Location.Host"));
-    client.DefaultRequestHeaders.Add("x-rapidapi-key", configuration.GetValue<string>("APIKeys.Location.Key"));
+    client.BaseAddress = new("https://" + configuration.GetValue<string>("APIKeys:Location:Host"));
+    client.DefaultRequestHeaders.Add("x-rapidapi-host", configuration.GetValue<string>("APIKeys:Location:Host"));
+    client.DefaultRequestHeaders.Add("x-rapidapi-key", configuration.GetValue<string>("APIKeys:Location:Key"));
 });
 
 builder.Services.AddScoped<IFlightProvider, BookingFlightProvider>();
