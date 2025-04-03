@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using GotorzProject.Shared;
+using GotorzProject.Model;
 
 namespace GotorzProject.ServerAPI
 {
@@ -13,10 +14,10 @@ namespace GotorzProject.ServerAPI
     public class LoginController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<CustomUser> _signInManager;
 
         public LoginController(IConfiguration configuration,
-                               SignInManager<IdentityUser> signInManager)
+                               SignInManager<CustomUser> signInManager)
         {
             _configuration = configuration;
             _signInManager = signInManager;
@@ -27,16 +28,31 @@ namespace GotorzProject.ServerAPI
         {
             var result = await _signInManager.PasswordSignInAsync(login.Email, login.Password, false, false);
 
+            
+
             if (!result.Succeeded) return BadRequest(new LoginResult { Successful = false, Error = "Username and password are invalid." });
 
-            var claims = new[]
+            var claims = new List<Claim>()
             {
-            new Claim(ClaimTypes.Name, login.Email)
-        };
+                new Claim(ClaimTypes.Name, login.Email)
+            };
+          
+            
+
+            // get roles for user and append them to claims
+            foreach (var claim in _signInManager.Context.User.Claims)
+            {
+                if(claim.Type == ClaimTypes.Role)
+                {
+                    claims.Add(claim);
+                }
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSecurityKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expiry = DateTime.Now.AddDays(Convert.ToInt32(_configuration["JwtExpiryInDays"]));
+
+            Console.WriteLine($"claims.Length {claims.Count}");
 
             var token = new JwtSecurityToken(
                 _configuration["JwtIssuer"],
@@ -45,6 +61,8 @@ namespace GotorzProject.ServerAPI
                 expires: expiry,
                 signingCredentials: creds
             );
+
+            Console.WriteLine(token);
 
             return Ok(new LoginResult { Successful = true, Token = new JwtSecurityTokenHandler().WriteToken(token) });
         }

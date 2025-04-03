@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using GotorzProject.Client.Services;
 using Blazored.LocalStorage;
+using GotorzProject.Model;
 using GotorzProject.Service;
 using GotorzProject.Service.Misc;
 
@@ -46,10 +47,19 @@ string dbType = "MSSql";
 var connectionString = configuration.GetConnectionString(dbType);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString)
+    options.UseSqlServer(connectionString), ServiceLifetime.Scoped
 );
 
-builder.Services.AddDefaultIdentity<IdentityUser>()
+
+// Location HttpClient
+builder.Services.AddHttpClient("Location", client =>
+{
+    client.BaseAddress = new("https://" + configuration.GetValue<string>("APIKeys:Location:Host"));
+    client.DefaultRequestHeaders.Add("x-rapidapi-host", configuration.GetValue<string>("APIKeys:Location:Host"));
+    client.DefaultRequestHeaders.Add("x-rapidapi-key", configuration.GetValue<string>("APIKeys:Location:Key"));
+});
+
+builder.Services.AddIdentity<CustomUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -80,6 +90,8 @@ builder.Services.AddHttpClient("BookingCOM", client =>
 
 builder.Services.AddScoped<IFlightProvider, BookingFlightProvider>();
 builder.Services.AddScoped<IHotelProvider, BookingCOMHotelProvider>();
+
+builder.Services.AddScoped<IUserAdminstration, UserAdminstration>();
 
 builder.Services.AddControllers();
 

@@ -1,43 +1,35 @@
 ﻿using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql.Replication;
+using NuGet.Versioning;
 using static System.Net.WebRequestMethods;
 
 namespace GotorzProject.ServerAPI
 {
-    [ApiController ]
+    [ApiController]
     [Route("api/[controller]")]
     public class LocationController : Controller
     {
         HttpClient Http;
 
-        public LocationController(HttpClient http)
+        public LocationController(IHttpClientFactory factory)
         {
-            Http = http;
+            // Get setup http client with headers from configuration
+            Http = factory.CreateClient("Location");
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+        // unused 
+        //public IActionResult Index()
+        //{
+        //    return View();
+        //}
 
         [HttpGet("getCountries")]
         public async Task<IActionResult> GetContries()
         {
-            //Definerer headers
-            var requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://country-state-city-search-rest-api.p.rapidapi.com/allcountries")
-            {
-                Headers =
-            {
-                { "x-rapidapi-key", "89a426e5e5msh5e0f6acce251423p153feejsnb4c34d85e74b"},
-                { "x-rapidapi-host", "country-state-city-search-rest-api.p.rapidapi.com" }
-            }
-            };
 
-            var response = await Http.SendAsync(requestMessage);
-            
-            //Console.WriteLine(response.Headers);
-            //Console.WriteLine(response.StatusCode);
-            //Console.WriteLine(await response.Content.ReadAsStringAsync());
+            // Get countries 
+            var response = await Http.GetAsync("/allcountries");
 
             var result = new List<string>();
 
@@ -45,12 +37,31 @@ namespace GotorzProject.ServerAPI
             {
                 var countriesList = await response.Content.ReadFromJsonAsync<List<Country>>();
 
-                return Ok(countriesList.Select(c => c.Name).ToList());
+                return Ok(countriesList);
             }
             else
             {
                 return BadRequest("Failed to load countries");
             }
+        }
+
+        [HttpGet("getCities")]
+        public async Task<IActionResult> GetCities([FromQuery] string country)
+        {
+            // Set query string with parameter from method
+            string query = $"/cities-by-countrycode?countrycode={country}";
+
+            // get response object
+            var response = await Http.GetAsync(query);
+
+            // parse response content into list of cities
+            var result = await response.Content.ReadFromJsonAsync<List<City>>();
+
+            // Convert list of cities into list of strings, each index is a city name
+            var list = result.Select(c => c.name).ToList();
+            
+            // return list of citynames
+            return Ok(list);
         }
 
     }
@@ -77,7 +88,15 @@ namespace GotorzProject.ServerAPI
         [JsonPropertyName("longitude")]
         public string Longitude { get; set; }
 
-        
-        
     }
+
+    public class City
+    {
+        public string name { get; set; }
+        public string countryCode { get; set; }
+        public string stateCode { get; set; }
+        public string latitude { get; set; }
+        public string longitude { get; set; }
+    }
+
 }

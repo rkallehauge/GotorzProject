@@ -1,0 +1,98 @@
+﻿@page "/MedarbejderAdministration"
+@* @rendermode InteractiveWebAssembly *@
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@using GotorzProject.Client.Component
+@using GotorzProject.Shared.DataTransfer
+@using System.Security.Claims
+
+@inject HttpClient http
+<CascadingAuthenticationState>
+	<AuthorizeView Roles="Admin,Manager">
+		<Authorized>
+			@if(@context != null){
+				<h3>Medarbejder Administration</h3>
+
+				@* <h4>Opret ny medarbejder</h4> *@
+				<div>
+					<!-- List all current employees -->
+					@* An employee is any user with a role by our definition*@
+					<h5>All currenlt employees.</h5>
+					@if(users != null)
+					{
+						@foreach(UserDTO user in users)
+						{
+							<UserView CurrentUser="user" />
+						}
+					}
+					else
+					{
+						@* Change this to show no users loaded if that actually happens *@
+						<p>Loading Employees...</p>
+						<Spinner />
+					}
+				</div>
+				<!-- List users by their allocated role -->
+				<div>
+					@foreach(var role in usersByRole.Keys){
+						<div>
+							<h5>Users in @role</h5>
+							@foreach(UserDTO user in usersByRole[role]){
+								<UserView CurrentUser="user" />
+							}
+						</div>
+					}
+				</div>
+			}
+		</Authorized>
+		<NotAuthorized>
+			<Spinner />
+		</NotAuthorized>
+	</AuthorizeView>
+</CascadingAuthenticationState>
+
+
+@code{
+
+
+	// unique users
+	HashSet<UserDTO>? users = new();
+
+	// Users by role
+	Dictionary<string, HashSet<UserDTO>> usersByRole = new();
+
+
+
+	protected override async Task OnInitializedAsync(){
+
+		if(http.BaseAddress != null){
+			string getUsersEndpoint = "/api/User/GetUsers";
+			var result = await http.GetAsync(getUsersEndpoint);
+			result.EnsureSuccessStatusCode();
+
+			users = await result.Content.ReadFromJsonAsync<HashSet<UserDTO>>();
+
+			// This might be needed at a future date
+			// var roleResult = await http.GetAsync("api/User/GetRoles");
+			// roleResult.EnsureSuccessStatusCode();
+			// List<string> roles = await roleResult.Content.ReadFromJsonAsync<List<string>>();
+
+			// // add user lists to dictionary
+			// foreach(var role in roles){
+			// 	usersByRole.Add(role, new());
+			// }
+
+			foreach(UserDTO user in users){
+				foreach(var role in user.Roles){
+
+					// Only add roles that actually exist in system
+					if(!usersByRole.ContainsKey(role)){
+						usersByRole.Add(role, new());
+					}
+
+					usersByRole[role].Add(user);
+				}
+			}
+		}	
+	}
+}

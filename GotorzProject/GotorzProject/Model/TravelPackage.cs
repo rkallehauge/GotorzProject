@@ -8,10 +8,17 @@ namespace GotorzProject.Model
         public int Id { get; set; }
         public string DestinationCity { get; set; }
         public string DestinationCountry { get; set; }
-        public string Hotel { get; set; }
+
+        [Required]
+        public Hotel? Hotel { get; set; }
+
         public double Price { get; set; }
         public DateTime Departure { get; set; }
         public DateTime Return { get; set; }
+        // for ef core
+        public TravelPackage()
+        {
+        }
 
         //Midlertidig constructor med begrænset info
         public TravelPackage(string destinationCity, string destinationCountry)
