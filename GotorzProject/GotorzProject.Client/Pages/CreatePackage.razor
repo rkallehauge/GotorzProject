@@ -4,6 +4,7 @@
 
 @using GotorzProject.Shared.DataTransfer
 @using System.Text.Json.Serialization
+@using System.Web
 
 
 @inject HttpClient Http
@@ -79,13 +80,13 @@
 @*CheckIn*@
 <div class="Choose check in"
 	<label for="return">Choose check in</label>
-	<input id="returnDate" type="datetime-local" @bind="checkIn"/>
+	<input id="returnDate" type="datetime-local" @onchange="OnHotelCheckInTimeChanged"/>
 </div>
 
 @*CheckOut*@
 <div class="Choose check out"
 	<label for="return">Choose check out</label>
-	<input id="returnDate" type="datetime-local" @bind="checkOut"/>
+	<input id="returnDate" type="datetime-local" @onchange="OnHotelCheckOutTimeChanged"/>
 </div>
 
 @*Return Date*@
@@ -159,6 +160,19 @@
 		hotels = await LoadHotelsFromCity(destinationCity, destinationCountry);
 	}
 
+	private async Task OnHotelCheckInTimeChanged(ChangeEventArgs e)
+	{
+		checkIn = DateTime.Parse(e.Value.ToString());
+
+		hotels = await LoadHotelsFromCity(destinationCity, destinationCountry);
+	}
+
+	private async Task OnHotelCheckOutTimeChanged(ChangeEventArgs e)
+	{
+		checkOut = DateTime.Parse(e.Value.ToString());
+		hotels = await LoadHotelsFromCity(destinationCity, destinationCountry);
+	}
+
 
 	//Henter en liste af byer fra et land
 	private async Task<List<string>> LoadCitiesFromCountry(string country)
@@ -174,34 +188,31 @@
 
 		if (string.IsNullOrEmpty(destinationCity) || string.IsNullOrEmpty(destinationCountry))
 		{
-			Console.WriteLine("Godaw");
+			Console.WriteLine("Destination city or country was empty.");
 			return new List<string>();
 		}
 
 		if (checkIn < DateTime.Today || checkIn >= checkOut)
 		{
-			errorMessage = "Invalid check-in or check-out date.";
+			Console.WriteLine("Invalid check-in or check-out date.");
+			return new List<string>(); // we cant allow malformed message to be sent to server, s this will cause a crash
 		}
 
 		string formattedCheckIn = checkIn.ToString("yyyy-MM-dd");
 		string formattedCheckOut = checkOut.ToString("yyyy-MM-dd");
 
-		string encodedCity = Uri.EscapeDataString(destinationCity);
-		string encodedCountry = Uri.EscapeDataString(destinationCountry);
+		// Console.WriteLine($"Req hotels for location: {encodedCountry}, {encodedCity}, Check in: {formattedCheckIn}, check out: {formattedCheckOut}");
 
-		Console.WriteLine($"Req hotels for location: {encodedCountry}, {encodedCity}, Check in: {formattedCheckIn}, check out: {formattedCheckOut}");
+		Console.WriteLine("please god work");
 
-		try
-		{
-			var response = await Http.GetFromJsonAsync<List<string>>($"api/Hotel/GetHotels?location={encodedCountry},%20{encodedCity}&checkIn={formattedCheckIn}&checkOut={formattedCheckOut}");
+		var location = HttpUtility.UrlEncode($"{countries.FirstOrDefault(x => x.Value == destinationCountry).Key} {destinationCity}");
 
-			return response ?? new List<string>();
-		}
-		catch (Exception ex)
-		{
-			errorMessage = $"Error fetching hotels: {ex.Message}";
-			return new List<string>();
-		}
+		var response = await Http.GetFromJsonAsync<List<Hotel>>($"api/Hotel/GetHotels?location={location}&checkIn={formattedCheckIn}&checkOut={formattedCheckOut}");
+
+		var result = response.Select(hotel => hotel.Name).ToList();
+
+		return result ?? new List<string>();
+		
 	}
 
 
@@ -270,5 +281,35 @@
 		public string Longitude { get; set; }
 
 	}
+
+	public class TotalPrice
+	{
+		public double Value { get; set; }
+		public string Currency { get; set; }
+	}
+
+	public class PricePerNight
+	{
+		public double Value { get; set; }
+		public string Currency { get; set; }
+	}
+
+	public class Hotel
+	{
+		public string Name { get; set; }
+		public string Beds { get; set; }
+		public TotalPrice TotalPrice { get; set; }
+		public PricePerNight PricePerNight { get; set; }
+		public double Rating { get; set; }
+		public string RatingDesc { get; set; }
+		public int RatingAmount { get; set; }
+		public string ImageSource { get; set; }
+	}
+
+	public class HotelList
+	{
+		public List<Hotel> Hotels { get; set; }
+	}
+
 
 }

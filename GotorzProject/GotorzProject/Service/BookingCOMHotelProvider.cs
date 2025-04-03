@@ -36,12 +36,13 @@ namespace GotorzProject.Service
             string hotelSearchEndpoint = apiBase + "searchHotels";
 
             string locationQuery = $"{locationSearchEndpoint}?query={location}";
+            Console.WriteLine(locationQuery);
 
             var locationResponse = await _httpClient.GetAsync(locationQuery);
             locationResponse.EnsureSuccessStatusCode();
 
-            //Console.WriteLine("Location Search");
-            //Console.WriteLine(await locationResponse.Content.ReadAsStringAsync());
+            Console.WriteLine("Location Search");
+            Console.WriteLine(await locationResponse.Content.ReadAsStringAsync());
 
             LocationSearchModel? lsm = await locationResponse.Content.ReadFromJsonAsync<LocationSearchModel>();
 
@@ -72,7 +73,7 @@ namespace GotorzProject.Service
             var hotelQuery = hotelSearchEndpoint + Helper.ToQueryString(param);
 
 
-            //Console.WriteLine(hotelQuery);
+            Console.WriteLine(hotelQuery);
             //return null;
             //Console.WriteLine(hotelQuery);
 
@@ -80,10 +81,16 @@ namespace GotorzProject.Service
             hotelResponse.EnsureSuccessStatusCode();
 
 
-            //Console.WriteLine("Hotel Search Model");
-            //Console.WriteLine(await hotelResponse.Content.ReadAsStringAsync());
+            Console.WriteLine("Hotel Search Model");
+            Console.WriteLine(await hotelResponse.Content.ReadAsStringAsync());
 
             var hotels = await hotelResponse.Content.ReadFromJsonAsync<HotelSearchModel>();
+
+            if(hotels.data.hotels.Length == 0)
+            {
+                // no hotels found
+                return null;
+            }
 
             List<BaseHotelRoomDTO> result = new();
 
