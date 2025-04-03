@@ -184,6 +184,8 @@
 		string encodedCity = Uri.EscapeDataString(destinationCity);
 		string encodedCountry = Uri.EscapeDataString(destinationCountry);
 
+		// check om check in / out er gyldig
+
 		var response = await Http.GetFromJsonAsync<List<string>>($"api/Hotel/GetHotels?location={encodedCountry},%20{encodedCity}&checkIn={formattedCheckIn}&checkOut={formattedCheckOut}");
 
 		return response ?? new List<string>();
