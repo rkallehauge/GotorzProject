@@ -8,9 +8,24 @@
 
 <div>
     <div class="Startheader">
-        <img src="https://gotorz.ae/assets/img/logo-medium.png" alt="GoTorz.logo" class="GoTorz" />
+        <div>
+            <img src="https://gotorz.ae/assets/img/logo-medium.png" alt="GoTorz.logo" class="GoTorz" />
+        </div>
+        <div class="txtbanner">
+            <h1>Travel a lot... at a lower...</h1>
+            <p>Your trip with us includes plane tickets and hotel accommodation  </p>
+            <p> Book your tourist destination now with ease. </p>
+            <div><button>Select Your Destination</button></div>
+        </div>
+        <div>
+            <img src="https://gotorz.ae/assets/img/new-banner.svg" alt="Banner.Logo" class="Banner" />
+        </div>
     </div>
     <div>
+        <div style="height:100px; margin-top:30px;">
+            <h3 style="text-align:center;">Gotorz Provided Places</h3>
+            <h2>Best of the Best Travel Destinations</h2>
+        </div>
         <div class="scroll-container">
             <div class="bg-img-container">
                 <div class="bg-img1"></div>
@@ -28,19 +43,90 @@
         <div id="content-con">
             <div id="text-con">
                 <h3>Gotorz</h3>
-                <h5>Rejsen starter her</h5>
+                <h2 style="text-align:left;">Let's start Adventures</h2>
                 <p>We at Gotorz give you, besides the travel experience, the pleasure of adventure and discovering new and enjoyable tourist destinations. Life is short and the world is very wide, the sooner you start to discover it, the better. Gotorz has made achieving happiness and travel easy and convenient in addition to being cheap and accessible to everyone. Cheap prices with high services, this equation that we succeeded in achieving, and left a large imprint in the world of the travel industry.</p>
                 <p>Traveling is a culture, and it gives you money that a book or even a library would not give you, because it is a real and direct contact with life, with beauty, and with the other, consciously or unconsciously. Traveling is a great awareness that seeps so deep that it captures all of your consciousness. During travel, you may remain silent for a long time, but it later makes you a storyteller. The value of seeing once is hundreds of times better than hearing, so do not hear about what they say on travel, but go and see for yourself.</p>
             </div>
             <div class="textimg"></div>
         </div>
         <div id="con">
-            <h4>Gotorz Team</h4>
+            <h3 style="text-align:center;">Gotorz Team</h3>
             <h2>Lets Meet Gotorz Employees</h2>
         </div>
-        <div class="employeeimg"><img src=~/employees.png /></div>
+        <div class="employeeimg"><img/></div>
+    </div>
+    <div id="footer">
+        <div>
+            <h4>Gotorz</h4>
+            <p>info@gotorz.ae</p>
+        </div>
+        <div class="info">
+            <p>Home</p>
+            <p>About Gotoz</p>
+            <p>Tours Booking</p>
+            <p>Why Gotorz?</p>
+            <p>Membership</p>
+        </div>
+        <div class="info2">
+            <p>Reservation Info</p>
+            <p>Reservation Cancelleation</p>
+            <p>Advices</p>
+            <p>Contact Us</p>
+            <p>Careers</p>
+        </div>
+        <div id="social"> 
+            <div id="media">
+                <a class="icon" href="https://www.instagram.com/go_torz/"
+                    <i id="iconstyle" class="fa-brands fa-instagram"></i>
+                </a>
+            </div>
+            <div id="media">
+                <a class="icon" href="https://www.facebook.com/GodTurGermany"
+                    <i id="iconstyle" class="fa-brands fa-square-facebook"></i>
+                </a>
+                <div class="gdpr">
+                    <p>All Rights Reserved</p>
+                    <p>2025 Gotorz</p>
+                </div>
+            </div>
+            <div id="media">
+                <a class="icon" href="https://www.youtube.com/channel/UCW_TVt0fFu2Yab1qDwfVnaQ"
+                    <i id="iconstyle" class="fa-brands fa-youtube"></i>
+                </a>
+            </div>
+            <div id="media">
+                <a class="icon" href="https://www.tiktok.com/gotorz"
+                    <i id="iconstyle" class="fa-brands fa-tiktok"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button onclick="topFunction()" id="myBtn" title="Go to top" class="fa fa-level-up"></button>
     </div>
 </div>
+
+<script>
+    // Get the button
+    let mybutton = document.getElementById("myBtn");
+
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        mybutton.style.display = "block";
+      } else {
+        mybutton.style.display = "none";
+      }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+</script>
 
 @code{  
 
@@ -53,24 +139,43 @@
         font-family: Arial, Helvetica, sans-serif;
     }
 
-    .GoTorz {
-        height: 100px;
-        width: 200px;
-    }
-
-    h2, h4 {
-        text-align: center;
-        margin-top: 10px;
-    }
-
     .Startheader{
+        display:flex;
+        height: 600px;
         background-image: url(https://en.idei.club/uploads/posts/2023-06/1687613074_en-idei-club-p-travel-background-dizain-68.jpg);
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        height: 600px;
-        justify-content: center;
-        align-items: center;
+        box-shadow: inset 0 0 0 2000px rgba(52,119,148, 0.8);
+    }
+
+    .GoTorz {
+        height: 150px;
+        width: 25 0px;
+        margin-left:300px;
+        margin-top:40px;
+    }
+
+    .txtbanner{
+        width: auto;
+        margin-top:200px;
+        margin-left:50px;
+    }
+
+    .Banner{
+        height:300px;
+        margin-top:200px;
+        margin-left:100px;
+        opacity:80%;
+    }
+
+    h2{
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    h3 {
+        color: #f5b418;
     }
 
     .scroll-container {
@@ -142,7 +247,7 @@
         flex:1;
         background-image: url("https://start.paperoffice.com/_images/paperoffice_main_norisk.webp");
         height: 400px;
-        width: 300px;
+        width: 100%;
         object-fit:contain;
         background-repeat: no-repeat;
         background-size: cover;
@@ -157,7 +262,67 @@
     }
 
     .employeeimg{
-        width: 400px;
-        height:300px;
+        width: auto;
+        height:auto;
     }
+
+    #footer{
+        display:flex;
+        margin-left:20%;
+        margin-top:20px;
+    }
+
+    .info{
+        margin-left:100px;
+    }
+
+    .info2{
+        margin-left: 150px;
+    }
+
+    #social{
+        display:flex;
+        margin-left:200px;
+        margin-top:50px
+    }
+
+    #media{
+        height: 40px;
+        width: 40px;
+        border-radius: 4px;
+        background-color: #0095da;
+        margin-left:10px;
+    }
+
+    .icon{
+        color:white;
+    }
+
+    #iconstyle{
+        font-size:20px;
+        margin-top:10px;
+        margin-left:10px;
+    }
+
+    .gdpr{
+        display:flex;
+        margin-top:20px;
+    }
+
+    #myBtn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 30px;
+      z-index: 99;
+      font-size: 14px;
+      border: none;
+      outline: none;
+      background-color: #0095da;
+      color: white;
+      cursor: pointer;
+      padding: 15px;
+      border-radius: 4px;
+}
+
 </style>
