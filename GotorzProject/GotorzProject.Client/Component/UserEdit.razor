@@ -1,4 +1,5 @@
 ﻿@using GotorzProject.Shared.DataTransfer
+@using System.Text.Json.Serialization
 
 @inject HttpClient httpClient
 
@@ -46,13 +47,15 @@
 
                 <div class="form-group">
                     <label for="country">Country</label>
-                   @*  <AutoComplete 
-                        @bind-Value="CurrentUser.Country"
-                        TItem="Country"
-                        DataProvider=""
-                        
-                    
-                    > *@
+                    <AutoComplete 
+                    @bind-Value="CurrentUser.Country"
+                    TItem="Country"
+                    DataProvider="CountryDataProvider"
+                    PropertyName="Name"
+                    Placeholder="Select a country..."
+                    OnChanged="(Country country) => OnAutoCompleteChanged(country)" />
+                    >
+
                 </div>
 
                 @if(userRoles.Count!=0){
@@ -97,6 +100,11 @@ else
         }
 
         await UserEdited.InvokeAsync(true);
+    }
+
+    private void OnAutoCompleteChanged(Country country)
+    {
+        CurrentUser.Country = country.Name;
     }
 
     private async Task<AutoCompleteDataProviderResult<Country>> CountryDataProvider(AutoCompleteDataProviderRequest<Country> request)
