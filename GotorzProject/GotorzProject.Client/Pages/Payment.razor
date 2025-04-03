@@ -5,11 +5,29 @@
 <h3>Payment</h3>
 
 <form id=" =payment-form">
-	<div id="card-element">
+	<div style="margin-bottom: 20px">
+		<label for="name">Fornavn:</label>
+		<input type="text" id="name" name="name" required placeholder="Indtast fornavn"/>
+	</div>
+
+	<div style ="margin-bottom: 20px">
+		<label for="name">Efternavn:</label>
+		<input type="text" id="name" name="name" required placeholder="Indtast dit efternavn" />
+	</div>
+
+
+	<div style="margin-bottom:20px">
+		<label for="cardnumber">Kortoplysninger:</label>
+		<input type="text" id="cardnumber" name="cardnumber" required placeholder="Indtast dit kortnummer"/>
+	</div>
+
+
+	
+	<div id="card-element" >
 		<! Stripe card inserted here-->
 	</div>
 
-	<button itemid="submit">Betal</button>
+	<button itemid="submit">Betal med Stripe</button>
 
 </form>
 
@@ -18,17 +36,22 @@
 @code 
 {
 	private string stripePublicKey = "pk_test_51R93CSP59y1jtVDP2YoFzsxzVbByt2z9rE4gzybenudTV6zQ0nh0RGOp9Ub6zDoIOK176On3J9XGcIZIodsXruGN00c21LZNjm";
-
-	protected override async Task OnInitializedAsync()
+	private bool _isInitialized = false;
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		await base.OnInitializedAsync();
-		await InitializeStripeJs();
+		if (firstRender && !_isInitialized)
+		{
+			_isInitialized = true;
+			await InitializeStripeJs();
+		}
 	}
 
 	private async Task InitializeStripeJs()
 	{
 		await JSRuntime.InvokeVoidAsync("initializeStripe", stripePublicKey);
 	}
+
+	
 
 
 }

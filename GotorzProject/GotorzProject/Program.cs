@@ -13,6 +13,7 @@ using GotorzProject.Client.Services;
 using Blazored.LocalStorage;
 using GotorzProject.Service;
 using GotorzProject.Service.Misc;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSyncfusionBlazor();
@@ -78,8 +79,19 @@ builder.Services.AddHttpClient("BookingCOM", client =>
     client.DefaultRequestHeaders.Add("x-rapidapi-key", configuration.GetValue<string>("APIKeys:BookingCOM:Key"));
 });
 
+// HttpClientFactory PaymentProvider
+builder.Services.AddHttpClient("Stripe", client =>
+{
+    client.BaseAddress = new Uri("https://api.stripe.com/v1/");
+    client.DefaultRequestHeaders.Add("Authorization", "Bearer" + configuration["APIKeys:Stripe:sk_test_51R93CSP59y1jtVDPRvyzpEoB06u2NV5aqGxELTalIfjrdNZbAtCrdCATkFzWI2Fp6DLxakjQRPMO0nharQX7Nh3R00H2g2cCyp"]);
+});
+
+
+
 builder.Services.AddScoped<IFlightProvider, BookingFlightProvider>();
 builder.Services.AddScoped<IHotelProvider, BookingCOMHotelProvider>();
+builder.Services.AddSingleton<StripeClient>(_ => new StripeClient(configuration["APIKeys:Stripe:sk_test_51R93CSP59y1jtVDPRvyzpEoB06u2NV5aqGxELTalIfjrdNZbAtCrdCATkFzWI2Fp6DLxakjQRPMO0nharQX7Nh3R00H2g2cCyp"]));
+builder.Services.AddScoped<IPaymentProvider, PaymentProvider>();
 
 builder.Services.AddControllers();
 

@@ -1,31 +1,33 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GotorzProject.Service;
+using Microsoft.AspNetCore.Mvc;
 using Stripe;
 
 namespace GotorzProject.ServerAPI
 {
+    [Route("payment")]
     public class StripePaymentController : Controller
     {
-        private readonly StripeClient _stripeClient;
+        private readonly IPaymentProvider _paymentProvider;
 
-        public StripePaymentController(StripeClient stripeClient)
+        public StripePaymentController(IPaymentProvider paymentProvider)
         {
-            _stripeClient = stripeClient;
+            _paymentProvider = paymentProvider;
         }
 
-        [HttpPost ("payment/charge")]
+        [HttpPost ("charge")]
         public async Task<IActionResult> CreatePaymentIntent([FromBody] PaymentRequest request) 
         {
-            var paymentIntentService = new PaymentIntentService(_stripeClient);
-            var options = new PaymentIntentCreateOptions
+            if (request == null || request.Amount <= 0) 
             {
-              Amount = request.Amount,
-              Currency = "dkk",
+                return BadRequest("Beløbet skal være positivt");
+            }
+            var clientSecret = await _paymentProvider.CreatePaymentIntentAsync(request.Amount, "dkk");
 
-            };
-
-            var paymentIntent = await paymentIntentService.CreateAsync(options);
-            return Json(new { clientSecret = paymentIntent.ClientSecret });
-
+            if (string.IsNullOrEmpty(clientSecret))
+            {
+                return StatusCode(500, "Fejl ved oprettelse af betaling");
+            }
+            return Json(new { clientSecret });
         }
 
         public class PaymentRequest 
