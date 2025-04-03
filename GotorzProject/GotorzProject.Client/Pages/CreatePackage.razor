@@ -128,7 +128,7 @@
 	private string packageInfo;
 	private DateTime checkIn = DateTime.Now;
 	private DateTime checkOut = DateTime.Now;
-	
+
 	private Dictionary<string, string> countries = new();
 
 	private List<string> departureCities = new List<string>();
@@ -178,17 +178,30 @@
 			return new List<string>();
 		}
 
+		if (checkIn < DateTime.Today || checkIn >= checkOut)
+		{
+			errorMessage = "Invalid check-in or check-out date.";
+		}
+
 		string formattedCheckIn = checkIn.ToString("yyyy-MM-dd");
 		string formattedCheckOut = checkOut.ToString("yyyy-MM-dd");
 
 		string encodedCity = Uri.EscapeDataString(destinationCity);
 		string encodedCountry = Uri.EscapeDataString(destinationCountry);
 
-		// check om check in / out er gyldig
+		Console.WriteLine($"Req hotels for location: {encodedCountry}, {encodedCity}, Check in: {formattedCheckIn}, check out: {formattedCheckOut}");
 
-		var response = await Http.GetFromJsonAsync<List<string>>($"api/Hotel/GetHotels?location={encodedCountry},%20{encodedCity}&checkIn={formattedCheckIn}&checkOut={formattedCheckOut}");
+		try
+		{
+			var response = await Http.GetFromJsonAsync<List<string>>($"api/Hotel/GetHotels?location={encodedCountry},%20{encodedCity}&checkIn={formattedCheckIn}&checkOut={formattedCheckOut}");
 
-		return response ?? new List<string>();
+			return response ?? new List<string>();
+		}
+		catch (Exception ex)
+		{
+			errorMessage = $"Error fetching hotels: {ex.Message}";
+			return new List<string>();
+		}
 	}
 
 
