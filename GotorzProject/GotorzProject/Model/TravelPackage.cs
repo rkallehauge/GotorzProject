@@ -28,7 +28,7 @@ namespace GotorzProject.Model
         }
 
         //Den egentlige constructor, når page virker
-        public void UpdatedTravelPackage(int paymentID, string destinationCity, string destinationCountry, string hotel, double price, DateTime departure, DateTime @return)
+        public void UpdatedTravelPackage(int paymentID, string destinationCity, string destinationCountry, Hotel hotel, double price, DateTime departure, DateTime @return)
         {
             DestinationCity = destinationCity;
             DestinationCountry = destinationCountry;
