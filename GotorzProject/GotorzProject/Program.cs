@@ -52,6 +52,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString), ServiceLifetime.Scoped
 );
 
+
+
 // API Key Testing 
 bool apiConfigError = false;
 List<string> apiConfigErrors = new();
@@ -158,5 +160,22 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(GotorzProject.Client._Imports).Assembly);
 
 app.MapControllers();
+
+
+
+// Manage migrations on before running
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
+    // Check whether database setup is relational
+    if (dbContext.Database.IsRelational())
+    {
+        // If so, run a migration
+        // This will only be resource intensive if there actually are changes
+        dbContext.Database.Migrate();
+
+    }
+}
+
 
 app.Run();
