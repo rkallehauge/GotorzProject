@@ -26,7 +26,7 @@
 @*Departure City*@
 <div class="Choose departure city">
 	<label for="city">Choose departure city:</label>
-	<select id="city" @bind="departureCity">
+	<select id="city" @onchange="OnDepartureCityChanged">
 		<option value="">Select a city</option>"
 		@foreach (var city in departureCities)
 		{
@@ -63,6 +63,34 @@
 			<option value="@city">@city</option>
 		}
 	</select>
+</div>
+
+@*Flight Search*@
+<div>
+
+	<label>From</label>
+	<input @bind-value="From" />
+
+
+	<label>To</label>
+	<input @bind-value="To" />
+
+	<label>Departure</label>
+	<input type="date" @bind-value="SelectedDate" min="@MinimumDate" placeholder="@MinimumDate" />
+
+	<button @onclick="Check">Search Flight</button>
+
+	@if (Flights != null)
+	{
+		@foreach (var flight in Flights)
+		{
+			<GotorzProject.Client.Component.FlightOffer FlightDTO="flight" />
+		}
+	}
+	@if (Loading)
+	{
+		<Spinner />
+	}
 </div>
 
 @*Hotel*@
@@ -137,12 +165,43 @@
 	private List<string> hotels = new List<string>();
 	private string errorMessage;
 
+	private bool Loading = false;
+	private string MinimumDate = DateTime.Now.ToString("yyyy-MM-dd");
+	public DateOnly SelectedDate { get; set; }
+
+	public List<BaseFlightDTO> Flights { get; set; } = default!;
+
+	public string From { get; set; }
+	public string To { get; set; }
+
+	private async Task Check()
+	{
+		Loading = true;
+
+		Console.WriteLine($"api/Flights/Single?from={From}&to={To}&departure={SelectedDate.ToString("yyyy-MM-dd")}");
+		var response = await Http.GetAsync($"api/Flights/Single?from={From}&to={To}&departure={SelectedDate.ToString()}");
+		Loading = false;
+		Flights = await response.Content.ReadFromJsonAsync<List<BaseFlightDTO>>();
+
+	}
 
 	//Gemmer valgt afrejseland
 	private async Task OnDepartureCountryChanged(ChangeEventArgs e)
 	{
 		departureCountry = e.Value.ToString();
 		departureCities = await LoadCitiesFromCountry(departureCountry);
+
+		//Valgt afrejseland overføres til afrejseland i flight søgning
+		// var selectedCountryPair = countries.FirstOrDefault(c => c.Value == departureCountry);
+		// if (selectedCountryPair.Key != null)
+		// {
+		// 	From = selectedCountryPair.Key;
+		// }
+		// else
+		// {
+		// 	From = "";
+
+		// }
 
 	}
 
@@ -158,6 +217,15 @@
 	{
 		destinationCity = e.Value.ToString();
 		hotels = await LoadHotelsFromCity(destinationCity, destinationCountry);
+
+		To = destinationCity;
+	}
+
+	//Overfører valgt afrejse by til flight søgning
+	private void OnDepartureCityChanged(ChangeEventArgs e)
+	{
+		departureCity = e.Value.ToString();
+		From = departureCity;
 	}
 
 	private async Task OnHotelCheckInTimeChanged(ChangeEventArgs e)
