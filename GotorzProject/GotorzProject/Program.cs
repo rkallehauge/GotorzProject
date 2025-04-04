@@ -41,7 +41,7 @@ Console.WriteLine("All config KVPS");
 foreach (var kvp in configuration.AsEnumerable())
 {
     Console.WriteLine($"{kvp.Key}: {kvp.Value}");
-    Console.WriteLine(configuration.GetValue<string>(kvp.Key));
+    //Console.WriteLine(configuration.GetValue<string>(kvp.Key));
 }
 
 Console.WriteLine("All config KVPS");
@@ -69,10 +69,10 @@ bool apiConfigError = false;
 List<string> apiConfigErrors = new();
 var missingConfigs = new[]
 {
-    "API:Location:Key",
-    "API:Location:Host",
-    "API:BookingCOM:Host",
-    "API:BookingCOM:Host"
+    "APIKeys:Location:Key",
+    "APIKeys:Location:Host",
+    "APIKeys:BookingCOM:Host",
+    "APIKeys:BookingCOM:Host"
 }
 .Select(k => new { Key = k, Value = configuration.GetValue<string>(k) })  // Keep key-value pair
 .Where(kv => string.IsNullOrEmpty(kv.Value)) // Filter missing values
