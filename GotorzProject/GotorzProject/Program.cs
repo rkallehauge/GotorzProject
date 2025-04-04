@@ -184,10 +184,15 @@ using (var scope = app.Services.CreateScope())
     // Check whether database setup is relational
     if (dbContext.Database.IsRelational())
     {
-        // If so, run a migration
-        // This will only be resource intensive if there actually are changes
-        dbContext.Database.Migrate();
-
+        try
+        {
+            // If so, run a migration
+            // This will only be resource intensive if there actually are changes
+            dbContext.Database.Migrate();
+        } catch (InvalidOperationException e)
+        {
+            Console.WriteLine("No migrations to add.");
+        }
     }
 }
 
