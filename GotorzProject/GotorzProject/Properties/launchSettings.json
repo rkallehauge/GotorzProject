@@ -6,7 +6,7 @@
         "dotnetRunMessages": true,
         "launchBrowser": true,
         "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-        "applicationUrl": "http://localhost:5260",
+        "applicationUrl": "http://87.54.65.75;",
         "environmentVariables": {
           "ASPNETCORE_ENVIRONMENT": "Development"
         }
@@ -16,7 +16,7 @@
         "dotnetRunMessages": true,
         "launchBrowser": true,
         "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-        "applicationUrl": "https://localhost:7097;http://localhost:5260",
+        "applicationUrl": "https://87.54.65.75;http://localhost:5260",
         "environmentVariables": {
           "ASPNETCORE_ENVIRONMENT": "Development"
         }
