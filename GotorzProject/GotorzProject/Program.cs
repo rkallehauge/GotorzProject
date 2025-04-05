@@ -54,12 +54,16 @@ Console.WriteLine("All config KVPS");
 // MSSql
 // PostgreSQL
 
-string dbType = "MSSql";
+string dbType = "PostgreSQL";
 
 var connectionString = configuration.GetConnectionString(dbType);
 
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//    options.UseSqlServer(connectionString), ServiceLifetime.Scoped
+//);
+// We are currently using PostgreSQL on server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString), ServiceLifetime.Scoped
+    options.UseNpgsql(connectionString), ServiceLifetime.Scoped
 );
 
 

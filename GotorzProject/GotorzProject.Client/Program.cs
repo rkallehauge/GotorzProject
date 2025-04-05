@@ -15,7 +15,8 @@ string hardcodedLocalUrl = "https://localhost:7097";
 
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri(builder.Configuration["FrontendUrl"] ?? hardcodedLocalUrl)
+    //BaseAddress = new Uri(builder.Configuration["FrontendUrl"] ?? hardcodedLocalUrl)
+    BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) // Use real IP instead of dumb IP
 });
 
 builder.Services.AddBlazoredLocalStorage();
