@@ -10,6 +10,8 @@ using GotorzProject.Service;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddSyncfusionBlazor();
 
+builder.Services.AddBlazorBootstrap();
+
 // todo : fix / make this better pls
 string hardcodedLocalUrl = "https://localhost:7097";
 

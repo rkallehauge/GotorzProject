@@ -1,4 +1,4 @@
-﻿@page "/MedarbejderAdministration"
+﻿@page "/EmployeeAdminstration"
 @* @rendermode InteractiveWebAssembly *@
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
@@ -11,38 +11,48 @@
 	<AuthorizeView Roles="Admin,Manager">
 		<Authorized>
 			@if(@context != null){
-				<h3>Medarbejder Administration</h3>
+				<h3>Employee Administration Dashboard</h3>
 
 				@* <h4>Opret ny medarbejder</h4> *@
-				<div>
-					<!-- List all current employees -->
-					@* An employee is any user with a role by our definition*@
-					<h5>All currenlt employees.</h5>
-					@if(users != null)
-					{
-						@foreach(UserDTO user in users)
+
+
+				<Button Type="ButtonType.Button" Color="ButtonColor.Primary" @onclick="ToggleEmployeeList">Show Employees</Button>
+
+				<Button Type="ButtonType.Button" Color="ButtonColor.Secondary" @onclick="CreateEmployeeModal">Create a new employee</Button>
+				<Modal @ref="EmployeeCreationModal" />
+
+
+				<Collapse @ref="EmployeeCollapse">
+					<div>
+						<!-- List all current employees -->
+						@* An employee is any user with a role by our definition*@
+						<h5>All currenlt employees.</h5>
+						@if(users != null)
 						{
-							<UserView CurrentUser="user" />
-						}
-					}
-					else
-					{
-						@* Change this to show no users loaded if that actually happens *@
-						<p>Loading Employees...</p>
-						<Spinner />
-					}
-				</div>
-				<!-- List users by their allocated role -->
-				<div>
-					@foreach(var role in usersByRole.Keys){
-						<div>
-							<h5>Users in @role</h5>
-							@foreach(UserDTO user in usersByRole[role]){
+							@foreach(UserDTO user in users)
+							{
 								<UserView CurrentUser="user" />
 							}
-						</div>
-					}
-				</div>
+						}
+						else
+						{
+							@* Change this to show no users loaded if that actually happens *@
+							<p>Loading Employees...</p>
+							<Spinner />
+						}
+					</div>
+					<!-- List users by their allocated role -->
+					<div>
+						@foreach(var role in usersByRole.Keys){
+							<div>
+								<h5>Users in @role</h5>
+								@foreach(UserDTO user in usersByRole[role]){
+									<UserView CurrentUser="user" />
+								}
+							</div>
+						}
+					</div>
+				</Collapse>
 			}
 		</Authorized>
 		<NotAuthorized>
@@ -53,6 +63,14 @@
 
 
 @code{
+
+	public Modal EmployeeCreationModal { get; set; } = default!;
+	private async Task CreateEmployeeModal(){
+		// todo : implement this PROPERLY
+	}
+
+	Collapse EmployeeCollapse = default!;
+	private async Task ToggleEmployeeList() => await EmployeeCollapse.ToggleAsync();
 
 
 	// unique users
