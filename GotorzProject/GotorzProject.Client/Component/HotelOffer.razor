@@ -1,0 +1,33 @@
+﻿@using GotorzProject.Shared.DataTransfer
+
+
+@if(HotelRoomDTO != null){
+	<div>
+		<div class="image-container">
+			<img class="hotel-image" src="@HotelRoomDTO.ImageSource"/>
+		</div>
+		<div class="hotel-info">
+			<p class="hotel-name">@HotelRoomDTO.Name</p>
+			@* <p class="hotel-location">@HotelRoomDTO.Name</p> *@
+		</div>
+		<div class="hotel-ratinginfo">
+			<span class=" rating">@Math.Round(HotelRoomDTO.Rating,1)</span>
+			<span class="">@HotelRoomDTO.RatingDesc</span>
+			<span class="">@HotelRoomDTO.RatingAmount ratings</span>
+		</div>
+
+		<div class="pricing">
+			<p>Prices from : @HotelRoomDTO.TotalPrice.Currency @Math.Round(HotelRoomDTO.TotalPrice.Value,2)</p>
+		</div>
+	</div>
+
+
+	
+} else{
+	<Spinner />
+}
+
+@code {
+	[Parameter]
+	public BaseHotelRoomDTO HotelRoomDTO { get; set; }
+}

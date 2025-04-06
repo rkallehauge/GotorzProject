@@ -1,0 +1,77 @@
+﻿@using GotorzProject.Client.Component
+
+@using GotorzProject.Shared.DataTransfer
+
+@inject HttpClient httpClient
+
+@rendermode InteractiveWebAssembly
+
+@page "/hoteltest"
+<CascadingAuthenticationState>
+	<AuthorizeView>
+		<Authorized>
+			<label>Location</label>
+			<input @bind-value="Location" />
+
+			<label>Check In</label>
+			<input type="date" @bind-value="CheckIn" max="@CheckOut"/>
+
+			<label>Check Out</label>
+			<input type="date" @bind-value="CheckOut" min="@CheckIn"/>
+
+			<Button Type="ButtonType.Submit" Color="ButtonColor.Primary" @onclick="Search">Search that shit</Button>
+
+
+			@if(Hotels!=null && Hotels.Count != 0)
+			{
+				<HotelOfferings Hotels="Hotels" />
+			}
+
+		</Authorized>
+		<NotAuthorized>
+			<p>Try logging in, or wait a few seconds..</p>
+			<Spinner />
+		</NotAuthorized>
+	</AuthorizeView>
+</CascadingAuthenticationState>
+
+@code {
+
+	private string Location { get; set; } = default!;
+	private DateOnly? CheckIn { get; set; } = default!;
+	private DateOnly? CheckOut { get; set; } = default!;
+
+	private List<BaseHotelRoomDTO> Hotels { get; set; }	
+
+	private async Task Search()
+	{
+		if(httpClient == null)
+		{
+			throw new Exception("HttpClient not setup...");
+		}
+
+		if (string.IsNullOrEmpty(Location) || CheckIn == null || CheckOut == null)
+		{
+			return;
+		}
+
+		Dictionary<string, string> dict = new()
+		{
+			{"location", Location},
+			{"checkIn", CheckIn.ToString()},
+			{"checkOut", CheckOut.ToString()}
+		};
+
+		string param = Helper.ToQueryString(dict);
+		string apiBase = "api/Hotel/GetHotels";
+		var result = await httpClient.GetAsync(apiBase + param);
+		result.EnsureSuccessStatusCode();
+
+		var json = await result.Content.ReadFromJsonAsync<List<BaseHotelRoomDTO>>();
+
+		Console.WriteLine(json);
+
+		Hotels = json;
+
+	}
+}

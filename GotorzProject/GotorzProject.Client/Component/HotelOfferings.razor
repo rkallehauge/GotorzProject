@@ -1,0 +1,46 @@
+﻿@using GotorzProject.Shared.DataTransfer
+
+<div class="containerthing">
+	@if (Hotels != null && Hotels.Count != 0)
+	{
+		@foreach (var hotel in Hotels)
+		{
+			<HotelOffer HotelRoomDTO="hotel" />
+		}
+		<style>
+			.containerthing {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			}
+
+			.containerthing > div {
+			width: 25%;
+			min-width: 150px;
+			max-width: min(25%, 300px);
+			width: auto;
+			margin: 0.5%;
+			}
+
+			.rating {
+			background-color: darkblue;
+			color: white;
+			padding: 1px;
+			}
+
+
+			.hotel-name {
+			font: bold;
+			}
+
+			.hotel-image {
+			max-width: 100%;
+			display: block;
+			}
+		</style>
+	}
+</div>
+@code {
+	[Parameter]
+	public List<BaseHotelRoomDTO> Hotels { get; set; } = default!;
+}

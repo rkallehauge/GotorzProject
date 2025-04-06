@@ -1,0 +1,282 @@
+﻿@page "/CreatePackage"
+@* @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false)) *@
+@rendermode InteractiveWebAssembly
+
+@inject HttpClient Http
+
+<h3>Create Package</h3>
+
+<div class="Choose depature country">
+	<label for="country">Choose departure country:</label>
+	<select id="country" @onchange="LoadCitiesFromDepartureCountry">
+		<option value="">Select a country</option>
+		@foreach (var country in countries)
+		{
+			<option value="@country">@country</option>
+		}
+	</select>
+</div>
+
+<div class="Choose departure city">
+	<label for="city">Choose departure city:</label>
+	<select id="city" @bind="departureCity">
+		<option value="">Select a city</option>"
+		@foreach (var city in cities)
+		{
+			<option value="@city">@city</option>
+		}
+	</select>
+</div>
+
+<div class="Choose destination country">
+	<label for="country">Choose destination country:</label>
+	<select id="country" @onchange="LoadCitiesFromDestinationCountry">
+		<option value="">Select a country</option>
+		@foreach (var country in countries)
+		{
+			<option value="@country">@country</option>
+		}
+	</select>
+</div>
+
+<div class="Choose destination city">
+	<label for="city">Choose destination city:</label>
+	<select id="city" @bind="destinationCity">
+		<option value="">Select a city</option>"
+		@foreach (var city in cities)
+		{
+			<option value="@city">@city</option>
+		}
+	</select>
+</div>
+
+<div>
+	<button class="styled-button" @onclick="CreateTravelPackage">Create Package</button>
+</div>
+
+<div>
+	<h4>Package Details</h4>
+	<p>@packageInfo</p>
+</div>
+
+<style>
+	div {
+	margin-bottom: 15px;
+	}
+	.styled-button{
+	border: 2px solid black;
+	padding: 10px 20px;
+	background-color: #4CAF50;
+	cursor: pointer;
+	}
+</style>
+
+
+@code {
+	private string depatureCountry;
+	private string departureCity;
+	private string destinationCountry;
+	private string destinationCity;
+	private string packageInfo;
+	private List<string> countries = new List<string>();
+	private List<string> cities = new List<string>();
+	private string errorMessage;
+
+
+
+	private async Task OnCountriesChanged(ChangeEventArgs e)
+	{
+		depatureCountry = e.Value.ToString();
+		await LoadDepartureCountries(depatureCountry);
+		
+	}
+	
+	private async Task OnDestinationCountriesChanged(ChangeEventArgs e)
+	{
+		destinationCountry = e.Value.ToString();
+		await LoadDestinationCountries(depatureCountry);
+		
+	}
+
+	//Henter en liste af afgangslande
+	private async Task LoadDepartureCountries(string depatureCountry)
+	{
+		var response = await Http.GetFromJsonAsync<List<string>>($"https://country-state-city-search-rest-api.p.rapidapi.com/allcountries={depatureCountry}");
+
+		if (response != null)
+		{
+			cities = response;
+		}
+		else
+		{
+			cities.Clear();
+		}
+
+	}
+
+	//Henter en liste af destinationslande
+	private async Task LoadDestinationCountries(string destinationCountry)
+	{
+		var response = await Http.GetFromJsonAsync<List<string>>($"https://country-state-city-search-rest-api.p.rapidapi.com/allcountries={destinationCountry}");
+
+		if (response != null)
+		{
+			cities = response;
+		}
+		else
+		{
+			cities.Clear();
+		}
+
+	}
+
+	//Henter byer baseret på valg af afgangsland
+	private async Task LoadCitiesFromDepartureCountry(ChangeEventArgs e)
+	{
+		string country = e.Value.ToString();
+		Console.WriteLine(country);
+
+		if (string.IsNullOrEmpty(country))
+		{
+			cities.Clear();
+			return;
+		}
+
+		try
+		{
+			var requestData = new CountryRequest { Country = country };
+			var response = await Http.PostAsJsonAsync("https://countriesnow.space/api/v0.1/countries/cities", requestData);
+
+			if (response.IsSuccessStatusCode)
+			{
+				
+				var result = await response.Content.ReadFromJsonAsync<CitiesResponse>();
+				cities = result?.Data ?? new List<string>();
+				errorMessage = "";
+			}
+			else
+			{
+				errorMessage = $"Fejl ved hentning af byer: {response.ReasonPhrase}";
+				cities.Clear();
+			}
+		}
+		catch (Exception ex)
+		{
+			errorMessage = $"Fejl ved hentning af byer: {ex.Message}";
+			cities.Clear();
+		}
+
+	}
+
+	//Henter byer baseret på valg af destinationsland
+	private async Task LoadCitiesFromDestinationCountry(ChangeEventArgs e)
+	{
+		string destinationCountry = e.Value.ToString();
+		Console.WriteLine(destinationCountry);
+
+		if (string.IsNullOrEmpty(destinationCountry))
+		{
+			cities.Clear();
+			return;
+		}
+
+		try
+		{
+			var requestData = new CountryRequest { Country = destinationCountry };
+			var response = await Http.PostAsJsonAsync("https://countriesnow.space/api/v0.1/countries/cities", requestData);
+
+			if (response.IsSuccessStatusCode)
+			{
+
+				var result = await response.Content.ReadFromJsonAsync<CitiesResponse>();
+				cities = result?.Data ?? new List<string>();
+				errorMessage = "";
+			}
+			else
+			{
+				errorMessage = $"Fejl ved hentning af byer: {response.ReasonPhrase}";
+				cities.Clear();
+			}
+		}
+		catch (Exception ex)
+		{
+			errorMessage = $"Fejl ved hentning af byer: {ex.Message}";
+			cities.Clear();
+		}
+
+	}
+
+
+
+	//Opret pakke
+	private async Task CreateTravelPackage()
+	{
+		var travelPackage = new TravelPackage(departureCity, departureCity);
+
+		var response = await Http.PostAsJsonAsync("api/TravelPackages/createPackage", travelPackage);
+
+		if (response.IsSuccessStatusCode)
+		{
+			packageInfo = $"Pacakge created for {travelPackage.DestinationCity}, {travelPackage.DestinationCountry}";
+		}
+		else
+		{
+			packageInfo = "Failed to create package";
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		if(Http.BaseAddress!=null){
+			var response = await Http.GetAsync(Http.BaseAddress+"api/Location/GetCountries");
+			if (response.IsSuccessStatusCode)
+			{
+				countries = await response.Content.ReadFromJsonAsync<List<string>>();
+			}
+		}
+	}
+
+	public class TravelPackage
+	{
+		
+		public int Id { get; set; }
+		public string DestinationCity { get; set; }
+		public string DestinationCountry { get; set; }
+		public string Hotel { get; set; }
+		public double Price { get; set; }
+		public DateTime Departure { get; set; }
+		public DateTime Return { get; set; }
+
+		//Midlertidig constructor med begrænset info
+		public TravelPackage(string destinationCity, string destinationCountry)
+		{
+			DestinationCity = destinationCity;
+			DestinationCountry = destinationCountry;
+		}
+
+		//Den egentlige constructor, når page virker
+		public void UpdatedTravelPackage(int paymentID, string destinationCity, string destinationCountry, string hotel, double price, DateTime departure, DateTime @return)
+		{
+			DestinationCity = destinationCity;
+			DestinationCountry = destinationCountry;
+			Hotel = hotel;
+			Price = price;
+			Departure = departure;
+			Return = @return;
+		}
+	}
+
+	public class CitiesResponse
+	{
+		public bool Error { get; set; }  // Hvis API'et returnerer en fejl
+		public string Msg { get; set; }   // Fejlmeddelelse (hvis relevant)
+		public List<string> Data { get; set; }   // Liste af byer
+	}
+
+	public class CountryRequest
+	{
+		public string Country { get; set; }
+	}
+
+
+}

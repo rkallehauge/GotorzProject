@@ -1,0 +1,53 @@
+﻿@page "/flighttest"
+@using GotorzProject.Shared.DataTransfer
+
+@rendermode InteractiveWebAssembly
+
+@inject HttpClient httpClient
+
+<h3>GetFlightAPITest</h3>
+
+<button @onclick="Check">Search</button>
+
+<label>From</label>
+<input @bind-value="From" />
+
+
+<label>To</label>
+<input @bind-value="To" />
+
+<label>Departure</label>
+<input type="date" @bind-value="SelectedDate" min="@MinimumDate" placeholder="@MinimumDate"/>
+
+@if(Flights != null){
+	@foreach(var flight in Flights){
+		<GotorzProject.Client.Component.FlightOffer FlightDTO="flight" />
+	}
+}
+@if(Loading){
+	<Spinner />	
+}
+
+
+@code {
+
+
+	private bool Loading = false;
+	private string MinimumDate = DateTime.Now.ToString("yyyy-MM-dd");
+	public DateOnly SelectedDate { get; set; }
+
+	public List<BaseFlightDTO> Flights { get; set; } = default!;
+
+	public string From { get; set; }
+	public string To { get; set; }
+
+	private async Task Check(){
+		Loading = true;
+
+		Console.WriteLine($"api/Flights/Single?from={From}&to={To}&departure={SelectedDate.ToString("yyyy-MM-dd")}");
+		var response = await httpClient.GetAsync($"api/Flights/Single?from={From}&to={To}&departure={SelectedDate.ToString()}");
+		Loading = false;
+		Flights = await response.Content.ReadFromJsonAsync<List<BaseFlightDTO>>();
+
+	}
+}
