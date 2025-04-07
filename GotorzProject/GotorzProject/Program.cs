@@ -16,6 +16,9 @@ using GotorzProject.Service;
 using GotorzProject.Service.Misc;
 using System.Diagnostics;
 using System.Configuration;
+using Serilog;
+using Microsoft.Extensions.Configuration;
+using Serilog.Sinks.MSSqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSyncfusionBlazor();
@@ -33,6 +36,12 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.Development.json")
     .Build();
 
+//var logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
+//builder.Logging.AddSerilog(logger);
+
+
+
+
 
 // todo : refactor this into a class by itself, so we can use configsection for actual real purposes
 // IConfigurationSection => APIKeys
@@ -46,11 +55,37 @@ builder.Services.Configure<BookingAPIModel>(builder.Configuration.GetSection("AP
 
 string dbType = "MSSql";
 
-var connectionString = configuration.GetConnectionString(dbType);
+var connString = configuration.GetConnectionString(dbType);
+
+
+// TODO : in future, migrate this to use mssql, because we fucking have to, fuck you microsoft
+// Configure Serilog dynamically using the connection string
+if(dbType == "PostgreSQL")
+{
+    builder.Services.AddSingleton(new LoggerConfiguration()
+    .ReadFrom.Configuration(configuration)
+    .WriteTo.PostgreSQL(connString, "Logs")  // Directly use the connection string here
+    .CreateLogger()); 
+
+} else if(dbType == "MSSql")
+{
+    // Configure Serilog dynamically using the connection string for MSSQL
+    builder.Services.AddSingleton(new LoggerConfiguration()
+    .ReadFrom.Configuration(configuration)
+    .WriteTo.MSSqlServer(
+        connectionString : connString,
+        sinkOptions: new MSSqlServerSinkOptions { TableName= "Logs"}
+        )
+    .CreateLogger());
+}
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString), ServiceLifetime.Scoped
+    options.UseSqlServer(connString), ServiceLifetime.Scoped
 );
+
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//    options.UseNpgsql(connectionString), ServiceLifetime.Scoped
+//);
 
 // API Key Testing 
 bool apiConfigError = false;
