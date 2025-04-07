@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using GotorzProject.Service.System;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql.Replication;
 using NuGet.Versioning;
@@ -11,11 +12,13 @@ namespace GotorzProject.ServerAPI
     public class LocationController : Controller
     {
         HttpClient Http;
+        private readonly DatabaseLogger _databaseLogger;
 
-        public LocationController(IHttpClientFactory factory)
+        public LocationController(IHttpClientFactory factory, DatabaseLogger databaseLogger)
         {
             // Get setup http client with headers from configuration
             Http = factory.CreateClient("Location");
+            _databaseLogger = databaseLogger;
         }
 
         // unused 
@@ -41,6 +44,7 @@ namespace GotorzProject.ServerAPI
             }
             else
             {
+                _databaseLogger.LogError("Error occured during getting countries.");
                 return BadRequest("Failed to load countries");
             }
         }
@@ -59,6 +63,11 @@ namespace GotorzProject.ServerAPI
 
             // Convert list of cities into list of strings, each index is a city name
             var list = result.Select(c => c.name).ToList();
+
+            if(list.Count == 0)
+            {
+                _databaseLogger.LogInformation($"No cities were found in {country}. May or may not be an error.");
+            }
             
             // return list of citynames
             return Ok(list);

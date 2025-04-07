@@ -11,6 +11,8 @@ namespace GotorzProject.Model.ObjectRelationMapping
         public DbSet<Order> Orders { get; set; }
         public DbSet<TravelPackage> TravelPackages { get; set; }
 
+        public DbSet<LoggedEvent> LoggedEvents { get; set; }
+
         public ApplicationDbContext(DbContextOptions options) : base(options) 
         {
 

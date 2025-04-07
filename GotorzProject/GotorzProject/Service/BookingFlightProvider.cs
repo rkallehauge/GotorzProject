@@ -9,6 +9,7 @@ using GotorzProject.Service.Misc;
 using Microsoft.Extensions.Options;
 using GotorzProject.Shared.DataTransfer;
 using GotorzProject.Service.Model.Flight;
+using GotorzProject.Service.System;
 
 
 namespace GotorzProject.Service
@@ -24,14 +25,15 @@ namespace GotorzProject.Service
 
         // todo : Dynamically set in future
         private readonly string apiBase;
+        private readonly DatabaseLogger _databaseLogger;
 
-
-        public BookingFlightProvider(IHttpClientFactory factory, IOptions<BookingAPIModel> apiModel)
+        public BookingFlightProvider(IHttpClientFactory factory, IOptions<BookingAPIModel> apiModel, DatabaseLogger databaseLogger)
         {
             _httpClient = factory.CreateClient("BookingCOM");
 
-            //somewhat disgusting
             apiBase = "/api/v1/flights/";
+
+            _databaseLogger = databaseLogger;
         }
 
         public async Task<List<BaseFlightDTO>> GetFlights(string from, string to, DateOnly departureDate, DateOnly? returnDate = null)
@@ -59,11 +61,11 @@ namespace GotorzProject.Service
 
             if(fromContent == null || fromContent.Data.Count == 0 || fromContent.Status != true)
             {
-                // log instead?
-                Console.WriteLine("exit a");
-                throw new Exception($"No airport found from : {from}");
+                _databaseLogger.LogInformation($"No airport found on search query : {from}");
+                return new List<BaseFlightDTO>();
+                //throw new Exception($"No airport found from : {from}");
             }
-
+            
             airportFrom = fromContent.Data.First().Id;
 
             query = airportSearchEndpoint + $"?query={to}";
@@ -77,8 +79,9 @@ namespace GotorzProject.Service
 
             if (toContent == null || toContent.Data.Count == 0 || toContent.Status != true)
             {
-                Console.WriteLine("exit b");
-                throw new Exception($"No airport found from : {to}");
+                _databaseLogger.LogInformation($"No airport found on search query : {to}");
+                return new List<BaseFlightDTO>();
+                //throw new Exception($"No airport found from : {to}");
             }
 
             airportTo = toContent.Data.First().Id;
@@ -101,10 +104,10 @@ namespace GotorzProject.Service
             }
 
 
-            foreach(var parameter in parameters)
-            {
-                Console.WriteLine($"{parameter.Key} : {parameter.Value}");
-            }
+            //foreach(var parameter in parameters)
+            //{
+            //    Console.WriteLine($"{parameter.Key} : {parameter.Value}");
+            //}
 
             query = flightSearchEndpoint + Helper.ToQueryString(parameters);
             var flightSearchResponse = await _httpClient.GetAsync(query);
@@ -117,8 +120,9 @@ namespace GotorzProject.Service
 
             if(fsr == null)
             {
-                // log error ?
-                return null;
+                var param = string.Join(Environment.NewLine, parameters);
+                _databaseLogger.LogError($"Flight search resulted in an error.. \n Parameters : {param}");
+                return new List<BaseFlightDTO>();
             }
 
             return fsr.ToBaseFlightDTO();     

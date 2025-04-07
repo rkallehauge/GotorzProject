@@ -1,5 +1,6 @@
 ﻿using GotorzProject.Service.Model.Hotel;
 using GotorzProject.Service.Model.Location;
+using GotorzProject.Service.System;
 using GotorzProject.Shared;
 using GotorzProject.Shared.DataTransfer;
 //using Newtonsoft.Json;
@@ -15,12 +16,13 @@ namespace GotorzProject.Service
         HttpClient _httpClient;
 
         private readonly string apiBase;
+        private readonly DatabaseLogger _databaseLogger;
 
-
-        public BookingCOMHotelProvider(IHttpClientFactory httpClientFactory)
+        public BookingCOMHotelProvider(IHttpClientFactory httpClientFactory, DatabaseLogger databaseLogger)
         {
             _httpClient = httpClientFactory.CreateClient("BookingCOM");
             apiBase = "/api/v1/hotels/";
+            _databaseLogger = databaseLogger;
         }
 
 
@@ -38,6 +40,7 @@ namespace GotorzProject.Service
             LocationSearchModel? lsm = await locationResponse.Content.ReadFromJsonAsync<LocationSearchModel>();
             if (lsm == null || lsm.Status != true || lsm.Data.Count==0)
             {
+                _databaseLogger.LogInformation($"Location search returned nothing from location : {location}");
                 return null;
             }
 
@@ -65,7 +68,15 @@ namespace GotorzProject.Service
             //Console.WriteLine(hotelQuery);
 
             var hotelResponse = await _httpClient.GetAsync(hotelQuery);
-            hotelResponse.EnsureSuccessStatusCode();
+            try
+            {
+                hotelResponse.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                _databaseLogger.LogError("Error occured during searching for a hotel.");
+                _databaseLogger.LogError(ex.Message);
+            }
 
             //Console.WriteLine(await hotelResponse.Content.ReadAsStringAsync());
 
@@ -73,6 +84,7 @@ namespace GotorzProject.Service
 
             List<BaseHotelRoomDTO> result = new();
 
+            // piece of shit regex that doesn't work properly with a even shitter api response pattern, fuck you BookingCOM
             Regex bedPattern = new Regex(@"(?:Hotel room|Room with shared bathroom|Private suite|Shared dorm room|Entire apartment)\s*[:-]\s*\d+\s*beds?");
 
 
@@ -106,7 +118,7 @@ namespace GotorzProject.Service
                 });
             }
 
-
+            _databaseLogger.LogInformation($"Hotel search successful, result length : {result.Count}");
             return result;
         }
 

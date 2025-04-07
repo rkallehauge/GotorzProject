@@ -16,8 +16,16 @@ using GotorzProject.Service;
 using GotorzProject.Service.Misc;
 using System.Diagnostics;
 using System.Configuration;
+using GotorzProject.Service.System;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Clear existing logging providers
+builder.Logging.ClearProviders();
+
+// Add in Console logging, journalctl is primary use
+builder.Logging.AddConsole(); // More further down
+
 builder.Services.AddSyncfusionBlazor();
 
 // Add services to the container.
@@ -49,8 +57,18 @@ string dbType = "MSSql";
 var connectionString = configuration.GetConnectionString(dbType);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString), ServiceLifetime.Scoped
+    options.UseSqlServer(connectionString), ServiceLifetime.Scoped // Will this cause race conditions? Probably :D
 );
+
+builder.Logging.AddDatabaseLogger(configuration =>
+{
+    
+});
+
+//builder.Logging.AddProvider(new DatabaseLoggerProvider(
+//    builder.Services.BuildServiceProvider().GetRequiredService<ApplicationDbContext>()
+//));
+
 
 // API Key Testing 
 bool apiConfigError = false;
@@ -77,7 +95,7 @@ if (apiConfigError)
 {
     // if error occurs here, just add the missing keys in appsettings.Development.json
     // and please make sure you don't push API keys to git :)
-    throw new ConfigurationErrorsException($"Following errors occurred:\n{string.Join(Environment.NewLine, apiConfigErrors)}");
+    //throw new ConfigurationErrorsException($"Following errors occurred:\n{string.Join(Environment.NewLine, apiConfigErrors)}");
 }
 // API Key Testing
 

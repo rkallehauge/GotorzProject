@@ -1,4 +1,5 @@
 ﻿using GotorzProject.Model;
+using GotorzProject.Service.System;
 using GotorzProject.Shared.DataTransfer;
 using Microsoft.AspNetCore.Identity;
 using NuGet.Protocol.Plugins;
@@ -27,10 +28,13 @@ namespace GotorzProject.Service
         // Maybe in future we add custom roles?
         RoleManager<IdentityRole> _roleManager;
 
-        public UserAdminstration(UserManager<CustomUser> manager, RoleManager<IdentityRole> roleManager)
+        private readonly DatabaseLogger _databaseLogger;
+
+        public UserAdminstration(UserManager<CustomUser> manager, RoleManager<IdentityRole> roleManager, DatabaseLogger databaseLogger)
         {
             _manager = manager;
             _roleManager = roleManager;
+            _databaseLogger = databaseLogger;
         }
 
         public async Task SetupRoles()
@@ -72,6 +76,10 @@ namespace GotorzProject.Service
             {
                 await _manager.AddToRoleAsync(user, role);
             }
+            else
+            {
+                _databaseLogger.LogInformation($"Someone tried to add role : {role} to : {user.Email}");
+            }
         }
 
         private async Task<IEnumerable<string>> trimRoles(CustomUser user, IEnumerable<string> roles)
@@ -91,11 +99,13 @@ namespace GotorzProject.Service
             return await Task.FromResult(result);
         }
 
-     
+        // We maybe need to add something identifying who is calling these methods
+        // So we can see exactly who is trying to mess about
         public async Task SetRoles(CustomUser user, IEnumerable<string> roles)
         {
             if (roles.Any(role => role == "Admin"))
             {
+                _databaseLogger.LogInformation($"Non-admin attempted to add admin role to user {user.Email}");
                 return;
             }
 
@@ -115,6 +125,8 @@ namespace GotorzProject.Service
         // only accessable by admin
         private async Task AdminSetRoles(CustomUser user, IEnumerable<string> roles)
         {
+            _databaseLogger.LogInformation($"Admin setting roles: {roles} to user ${user.Email}");
+
             var trimmedRoles = await trimRoles(user, roles);
 
             var result = await _manager.AddToRolesAsync(user, trimmedRoles.Where(role => Roles.ContainsKey(role)));

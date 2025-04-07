@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GotorzProject.Shared;
 using GotorzProject.Model;
+using GotorzProject.Service.System;
 
 
 namespace GotorzProject.ServerAPI
@@ -12,10 +13,13 @@ namespace GotorzProject.ServerAPI
     {
 
         private readonly UserManager<CustomUser> _userManager;
+        private readonly DatabaseLogger _databaseLogger;
 
-        public AccountsController(UserManager<CustomUser> userManager)
+
+        public AccountsController(UserManager<CustomUser> userManager, DatabaseLogger databaseLogger)
         {
             _userManager = userManager;
+            _databaseLogger = databaseLogger;
         }
 
         [HttpPost]
@@ -28,11 +32,12 @@ namespace GotorzProject.ServerAPI
             if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(x => x.Description);
-
+                _databaseLogger.LogInformation($"Registration attempt failed.");
                 return Ok(new RegisterResult { Successful = false, Errors = errors });
 
             }
 
+            _databaseLogger.LogInformation($"User successfully registered.");
             return Ok(new RegisterResult { Successful = true });
         }
 
@@ -41,7 +46,7 @@ namespace GotorzProject.ServerAPI
         {
             RegisterModel registerModel = (RegisterModel)model;
             var result = await Post(registerModel);
-
+            _databaseLogger.LogInformation($"Employee successfully registered");
             return Ok(new RegisterResult { Successful = true });
         }
     }
