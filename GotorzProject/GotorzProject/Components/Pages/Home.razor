@@ -15,14 +15,15 @@
             <h1>Travel a lot... at a lower...</h1>
             <p>Your trip with us includes plane tickets and hotel accommodation  </p>
             <p> Book your tourist destination now with ease. </p>
-            <div><button>Select Your Destination</button></div>
+            <div><button class="destination">Select Your Destination</button></div>
         </div>
         <div>
             <img src="https://gotorz.ae/assets/img/new-banner.svg" alt="Banner.Logo" class="Banner" />
         </div>
     </div>
-    <div>
-        <div style="height:100px; margin-top:30px;">
+    <div class="desticolor">
+        <div style="height:120px;">
+            <br />
             <h3 style="text-align:center;">Gotorz Provided Places</h3>
             <h2>Best of the Best Travel Destinations</h2>
         </div>
@@ -52,8 +53,10 @@
         <div id="con">
             <h3 style="text-align:center;">Gotorz Team</h3>
             <h2>Lets Meet Gotorz Employees</h2>
+            <div>
+                <img src="/employees.png" width="1800" height="290">
+            </div>
         </div>
-        <div class="employeeimg"><img/></div>
     </div>
     <div id="footer">
         <div>
@@ -142,6 +145,7 @@
     .Startheader{
         display:flex;
         height: 600px;
+        text-align:center;
         background-image: url(https://en.idei.club/uploads/posts/2023-06/1687613074_en-idei-club-p-travel-background-dizain-68.jpg);
         background-size: cover;
         background-position: center;
@@ -160,6 +164,7 @@
         width: auto;
         margin-top:200px;
         margin-left:50px;
+        color:whitesmoke;
     }
 
     .Banner{
@@ -168,6 +173,25 @@
         margin-left:100px;
         opacity:80%;
     }
+
+    .destination{
+        width:250px;
+        padding:10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        background-color: #f5b418;
+        border-color: #f5b418;
+        border-radius: 5px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+
+    .destination:hover{
+            background-color:white;
+            color: #0095da;
+    }
+    
 
     h2{
         text-align: center;
@@ -178,8 +202,12 @@
         color: #f5b418;
     }
 
+    .desticolor{
+        background-color: #fff9f2;
+    }
+
     .scroll-container {
-        height: auto; 
+        height: auto;
 /*         overflow: auto; */
     }
 
@@ -258,12 +286,7 @@
     #con{
         width:auto;
         height:400px;
-        background-color: cornflowerblue;
-    }
-
-    .employeeimg{
-        width: auto;
-        height:auto;
+        background-color: #f5fafe;
     }
 
     #footer{
