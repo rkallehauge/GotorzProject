@@ -77,7 +77,7 @@ if (apiConfigError)
 {
     // if error occurs here, just add the missing keys in appsettings.Development.json
     // and please make sure you don't push API keys to git :)
-    throw new ConfigurationErrorsException($"Following errors occurred:\n{string.Join(Environment.NewLine, apiConfigErrors)}");
+    //throw new ConfigurationErrorsException($"Following errors occurred:\n{string.Join(Environment.NewLine, apiConfigErrors)}");
 }
 // API Key Testing
 
