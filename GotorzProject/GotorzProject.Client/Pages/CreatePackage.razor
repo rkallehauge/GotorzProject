@@ -6,7 +6,7 @@
 @using System.Text.Json.Serialization
 @using System.Web
 
-
+@inject HttpClient http
 @inject HttpClient Http
 
 <h3>Create Package</h3>
@@ -35,11 +35,11 @@
 	</select>
 </div>
 
-@*Departure Date*@
-<div class="Choose Departure date">
+@*Departure Date - Moved to flight search*@
+@* <div class="Choose Departure date">
 	<label for="departure">Choose departure date</label>
 	<input id="departureDate" type="datetime-local" @bind="departureDate" />
-</div>
+</div> *@
 
 @*Destination Country*@
 <div class="Choose destination country">
@@ -71,12 +71,14 @@
 	<label>From</label>
 	<input @bind-value="From" />
 
-
 	<label>To</label>
 	<input @bind-value="To" />
 
-	<label>Departure</label>
+	<label>Departure date</label>
 	<input type="date" @bind-value="SelectedDate" min="@MinimumDate" placeholder="@MinimumDate" />
+
+	<label>Return date</label>
+	<input type="date" @bind-value="returnDate" min="@MinimumDate" placeholder="@MinimumDate" />
 
 	<button @onclick="Check">Search Flight</button>
 
@@ -117,11 +119,11 @@
 	<input id="returnDate" type="datetime-local" @onchange="OnHotelCheckOutTimeChanged"/>
 </div>
 
-@*Return Date*@
-<div class="Choose return date"
+@*Return Date - Return date in flight search suffices*@
+@* <div class="Choose return date"
 	<label for="return">Choose return date</label>
 	<input id="returnDate" type="datetime-local" @bind="returnDate"/>
-</div>
+</div> *@
 
 <div>
 	<button class="styled-button" @onclick="CreateTravelPackage">Create Package</button>
@@ -251,6 +253,7 @@
 
 	}
 
+	//Fetching hotels from selected city
 	private async Task<List<string>> LoadHotelsFromCity(string destinationCity, string destinationCountry)
 	{
 
