@@ -7,8 +7,11 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using GotorzProject.Service;
 
+
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.Services.AddSyncfusionBlazor();
+//builder.Services.AddSyncfusionBlazor();
+
 
 // todo : fix / make this better pls
 string hardcodedLocalUrl = "https://localhost:7097";

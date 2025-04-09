@@ -38,6 +38,7 @@ var configuration = new ConfigurationBuilder()
 
 // Change this if we change booking / flight api provider
 builder.Services.Configure<BookingAPIModel>(builder.Configuration.GetSection("APIKeys:BookingCOM"));
+StripeConfiguration.ApiKey = builder.Configuration["APIKeys:Stripe:SecretKey"];
 
 // MSSql
 // PostgreSQL

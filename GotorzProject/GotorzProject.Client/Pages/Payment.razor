@@ -22,7 +22,7 @@
 	</div>
 
 
-	
+
 	<div id="card-element" >
 		<! Stripe card inserted here-->
 	</div>
@@ -39,16 +39,10 @@
 	private bool _isInitialized = false;
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		if (firstRender && !_isInitialized)
+		if (firstRender)
 		{
-			_isInitialized = true;
-			await InitializeStripeJs();
+			await JSRuntime.InvokeVoidAsync("initializeStripe", stripePublicKey);
 		}
-	}
-
-	private async Task InitializeStripeJs()
-	{
-		await JSRuntime.InvokeVoidAsync("initializeStripe", stripePublicKey);
 	}
 
 	
