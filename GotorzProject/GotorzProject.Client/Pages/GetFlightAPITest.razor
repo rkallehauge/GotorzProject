@@ -45,7 +45,7 @@
 		Loading = true;
 
 		Console.WriteLine($"api/Flights/Single?from={From}&to={To}&departure={SelectedDate.ToString("yyyy-MM-dd")}");
-		var response = await httpClient.GetAsync($"api/Flights/Single?from={From}&to={To}&departure={SelectedDate.ToString()}");
+		var response = await httpClient.GetAsync($"api/Flights/Single?from={From}&to={To}&departure={SelectedDate.ToString("yyyy-MM-dd")}");
 		Loading = false;
 		Flights = await response.Content.ReadFromJsonAsync<List<BaseFlightDTO>>();
 
