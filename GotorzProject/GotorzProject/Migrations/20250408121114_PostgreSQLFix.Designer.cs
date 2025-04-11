@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GotorzProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250405214431_InitPostgres")]
-    partial class InitPostgres
+    [Migration("20250408121114_PostgreSQLFix")]
+    partial class PostgreSQLFix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
