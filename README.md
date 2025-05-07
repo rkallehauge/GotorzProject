@@ -12,7 +12,7 @@ For at sikre en god kundeoplevelse leverer virksomheden også digitale rejseguid
 Hvordan kan GodTur udvikle en webapplikation, der integrerer data fra både flyselskabers API og hotellers API for at skabe en samlet og overskuelig rejsepakke, som præsenteres for kunden som én samlet
 reservation? Systemet skal være designet, så det skjuler de enkelte detaljer om fly og hotel for kunden, og det samlede tilbud præsenteres på en enkel måde. Integration af betalingssystemer og forbedret UI/UX betragtes som en ekstra bonus.
 
-# Dette er et webapplikationsprojekt lavet i Blazor Server med Razor Pages og en SQL Server-database. Applikationen gør det muligt for brugere at [indsæt funktionalitet, fx oprette og administrere produkter i et katalog].
+Dette er et webapplikationsprojekt lavet i Blazor Server med Razor Pages og en SQL Server-database. Applikationen gør det muligt for brugere at finde rejser og kontakte GoTorz 
 
 ##  Screenshots
 
@@ -69,12 +69,12 @@ dotnet ef database update
 
 ##  Funktionalitet
 
-Beskriv kort de vigtigste funktioner:
+*Beskrivelse
 
-* Opret/redigér/slet \[fx produkter]
+* Opret/redigér/slet \ [Fx. Bruger og Rejser]
 * Login-system med roller
-* Søge- og filtreringsfunktioner
-* Validering af input
+* Søge- og finde rejser
+* Chat system
 
 ##  Arkitektur
 
