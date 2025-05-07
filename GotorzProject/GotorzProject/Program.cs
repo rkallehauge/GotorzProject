@@ -210,6 +210,9 @@ using (var scope = app.Services.CreateScope())
     {
         Console.WriteLine("Database is NOT relational...?");
     }
+
+    // setup roles
+    await scope.ServiceProvider.GetService<IUserAdminstration>().SetupRoles();
 }
 
 
