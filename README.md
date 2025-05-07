@@ -44,7 +44,7 @@ Du skal have følgende installeret:
 1. Clone dette repository:
 
 ```bash
-git clone https://github.com/brugernavn/projektnavn.git
+[git clone https://github.com/brugernavn/projektnavn.git](https://github.com/rkallehauge/GotorzProject.git)
 ````
 
 2. Åbn projektet i Visual Studio.
