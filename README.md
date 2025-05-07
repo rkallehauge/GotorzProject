@@ -1,6 +1,6 @@
 
 
-##  Eksempelstruktur for en README.md
+## README.md
 
 # Projektnavn
 GoTorzProjekt
