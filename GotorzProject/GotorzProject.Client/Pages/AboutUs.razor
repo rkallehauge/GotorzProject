@@ -1,0 +1,70 @@
+﻿@page "/AboutUs"
+@rendermode InteractiveWebAssembly
+
+<PageTitle>About Gotorz</PageTitle>
+
+
+<h3>Om Gotorz </h3>
+
+<p>
+    Gotorz begyndte i 2017 med at tage imod rejseforespørgsler via WhatsApp og Messenger.
+    Vi startede simpelt, med fokus på personlig service og kundekontakt.
+</p>
+
+<p>
+    I dag er vi en online rejsevirksomhed, der giver dig frihed og fleksibilitet til selv at booke dine rejser.<br />
+    Med Gotorz kan du nemt søge og booke rejser selv – uden besvær.
+    Vi kombinerer hotelophold og flyrejse i 1 samlet rejsepakke, så du hurtigere kan bestille din drømmeferie, uden besvær.
+</p>
+
+<p>
+    "Fra en lille start i 2017 til over 100.000 følgere og 20.000 glade kunder i dag."
+
+    Velkommen til Gotorz – din rejse, dine vilkår.
+</p>
+
+<h4>Holdet bag</h4>
+<p style="text-align: center;">
+    <a href="/upload-image" style="color: #007bff; text-decoration: none;">Tilføj et nyt teammedlem</a>
+</p>
+<div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+    @foreach (var member in TeamMembers)
+    {
+        <div style="text-align: center; background-color: #2a2a2a; padding: 10px; border-radius: 10px; width: 150px;">
+            <img src="@member.ImagePath" alt="@member.Name" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover;">
+            <p style="margin: 5px 0;">@member.Name</p>
+            <button style="background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 5px;">@member.Role</button>
+        </div>
+    }
+</div>
+
+<div>
+    <p style="line-height: 1.6; font-style: italic; text-align: center; margin-top: 20px;">
+        Kontakt os på tlf: xxx, chat xxx, andet
+    </p>
+</div>
+
+
+
+@code {
+    public class TeamMember
+    {
+        public string Name { get; set; }
+        public string Role { get; set; }
+        public string ImagePath { get; set; }
+    }
+
+    private List<TeamMember> TeamMembers { get; set; } = new List<TeamMember>
+    {
+        new TeamMember { Name = "Marwan Soboh", Role = "Executive Manager", ImagePath = "https://placehold.co/100x100?text=Marwan" },
+        new TeamMember { Name = "Samira", Role = "Sales & Marketing", ImagePath = "https://placehold.co/100x100?text=Samira" },
+        new TeamMember { Name = "Budor", Role = "Reservations Officer", ImagePath = "https://placehold.co/100x100?text=Budor" },
+        new TeamMember { Name = "Roaa", Role = "Customer Service", ImagePath = "https://placehold.co/100x100?text=Roaa" },
+        new TeamMember { Name = "Chima", Role = "Sales", ImagePath = "https://placehold.co/100x100?text=Chima" },
+        new TeamMember { Name = "Heba", Role = "Sales", ImagePath = "https://placehold.co/100x100?text=Heba" },
+        new TeamMember { Name = "Niveen", Role = "Sales", ImagePath = "https://placehold.co/100x100?text=Niveen" },
+        new TeamMember { Name = "Fatma", Role = "Sales", ImagePath = "https://placehold.co/100x100?text=Fatma" }
+
+
+    };
+}
