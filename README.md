@@ -2,8 +2,7 @@
 
 ## README.md
 
-# Projektnavn
-GoTorzProjekt
+# GoTorzProjekt
 
 En kort beskrivelse af, hvad projektet går ud på.
 
