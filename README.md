@@ -1,5 +1,3 @@
-En god README-fil til et GitHub-projekt er afgørende for at gøre dit projekt forståeligt, brugbart og nemt at komme i gang med – både for jer selv og for andre, der måtte kigge på det senere (fx undervisere, medstuderende, eller arbejdsgivere). Her er en struktur med forklaringer og eksempler, der passer godt til et Visual Studio-projekt med Blazor, Razor og en database:
-
 ---
 
 ##  Eksempelstruktur for en README.md
