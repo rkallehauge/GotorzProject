@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GotorzProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250331112556_StartOverVersionTwo")]
-    partial class StartOverVersionTwo
+    [Migration("20250508075426_StartOverVersion9")]
+    partial class StartOverVersion9
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -190,7 +190,12 @@ namespace GotorzProject.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
+                    b.Property<int>("TravelPackageId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TravelPackageId");
 
                     b.ToTable("Orders");
                 });
@@ -214,10 +219,10 @@ namespace GotorzProject.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("HotelId")
+                    b.Property<int>("FlightDepartureId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PaymentID")
+                    b.Property<int>("HotelId")
                         .HasColumnType("int");
 
                     b.Property<double>("Price")
@@ -227,6 +232,8 @@ namespace GotorzProject.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FlightDepartureId");
 
                     b.HasIndex("HotelId");
 
@@ -313,12 +320,10 @@ namespace GotorzProject.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -355,12 +360,10 @@ namespace GotorzProject.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -370,13 +373,32 @@ namespace GotorzProject.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("GotorzProject.Model.Order", b =>
+                {
+                    b.HasOne("GotorzProject.Model.TravelPackage", "TravelPackage")
+                        .WithMany()
+                        .HasForeignKey("TravelPackageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TravelPackage");
+                });
+
             modelBuilder.Entity("GotorzProject.Model.TravelPackage", b =>
                 {
+                    b.HasOne("GotorzProject.Model.FlightDeparture", "FlightDeparture")
+                        .WithMany()
+                        .HasForeignKey("FlightDepartureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GotorzProject.Model.Hotel", "Hotel")
                         .WithMany()
                         .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("FlightDeparture");
 
                     b.Navigation("Hotel");
                 });

@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GotorzProject.Migrations
 {
     /// <inheritdoc />
-    public partial class StartOverVersionTwo : Migration
+    public partial class StartOverVersion9 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -92,21 +92,6 @@ namespace GotorzProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false),
-                    OrderStatus = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -152,8 +137,8 @@ namespace GotorzProject.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -197,8 +182,8 @@ namespace GotorzProject.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -218,10 +203,10 @@ namespace GotorzProject.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PaymentID = table.Column<int>(type: "int", nullable: false),
                     DestinationCity = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DestinationCountry = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HotelId = table.Column<int>(type: "int", nullable: false),
+                    FlightDepartureId = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
                     Departure = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Return = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -230,9 +215,37 @@ namespace GotorzProject.Migrations
                 {
                     table.PrimaryKey("PK_TravelPackages", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_TravelPackages_FlightDepartures_FlightDepartureId",
+                        column: x => x.FlightDepartureId,
+                        principalTable: "FlightDepartures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_TravelPackages_Hotels_HotelId",
                         column: x => x.HotelId,
                         principalTable: "Hotels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TravelPackageId = table.Column<int>(type: "int", nullable: false),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    OrderStatus = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Orders_TravelPackages_TravelPackageId",
+                        column: x => x.TravelPackageId,
+                        principalTable: "TravelPackages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -277,6 +290,16 @@ namespace GotorzProject.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Orders_TravelPackageId",
+                table: "Orders",
+                column: "TravelPackageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TravelPackages_FlightDepartureId",
+                table: "TravelPackages",
+                column: "FlightDepartureId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TravelPackages_HotelId",
                 table: "TravelPackages",
                 column: "HotelId");
@@ -301,19 +324,19 @@ namespace GotorzProject.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "FlightDepartures");
-
-            migrationBuilder.DropTable(
                 name: "Orders");
-
-            migrationBuilder.DropTable(
-                name: "TravelPackages");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "TravelPackages");
+
+            migrationBuilder.DropTable(
+                name: "FlightDepartures");
 
             migrationBuilder.DropTable(
                 name: "Hotels");

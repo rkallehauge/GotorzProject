@@ -12,6 +12,9 @@ namespace GotorzProject.Model
         [Required]
         public Hotel? Hotel { get; set; }
 
+        [Required]
+        public FlightDeparture? FlightDeparture { get; set; }
+
         public double Price { get; set; }
         public DateTime Departure { get; set; }
         public DateTime Return { get; set; }

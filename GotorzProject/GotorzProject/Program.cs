@@ -53,7 +53,7 @@ builder.Services.Configure<BookingAPIModel>(builder.Configuration.GetSection("AP
 // MSSql
 // PostgreSQL
 
-string dbType = "PostgreSQL";
+string dbType = "MSSql";
 
 var connString = configuration.GetConnectionString(dbType);
 
