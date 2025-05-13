@@ -10,7 +10,7 @@
 <h5>You can chat with one of our amazing employees to receive help</h5>
 
 <div id="Startside">
-    <div id="nav">
+@*     <div id="nav">
         <div class="customform">
             <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToPersonalDetails"> Personal details</button>
         </div>
@@ -26,7 +26,7 @@
         <div class="customform">
             <button type="button" class="btn btn-secondary btn-sm" id="fafa" @onclick="NavigateToAbout"> About us</button>
         </div>
-    </div>
+    </div> *@
     <div>
         <div>
             <Syncfusion.Blazor.InteractiveChat.SfChatUI Height="600px" Width="600px" Messages="Messages">
@@ -50,30 +50,30 @@
         new ChatMessage() { ID = "1", Author = ProductManager, Text = "Hello, how can I help you today?", Timestamp = DateTime.Now.AddMinutes(-1) }
     };
 
-    private void NavigateToPersonalDetails()
-    {
-        Navigation.NavigateTo("/Kundeside");
-    }
+    // private void NavigateToPersonalDetails()
+    // {
+    //     Navigation.NavigateTo("/Kundeside");
+    // }
 
-    private void NavigateToOrderHistory()
-    {
-        Navigation.NavigateTo("/OrderHistory");
-    }
+    // private void NavigateToOrderHistory()
+    // {
+    //     Navigation.NavigateTo("/OrderHistory");
+    // }
 
-    private void NavigateToCard()
-    {
-        Navigation.NavigateTo("/CreditCard");
-    }
+    // private void NavigateToCard()
+    // {
+    //     Navigation.NavigateTo("/CreditCard");
+    // }
 
-    private void NavigateToSupport()
-    {
-        Navigation.NavigateTo("/Support");
-    }
+    // private void NavigateToSupport()
+    // {
+    //     Navigation.NavigateTo("/Support");
+    // }
 
-    private void NavigateToAbout()
-    {
-        Navigation.NavigateTo("/AboutUs");
-    }
+    // private void NavigateToAbout()
+    // {
+    //     Navigation.NavigateTo("/AboutUs");
+    // }
 }
 
 <style>
