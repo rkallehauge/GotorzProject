@@ -14,10 +14,6 @@ reservation? Systemet skal være designet, så det skjuler de enkelte detaljer o
 
 Dette er et webapplikationsprojekt lavet i Blazor Server med Razor Pages og en SQL Server-database. Applikationen gør det muligt for brugere at finde rejser og kontakte GoTorz 
 
-##  Screenshots
-
-*Indsæt gerne billeder af brugergrænsefladen eller nøglefunktioner.*
-
 ##  Teknologier
 
 Projektet er bygget med følgende teknologier:
@@ -98,11 +94,3 @@ En kort beskrivelse af projektets opbygning, fx:
 Dette projekt er lavet som en del af et skoleprojekt og er ikke licenseret til produktion
 
 ---
-
-## ✅ Tips
-
-* **Brug markdown-syntaks** for at lave en læsbar og flot README.
-* Inkludér billeder/gifs hvis muligt – det gør det mere visuelt.
-* Hold det opdateret med jeres kode – især teknologier og opsætning.
-* Skriv det som om det skal bruges af en person, der ikke har set koden før.
-
