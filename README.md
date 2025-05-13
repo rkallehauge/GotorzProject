@@ -6,10 +6,10 @@
 
 En kort beskrivelse af, hvad projektet går ud på.
 
-GodTur gør rejseoplevelsen enkel og effektiv. Kunderne kan kontakte virksomheden via WhatsApp eller messenger-tjenester for at forespørge om og købe rejser. Efter at have delt deres personlige oplysninger modtager de en elektronisk faktura via Stripe, som muliggør nem betaling med kreditkort. Efter betalingen modtager kunden e-billetter og hotelreservationer direkte via e-mail.
+Gotorz gør rejseoplevelsen enkel og effektiv. Kunderne kan kontakte virksomheden via WhatsApp eller messenger-tjenester for at forespørge om og købe rejser. Efter at have delt deres personlige oplysninger modtager de en elektronisk faktura via Stripe, som muliggør nem betaling med kreditkort. Efter betalingen modtager kunden e-billetter og hotelreservationer direkte via e-mail.
 For at sikre en god kundeoplevelse leverer virksomheden også digitale rejseguider, der beskriver attraktioner og de bedste restauranter samt en rejseplan over transport fra lufthavnen til hotellet og en kortoversigt over hotellets beliggenhed og omgivelser.
 
-Hvordan kan GodTur udvikle en webapplikation, der integrerer data fra både flyselskabers API og hotellers API for at skabe en samlet og overskuelig rejsepakke, som præsenteres for kunden som én samlet
+Hvordan kan Gotorz udvikle en webapplikation, der integrerer data fra både flyselskabers API og hotellers API for at skabe en samlet og overskuelig rejsepakke, som præsenteres for kunden som én samlet
 reservation? Systemet skal være designet, så det skjuler de enkelte detaljer om fly og hotel for kunden, og det samlede tilbud præsenteres på en enkel måde. Integration af betalingssystemer og forbedret UI/UX betragtes som en ekstra bonus.
 
 Dette er et webapplikationsprojekt lavet i Blazor Server med Razor Pages og en SQL Server-database. Applikationen gør det muligt for brugere at finde rejser og kontakte GoTorz 
@@ -18,8 +18,8 @@ Dette er et webapplikationsprojekt lavet i Blazor Server med Razor Pages og en S
 
 Projektet er bygget med følgende teknologier:
 
-- [.NET 8](https://dotnet.microsoft.com/)
-- Blazor Server
+- [.NET 9](https://dotnet.microsoft.com/)
+- Blazor Webassembly
 - Razor Pages
 - Entity Framework Core
 - SQL Server
@@ -31,7 +31,7 @@ Projektet er bygget med følgende teknologier:
 
 Du skal have følgende installeret:
 
-- Visual Studio 2022 med .NET 8 og Blazor Server workload
+- Visual Studio 2022 med .NET 9 og Blazor Webassembly
 - SQL Server
 - Git
 
