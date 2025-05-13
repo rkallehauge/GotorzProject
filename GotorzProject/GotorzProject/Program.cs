@@ -83,13 +83,18 @@ if(dbType == "PostgreSQL")
 {
     // This also needs to be fixed if we for some reason decide to use MSSql, for now, we just use PostgreSQL and ignore this
     // Configure Serilog dynamically using the connection string for MSSQL
-    builder.Services.AddSingleton(new LoggerConfiguration()
-    .ReadFrom.Configuration(configuration)
-    .WriteTo.MSSqlServer(
-        connectionString : connString,
-        sinkOptions: new MSSqlServerSinkOptions { TableName= "Logs"}
-        )
-    .CreateLogger());
+
+    // Removed because causing errors because of misconfiguration
+    // Also this is not a must have feature, as logging is already implemented through console
+    // Also when this application is registered as a service, it's conosole output will be persisted in a logfile, which is basically what we were trying to do with database logging
+
+    //builder.Services.AddSingleton(new LoggerConfiguration()
+    //.ReadFrom.Configuration(configuration)
+    //.WriteTo.MSSqlServer(
+    //    connectionString : connString,
+    //    sinkOptions: new MSSqlServerSinkOptions { TableName= "Logs"}
+    //    )
+    //.CreateLogger());
 }
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
