@@ -212,4 +212,36 @@ app.MapRazorComponents<App>()
 
 app.MapControllers();
 
+// Manage migrations on before running
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
+    // Check whether database setup is relational
+    if (dbContext.Database.IsRelational())
+    {
+        Console.WriteLine("Database is relational.");
+        try
+        {
+            // If so, run a migration
+            // This will only be resource intensive if there actually are changes
+            dbContext.Database.Migrate();
+        }
+        catch (InvalidOperationException e)
+        {
+            Console.WriteLine("No migrations to add.");
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.Data);
+            Console.WriteLine(e.Source);
+            Console.WriteLine(e.StackTrace);
+        }
+    }
+    else
+    {
+        Console.WriteLine("Database is NOT relational...?");
+    }
+
+    // setup roles
+    await scope.ServiceProvider.GetService<IUserAdminstration>().SetupRoles();
+}
+
 app.Run();

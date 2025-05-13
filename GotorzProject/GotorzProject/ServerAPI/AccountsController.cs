@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GotorzProject.Shared;
 using GotorzProject.Model;
+using GotorzProject.Service;
 
 
 namespace GotorzProject.ServerAPI
@@ -12,10 +13,12 @@ namespace GotorzProject.ServerAPI
     {
 
         private readonly UserManager<CustomUser> _userManager;
+        private readonly IUserAdminstration _userAdminstration;
 
-        public AccountsController(UserManager<CustomUser> userManager)
+        public AccountsController(UserManager<CustomUser> userManager, IUserAdminstration userAdmin)
         {
             _userManager = userManager;
+            _userAdminstration = userAdmin;
         }
 
         [HttpPost]
@@ -33,6 +36,14 @@ namespace GotorzProject.ServerAPI
 
             }
 
+            // Automagically set first user to be admin, so as we don't have to manually add a an admin in database directly
+            // This code will also run if all other users somehow get deleted
+            if(_userManager.Users.Count() == 1)
+            {
+                Console.WriteLine($"Adding newly created user {newUser.Email} as admin.");
+                await _userManager.AddToRoleAsync(newUser, "Admin"); // lq
+            }
+
             return Ok(new RegisterResult { Successful = true });
         }
 
@@ -43,6 +54,13 @@ namespace GotorzProject.ServerAPI
             var result = await Post(registerModel);
 
             return Ok(new RegisterResult { Successful = true });
+        }
+
+        [HttpGet("Test")]
+        public async Task<IActionResult> Test()
+        {
+            Console.WriteLine(_userManager.Users.Count());
+            return Ok();
         }
     }
 }
