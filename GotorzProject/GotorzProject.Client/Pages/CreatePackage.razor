@@ -1,38 +1,43 @@
 ﻿@page "/CreatePackage"
-@* @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false)) *@
-@rendermode InteractiveWebAssembly
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@* @rendermode InteractiveWebAssembly *@
 
 @using GotorzProject.Shared.DataTransfer
 @using System.Text.Json.Serialization
 @using System.Web
 
-@inject HttpClient http
 @inject HttpClient Http
+
+<GotorzProject.Client.Action.AuthCheck/>
 
 <h3>Create Package</h3>
 
 @*Departure Country*@
-<div class="Choose depature country">
+<div>
 	<label for="country">Choose departure country:</label>
-	<select id="country" @onchange="OnDepartureCountryChanged">
-		<option value="">Select a country</option>
-		@foreach (var country in countries)
-		{
-			<option value="@country.Value">@country.Key</option>
-		}
-	</select>
+	<AutoComplete 
+	@bind-Value="departureCountry"
+	TItem="Country"
+	DataProvider="CountryProvider"
+	PropertyName="Name"
+	Placeholder="Select departure country"
+	OnChanged="(Country selected) => OnDepartureCountryChanged(selected)"
+	>
+
+	</AutoComplete>
 </div>
 
 @*Departure City*@
 <div class="Choose departure city">
 	<label for="city">Choose departure city:</label>
-	<select id="city" @onchange="OnDepartureCityChanged">
-		<option value="">Select a city</option>"
-		@foreach (var city in departureCities)
-		{
-			<option value="@city">@city</option>
-		}
-	</select>
+	<AutoComplete 
+	@bind-Value="departureCity"
+	TItem="City"
+	DataProvider="FromCityProvider"
+	PropertyName="Name"
+	Placeholder="Select departure city"
+	OnChanged="(City selected) => OnDepartureCityChanged(selected)">
+	</AutoComplete>
 </div>
 
 @*Departure Date - Moved to flight search*@
@@ -42,7 +47,7 @@
 </div> *@
 
 @*Destination Country*@
-<div class="Choose destination country">
+@* <div class="Choose destination country">
 	<label for="country">Choose destination country:</label>
 	<select id="country" @onchange="OnDestinationCountryChanged">
 		<option value="">Select a country</option>
@@ -51,18 +56,27 @@
 			<option value="@country.Value">@country.Key</option>
 		}
 	</select>
-</div>
+</div> *@
 
-@*Destination City*@
+<label for="country">Choose destination country:</label>
+<AutoComplete @bind-Value="destinationCountry"
+TItem="Country"
+DataProvider="CountryProvider"
+PropertyName="Name"
+Placeholder="Select departure country"
+OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
+
+</AutoComplete>
+
 <div class="Choose destination city">
 	<label for="city">Choose destination city:</label>
-	<select id="city" @onchange="OnDestinationCityChanged">
-		<option value="">Select a city</option>"
-		@foreach (var city in destinationCities)
-		{
-			<option value="@city">@city</option>
-		}
-	</select>
+	<AutoComplete @bind-Value="destinationCity"
+				  TItem="City"
+				  DataProvider="ToCityProvider"
+				  PropertyName="Name"
+				  Placeholder="Select departure city"
+				  OnChanged="(City selected) => OnDestinationCityChanged(selected)">
+	</AutoComplete>
 </div>
 
 @*Flight Search*@
@@ -84,10 +98,19 @@
 
 	@if (Flights != null)
 	{
-		@foreach (var flight in Flights)
-		{
-			<GotorzProject.Client.Component.FlightOffer FlightDTO="flight" />
-		}
+		<div>
+			<label>Sort by</label>
+			<!-- If we had more time, we would add sorting functionality -->
+
+			<div class="flightoffers">
+
+			@foreach (var flight in Flights)
+			{
+				<GotorzProject.Client.Component.FlightOffer FlightDTO="flight" />
+			}
+		
+			</div>
+		</div>
 	}
 	@if (Loading)
 	{
@@ -144,6 +167,10 @@
 	background-color: #4CAF50;
 	cursor: pointer;
 	}
+
+	.flightoffers > div:nth-child(even){
+		background-color:gray;
+	}
 </style>
 
 
@@ -160,10 +187,10 @@
 	private DateTime checkIn = DateTime.Now;
 	private DateTime checkOut = DateTime.Now;
 
-	private Dictionary<string, string> countries = new();
+	private List<Country> countries = new();
 
-	private List<string> departureCities = new List<string>();
-	private List<string> destinationCities = new List<string>();
+	private List<City> departureCities = new List<City>();
+	private List<City> destinationCities = new List<City>();
 	private List<string> hotels = new List<string>();
 	private string errorMessage;
 
@@ -176,6 +203,29 @@
 	public string From { get; set; }
 	public string To { get; set; }
 
+
+	private async Task<AutoCompleteDataProviderResult<Country>> CountryProvider(AutoCompleteDataProviderRequest<Country> request)
+	{
+
+		if(countries.Count==0){
+			Console.WriteLine("Yep yep");
+		}
+
+		Console.WriteLine(request.Filter.Value);
+		Console.WriteLine(countries.Count);
+		return await Task.FromResult(request.ApplyTo(countries.OrderBy(country => country.Name)));
+	}
+
+	private async Task<AutoCompleteDataProviderResult<City>> FromCityProvider(AutoCompleteDataProviderRequest<City> request)
+	{
+		return await Task.FromResult(request.ApplyTo(departureCities));
+	}
+
+	private async Task<AutoCompleteDataProviderResult<City>> ToCityProvider(AutoCompleteDataProviderRequest<City> request)
+	{
+		return await Task.FromResult(request.ApplyTo(destinationCities));
+	}
+
 	private async Task Check()
 	{
 		Loading = true;
@@ -183,51 +233,36 @@
 		Console.WriteLine($"api/Flights/Single?from={From}&to={To}&departure={SelectedDate.ToString("yyyy-MM-dd")}");
 		var response = await Http.GetAsync($"api/Flights/Single?from={From}&to={To}&departure={SelectedDate.ToString()}");
 		Loading = false;
-		Flights = await response.Content.ReadFromJsonAsync<List<BaseFlightDTO>>();
-
+		try{
+			Flights = await response.Content.ReadFromJsonAsync<List<BaseFlightDTO>>();
+		} catch (Exception e){
+			Console.WriteLine("Stuff happend");
+		}
 	}
 
 	//Gemmer valgt afrejseland
-	private async Task OnDepartureCountryChanged(ChangeEventArgs e)
+	private async Task OnDepartureCountryChanged(Country country)
 	{
-		departureCountry = e.Value.ToString();
-		departureCities = await LoadCitiesFromCountry(departureCountry);
-
-		//Valgt afrejseland overføres til afrejseland i flight søgning
-		// var selectedCountryPair = countries.FirstOrDefault(c => c.Value == departureCountry);
-		// if (selectedCountryPair.Key != null)
-		// {
-		// 	From = selectedCountryPair.Key;
-		// }
-		// else
-		// {
-		// 	From = "";
-
-		// }
-
+		departureCities = await LoadCitiesFromCountry(country.IsoCode);
 	}
 
 	//Gemmer valgt destinationsland
-	private async Task OnDestinationCountryChanged(ChangeEventArgs e)
+	private async Task OnDestinationCountryChanged(Country country)
 	{
-		destinationCountry = e.Value.ToString();
-		destinationCities = await LoadCitiesFromCountry(destinationCountry);
+		destinationCities = await LoadCitiesFromCountry(country.IsoCode);
 	}
 
 	//Gemmer valgt hotel
-	private async Task OnDestinationCityChanged(ChangeEventArgs e)
+	private async Task OnDestinationCityChanged(City city)
 	{
-		destinationCity = e.Value.ToString();
-		hotels = await LoadHotelsFromCity(destinationCity, destinationCountry);
 
-		To = destinationCity;
+		To = city.Name;
 	}
 
 	//Overfører valgt afrejse by til flight søgning
-	private void OnDepartureCityChanged(ChangeEventArgs e)
+	private void OnDepartureCityChanged(City city)
 	{
-		departureCity = e.Value.ToString();
-		From = departureCity;
+		From = city.Name;
 	}
 
 	private async Task OnHotelCheckInTimeChanged(ChangeEventArgs e)
@@ -245,12 +280,15 @@
 
 
 	//Henter en liste af byer fra et land
-	private async Task<List<string>> LoadCitiesFromCountry(string country)
+	private async Task<List<City>> LoadCitiesFromCountry(string country)
 	{
 		var response = await Http.GetFromJsonAsync<List<string>>($"api/Location/getCities?country={country}");
 
-		return response;
-
+		var result = new List<City>();
+		foreach (var i in response) {
+			result.Add(new City { Name = i });
+		}
+		return result;
 	}
 
 	//Fetching hotels from selected city
@@ -276,14 +314,14 @@
 
 		Console.WriteLine("please god work");
 
-		var location = HttpUtility.UrlEncode($"{countries.FirstOrDefault(x => x.Value == destinationCountry).Key} {destinationCity}");
+		var location = HttpUtility.UrlEncode($"{countries.FirstOrDefault(x => x.IsoCode == destinationCountry).Name} {destinationCity}");
 
 		var response = await Http.GetFromJsonAsync<List<Hotel>>($"api/Hotel/GetHotels?location={location}&checkIn={formattedCheckIn}&checkOut={formattedCheckOut}");
 
 		var result = response.Select(hotel => hotel.Name).ToList();
 
 		return result ?? new List<string>();
-		
+
 	}
 
 
@@ -297,7 +335,7 @@
 			Price = price,
 			DepartureDate = departureDate,
 			ReturnDate = returnDate,
-			
+
 		};
 
 		var response = await Http.PostAsJsonAsync("api/TravelPackages/createPackage", travelPackage);
@@ -319,13 +357,15 @@
 			if (response.IsSuccessStatusCode)
 			{
 				var res = await response.Content.ReadFromJsonAsync<List<Country>>();
+				// bit weird but alas
+				countries = res;
 
-				foreach(var country in res){
-					countries.Add(country.Name, country.IsoCode);
-				}
-				
 			}
 		}
+	}
+
+	public class City{
+		public string Name { get; set; }
 	}
 
 	public class Country

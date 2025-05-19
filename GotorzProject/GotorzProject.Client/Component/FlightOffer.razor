@@ -2,7 +2,7 @@
 
 @using GotorzProject.Shared.DataTransfer
 @if(FlightDTO!=null){
-	<div>
+	<div style="margin:5px">
 		
 
 		
@@ -14,7 +14,7 @@
 			@foreach (var leg in FlightDTO.FlightLegs){
 				<div>
 					<h4>@leg.Carrier.Name</h4>
-
+					<p>@leg.Carrier.IconWebSource</p>
 					<img src="@leg.Carrier.IconWebSource" />
 					<div class="row">
 						<h4 class="col">@leg.FromAirportCode</h4>
@@ -25,6 +25,7 @@
 			}
 		</div>
 
+		<h3>@FlightDTO.Price,-</h3>
 		
 	</div>
 }

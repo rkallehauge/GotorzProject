@@ -36,7 +36,11 @@ namespace GotorzProject.Service
 
         public async Task<List<BaseFlightDTO>> GetFlights(string from, string to, DateOnly departureDate, DateOnly? returnDate = null)
         {
-           
+           // hail mary
+            try
+            {
+
+
 
             string airportSearchEndpoint = apiBase + "searchDestination";
             string flightSearchEndpoint = apiBase + "searchFlights";
@@ -46,13 +50,16 @@ namespace GotorzProject.Service
             const string dateFormat = "yyyy-MM-dd";
 
             // firstly we need the airport code for the [from] part of this method
-            query = airportSearchEndpoint + $"?query={from}";
+            
+            query = airportSearchEndpoint + $"?query={System.Net.WebUtility.UrlEncode(from)}";
 
             // first result best result 😎 (await (await _httpClient.GetAsync(query)).Content.ReadFromJsonAsync<AirportSearchResponse>()).Data[0].Code;
+            Console.WriteLine(query);
             var fromResponse = await _httpClient.GetAsync(query);
 
 
             fromResponse.EnsureSuccessStatusCode();
+            Console.WriteLine(await fromResponse.Content.ReadAsStringAsync());
             var fromContent = await fromResponse.Content.ReadFromJsonAsync<AirportSearchResponse>();
             fromResponse.Dispose();
 
@@ -66,13 +73,15 @@ namespace GotorzProject.Service
 
             airportFrom = fromContent.Data.First().Id;
 
-            query = airportSearchEndpoint + $"?query={to}";
+            query = airportSearchEndpoint + $"?query={System.Net.WebUtility.UrlEncode(to)}";
 
             var toResponse = await _httpClient.GetAsync(query);
 
             toResponse.EnsureSuccessStatusCode();
 
             var toContent = await toResponse.Content.ReadFromJsonAsync<AirportSearchResponse>();
+            Console.WriteLine(await toResponse.Content.ReadAsStringAsync());
+
             toResponse.Dispose();
 
             if (toContent == null || toContent.Data.Count == 0 || toContent.Status != true)
@@ -122,6 +131,12 @@ namespace GotorzProject.Service
             }
 
             return fsr.ToBaseFlightDTO();     
+            } catch(Exception e)
+            {
+                Console.WriteLine("Error during flight search");
+                // Something happend, just send empty object, won't do harm
+                return new List<BaseFlightDTO>();
+            }
         }
         
         public Task<List<BaseFlightDTO>> GetFlights(string from, string to, DateOnly departureDate)

@@ -40,7 +40,6 @@ namespace GotorzProject.Service.Model.Flight
                 {
                     foreach (var leg in item.legs)
                     {
-
                         if (flight.FlightLegs == null)
                         {
                             flight.FlightLegs = new();
@@ -51,7 +50,8 @@ namespace GotorzProject.Service.Model.Flight
                             Carrier = new()
                             {
                                 Iata = leg.carriers.First(),
-                                Name = CarrierCodeToName(leg.carriers.First())
+                                Name = CarrierCodeToName(leg.carriers.First()),
+                                IconWebSource = leg.carriersData.First().logo
                             },
                             FromAirportCode = leg.departureAirport.code,
                             FromAirportName = leg.departureAirport.name,
@@ -64,6 +64,8 @@ namespace GotorzProject.Service.Model.Flight
                 flight.Type = fo.tripType;
                 flight.StartAirport = flight.FlightLegs.First().FromAirportName;
                 flight.EndAirport = flight.FlightLegs.Last().ToAirportName;
+
+                flight.Price = fo.unifiedPriceBreakdown.price.units;
 
                 results.Add(flight);
             }
