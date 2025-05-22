@@ -3,29 +3,34 @@
 @using GotorzProject.Shared.DataTransfer
 @if(FlightDTO!=null){
 	<div>
+
+
+		<div class="row">
+
+			<h2 class="col">@FlightDTO.StartAirport ➡ @FlightDTO.EndAirport</h2>
+			<h2 class="col">@FlightDTO.Price,-</h2>
 		
-
-		
-		<h2>From @FlightDTO.StartAirport</h2>
-		<h2>To @FlightDTO.EndAirport</h2>
-
-
-		<div>
-			@foreach (var leg in FlightDTO.FlightLegs){
-				<div>
-					<h4>@leg.Carrier.Name</h4>
-
-					<img src="@leg.Carrier.IconWebSource" />
-					<div class="row">
-						<h4 class="col">@leg.FromAirportCode</h4>
-						<h4 class="col">➡</h4>
-						<h4 class="col">@leg.ToAirportCode</h4>
-					</div>
-				</div>
-			}
 		</div>
 
-		
+		<Button Type="ButtonType.Button" Color="ButtonColor.Primary" @onclick="ToggleContentAsync">Show flight legs</Button>
+		<Collapse @ref="collapseLegs">
+			<Card>
+				@foreach (var leg in FlightDTO.FlightLegs){
+					<CardBody>
+						<h4>@leg.Carrier.Name</h4>
+
+						<img src="@leg.Carrier.IconWebSource" />
+						<div class="row">
+							<h4 class="col">@leg.FromAirportCode</h4>
+							<h4 class="col">➡</h4>
+							<h4 class="col">@leg.ToAirportCode</h4>
+						</div>
+					</CardBody>
+				}
+			</Card>
+		</Collapse>
+
+
 	</div>
 }
 
@@ -33,6 +38,8 @@
 
 	[Parameter]
 	public BaseFlightDTO FlightDTO { get; set; }
-	
+
+	public Collapse collapseLegs = default!;
+	private async Task ToggleContentAsync() => await collapseLegs.ToggleAsync();
 
 }

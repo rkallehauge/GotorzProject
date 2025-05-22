@@ -2,23 +2,7 @@
 @page "/TestFlight"
 @* <GotorzProject.Client.Component.FlightOffer FlightDTO="BaseFlight" /> *@
 
-<h2>Flight offer</h2>
-
-@foreach (var leg in BaseFlight.FlightLegs)
-{
-	<div class="flight-card">
-		@* Flylogo *@
-		<img class="airline-logo" src="@leg.Carrier.IconWebSource" alt="@leg.Carrier.Name"/>
-		@* Afgangstid *@
-		<div class="time departure">@leg.Departure.ToString("HH:mm")</div>
-		@* Rejsetid *@
-		<div class="travel-time">@leg.TravelTimeMinutes min</div>
-		@* Ankomsttid *@
-		<div class="time arrival">@leg.Landing.ToString("HH:mm")</div>
-		@*Pris*@
-		<div class="price">@BaseFlight.Price DKK</div>
-	</div>	
-}
+<GotorzProject.Client.Component.FlightOffer FlightDTO="BaseFlight"/>
 
 <style>
 	.flight-card
