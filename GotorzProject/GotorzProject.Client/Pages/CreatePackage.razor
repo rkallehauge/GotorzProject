@@ -71,11 +71,11 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 <div class="Choose destination city">
 	<label for="city">Choose destination city:</label>
 	<AutoComplete @bind-Value="destinationCity"
-				  TItem="City"
-				  DataProvider="ToCityProvider"
-				  PropertyName="Name"
-				  Placeholder="Select departure city"
-				  OnChanged="(City selected) => OnDestinationCityChanged(selected)">
+	TItem="City"
+	DataProvider="ToCityProvider"
+	PropertyName="Name"
+	Placeholder="Select departure city"
+	OnChanged="(City selected) => OnDestinationCityChanged(selected)">
 	</AutoComplete>
 </div>
 
@@ -89,10 +89,10 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 	<input @bind-value="To" />
 
 	<label>Departure date</label>
-	<input type="date" @bind-value="SelectedDate" min="@MinimumDate" placeholder="@MinimumDate" />
+	<input type="date" @onchange="flightDepartureChanged" min="@MinimumDate" placeholder="@MinimumDate" />
 
 	<label>Return date</label>
-	<input type="date" @bind-value="returnDate" min="@MinimumDate" placeholder="@MinimumDate" />
+	<input type="date" min="@MinimumDate" @onchange="flightReturnChanged" placeholder="@MinimumDate" />
 
 	<button @onclick="Check">Search Flight</button>
 
@@ -102,14 +102,17 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 			<label>Sort by</label>
 			<!-- If we had more time, we would add sorting functionality -->
 
-			<div class="flightoffers">
+			<select class="flightoffers" @onchange="selectFlightHandler">
 
-			@foreach (var flight in Flights)
-			{
-				<GotorzProject.Client.Component.FlightOffer FlightDTO="flight" />
-			}
-		
-			</div>
+				@foreach (var flight in Flights)
+				{
+					@* Horrible visualization method, fix in soon future*@
+					<option value="@flight.Identifier">
+						<GotorzProject.Client.Component.FlightOffer FlightDTO="flight" />
+					</option>
+				}
+
+			</select>
 		</div>
 	}
 	@if (Loading)
@@ -169,7 +172,7 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 	}
 
 	.flightoffers > div:nth-child(even){
-		background-color:gray;
+	background-color:gray;
 	}
 </style>
 
@@ -177,15 +180,20 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 @code {
 	private string departureCountry;
 	private string departureCity;
-	private DateTime departureDate = DateTime.Now;
 	private string hotel;
 	private double price;
 	private string destinationCountry;
 	private string destinationCity;
-	private DateTime returnDate = DateTime.Now;
 	private string packageInfo;
+
+
+	private DateTime departureDate = DateTime.Now;
+	private DateTime returnDate = DateTime.Now;
+
 	private DateTime checkIn = DateTime.Now;
 	private DateTime checkOut = DateTime.Now;
+
+	private BaseFlightDTO? selectedFlight = default!;
 
 	private List<Country> countries = new();
 
@@ -202,6 +210,30 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 
 	public string From { get; set; }
 	public string To { get; set; }
+
+	private void flightDepartureChanged(ChangeEventArgs e){
+		departureDate = DateTime.Parse(e.Value.ToString());
+		checkIn = DateTime.Parse(e.Value.ToString());
+	}
+
+	private void flightReturnChanged(ChangeEventArgs e){
+		returnDate = DateTime.Parse(e.Value.ToString());
+		checkOut = DateTime.Parse(e.Value.ToString());
+	}
+
+
+	private async Task OnHotelCheckInTimeChanged(ChangeEventArgs e)
+	{
+		checkIn = DateTime.Parse(e.Value.ToString());
+
+		hotels = await LoadHotelsFromCity(destinationCity, destinationCountry);
+	}
+
+	private async Task OnHotelCheckOutTimeChanged(ChangeEventArgs e)
+	{
+		checkOut = DateTime.Parse(e.Value.ToString());
+		hotels = await LoadHotelsFromCity(destinationCity, destinationCountry);
+	}
 
 
 	private async Task<AutoCompleteDataProviderResult<Country>> CountryProvider(AutoCompleteDataProviderRequest<Country> request)
@@ -265,18 +297,6 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 		From = city.Name;
 	}
 
-	private async Task OnHotelCheckInTimeChanged(ChangeEventArgs e)
-	{
-		checkIn = DateTime.Parse(e.Value.ToString());
-
-		hotels = await LoadHotelsFromCity(destinationCity, destinationCountry);
-	}
-
-	private async Task OnHotelCheckOutTimeChanged(ChangeEventArgs e)
-	{
-		checkOut = DateTime.Parse(e.Value.ToString());
-		hotels = await LoadHotelsFromCity(destinationCity, destinationCountry);
-	}
 
 
 	//Henter en liste af byer fra et land
@@ -294,7 +314,7 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 	//Fetching hotels from selected city
 	private async Task<List<string>> LoadHotelsFromCity(string destinationCity, string destinationCountry)
 	{
-
+		Console.WriteLine("yes?");
 		if (string.IsNullOrEmpty(destinationCity) || string.IsNullOrEmpty(destinationCountry))
 		{
 			Console.WriteLine("Destination city or country was empty.");
@@ -322,6 +342,12 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 
 		return result ?? new List<string>();
 
+	}
+
+	private void selectFlightHandler(ChangeEventArgs e){
+		string flightToken = e.Value.ToString();
+		selectedFlight = Flights.Find((flight) => flight.Identifier == flightToken);
+		Console.WriteLine(selectedFlight.Identifier);
 	}
 
 

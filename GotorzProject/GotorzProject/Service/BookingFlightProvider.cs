@@ -40,97 +40,95 @@ namespace GotorzProject.Service
             try
             {
 
+                string airportSearchEndpoint = apiBase + "searchDestination";
+                string flightSearchEndpoint = apiBase + "searchFlights";
 
+                string airportFrom, airportTo, query;
 
-            string airportSearchEndpoint = apiBase + "searchDestination";
-            string flightSearchEndpoint = apiBase + "searchFlights";
+                const string dateFormat = "yyyy-MM-dd";
 
-            string airportFrom, airportTo, query;
-
-            const string dateFormat = "yyyy-MM-dd";
-
-            // firstly we need the airport code for the [from] part of this method
+                // firstly we need the airport code for the [from] part of this method
             
-            query = airportSearchEndpoint + $"?query={System.Net.WebUtility.UrlEncode(from)}";
+                query = airportSearchEndpoint + $"?query={System.Net.WebUtility.UrlEncode(from)}";
 
-            // first result best result 😎 (await (await _httpClient.GetAsync(query)).Content.ReadFromJsonAsync<AirportSearchResponse>()).Data[0].Code;
-            Console.WriteLine(query);
-            var fromResponse = await _httpClient.GetAsync(query);
-
-
-            fromResponse.EnsureSuccessStatusCode();
-            Console.WriteLine(await fromResponse.Content.ReadAsStringAsync());
-            var fromContent = await fromResponse.Content.ReadFromJsonAsync<AirportSearchResponse>();
-            fromResponse.Dispose();
+                // first result best result 😎 (await (await _httpClient.GetAsync(query)).Content.ReadFromJsonAsync<AirportSearchResponse>()).Data[0].Code;
+                Console.WriteLine(query);
+                var fromResponse = await _httpClient.GetAsync(query);
 
 
-            if(fromContent == null || fromContent.Data.Count == 0 || fromContent.Status != true)
-            {
-                // log instead?
-                Console.WriteLine("exit a");
-                throw new Exception($"No airport found from : {from}");
-            }
-
-            airportFrom = fromContent.Data.First().Id;
-
-            query = airportSearchEndpoint + $"?query={System.Net.WebUtility.UrlEncode(to)}";
-
-            var toResponse = await _httpClient.GetAsync(query);
-
-            toResponse.EnsureSuccessStatusCode();
-
-            var toContent = await toResponse.Content.ReadFromJsonAsync<AirportSearchResponse>();
-            Console.WriteLine(await toResponse.Content.ReadAsStringAsync());
-
-            toResponse.Dispose();
-
-            if (toContent == null || toContent.Data.Count == 0 || toContent.Status != true)
-            {
-                Console.WriteLine("exit b");
-                throw new Exception($"No airport found from : {to}");
-            }
-
-            airportTo = toContent.Data.First().Id;
-
-            string stringDeparture;
-
-            stringDeparture = departureDate.ToString(dateFormat);
-
-            var parameters = new Dictionary<string, string>
-            {
-                {"fromId", airportFrom},
-                {"toId", airportTo},
-                {"departDate", stringDeparture}
-            };
-
-            if (returnDate != null)
-            {
-                string returnString = returnDate?.ToString(dateFormat);
-                parameters.Add("returnDate", returnString);
-            }
+                fromResponse.EnsureSuccessStatusCode();
+                Console.WriteLine(await fromResponse.Content.ReadAsStringAsync());
+                var fromContent = await fromResponse.Content.ReadFromJsonAsync<AirportSearchResponse>();
+                fromResponse.Dispose();
 
 
-            foreach(var parameter in parameters)
-            {
-                Console.WriteLine($"{parameter.Key} : {parameter.Value}");
-            }
+                if(fromContent == null || fromContent.Data.Count == 0 || fromContent.Status != true)
+                {
+                    // log instead?
+                    Console.WriteLine("exit a");
+                    throw new Exception($"No airport found from : {from}");
+                }
 
-            query = flightSearchEndpoint + Helper.ToQueryString(parameters);
-            var flightSearchResponse = await _httpClient.GetAsync(query);
-            flightSearchResponse.EnsureSuccessStatusCode();
+                airportFrom = fromContent.Data.First().Id;
 
-            var jsonParse = await flightSearchResponse.Content.ReadAsStringAsync();
-            //Console.WriteLine(jsonParse);
+                query = airportSearchEndpoint + $"?query={System.Net.WebUtility.UrlEncode(to)}";
 
-            FlightSearchModel fsr = await flightSearchResponse.Content.ReadFromJsonAsync<FlightSearchModel>();
+                var toResponse = await _httpClient.GetAsync(query);
 
-            if(fsr == null)
-            {
-                // log error ?
-                return null;
-            }
+                toResponse.EnsureSuccessStatusCode();
 
-            return fsr.ToBaseFlightDTO();     
+                var toContent = await toResponse.Content.ReadFromJsonAsync<AirportSearchResponse>();
+                Console.WriteLine(await toResponse.Content.ReadAsStringAsync());
+
+                toResponse.Dispose();
+
+                if (toContent == null || toContent.Data.Count == 0 || toContent.Status != true)
+                {
+                    Console.WriteLine("exit b");
+                    throw new Exception($"No airport found from : {to}");
+                }
+
+                airportTo = toContent.Data.First().Id;
+
+                string stringDeparture;
+
+                stringDeparture = departureDate.ToString(dateFormat);
+
+                var parameters = new Dictionary<string, string>
+                {
+                    {"fromId", airportFrom},
+                    {"toId", airportTo},
+                    {"departDate", stringDeparture}
+                };
+
+                if (returnDate != null)
+                {
+                    string returnString = returnDate?.ToString(dateFormat);
+                    parameters.Add("returnDate", returnString);
+                }
+
+
+                foreach(var parameter in parameters)
+                {
+                    Console.WriteLine($"{parameter.Key} : {parameter.Value}");
+                }
+
+                query = flightSearchEndpoint + Helper.ToQueryString(parameters);
+                var flightSearchResponse = await _httpClient.GetAsync(query);
+                flightSearchResponse.EnsureSuccessStatusCode();
+
+                var jsonParse = await flightSearchResponse.Content.ReadAsStringAsync();
+                //Console.WriteLine(jsonParse);
+
+                FlightSearchModel fsr = await flightSearchResponse.Content.ReadFromJsonAsync<FlightSearchModel>();
+
+                if(fsr == null)
+                {
+                    // log error ?
+                    return null;
+                }
+
+                return fsr.ToBaseFlightDTO();     
             } catch(Exception e)
             {
                 Console.WriteLine("Error during flight search");

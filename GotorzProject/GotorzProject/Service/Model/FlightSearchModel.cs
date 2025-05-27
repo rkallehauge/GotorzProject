@@ -35,6 +35,9 @@ namespace GotorzProject.Service.Model.Flight
             foreach (var fo in this.data.flightOffers)
             {
                 BaseFlightDTO flight = new BaseFlightDTO();
+
+                flight.Identifier = fo.token; // Set identifier, sadly this ID type is somewhat unique per api provider
+
                 // This task might need optimization
                 foreach (var item in fo.segments)
                 {

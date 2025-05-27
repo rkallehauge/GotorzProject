@@ -9,6 +9,10 @@ namespace GotorzProject.Shared.DataTransfer
     public class BaseFlightDTO
     {
 
+        // added waaay too late
+        // we need a way to correlate a simplified flight offer (BaseFlightDTO), with an actual flight offer from an api
+        public string Identifier { get; set; }
+
         // Oneway / Roundtrip
         public string Type { get; set; }
 
