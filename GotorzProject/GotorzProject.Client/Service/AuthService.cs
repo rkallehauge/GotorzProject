@@ -39,10 +39,10 @@ namespace GotorzProject.Client.Services
         public async Task<LoginResult> Login(LoginModel loginModel)
         {
             var loginAsJson = JsonSerializer.Serialize(loginModel);
+
             var response = await _httpClient.PostAsync("api/Login",
                 new StringContent(loginAsJson, Encoding.UTF8, "application/json"));
 
-            Console.WriteLine(await response.Content.ReadAsStringAsync());
 
             var loginResult = JsonSerializer.Deserialize<LoginResult>(
                 await response.Content.ReadAsStringAsync(),
