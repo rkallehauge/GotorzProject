@@ -1,54 +1,155 @@
 ﻿@page "/CreatePackage"
-@* @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false)) *@
-@rendermode InteractiveWebAssembly
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@* @rendermode InteractiveWebAssembly *@
+
+@using GotorzProject.Shared.DataTransfer
+@using System.Text.Json.Serialization
+@using System.Web
 
 @inject HttpClient Http
 
+<GotorzProject.Client.Action.AuthCheck/>
+
 <h3>Create Package</h3>
 
-<div class="Choose depature country">
+@*Departure Country*@
+<div>
 	<label for="country">Choose departure country:</label>
-	<select id="country" @onchange="LoadCitiesFromDepartureCountry">
-		<option value="">Select a country</option>
-		@foreach (var country in countries)
-		{
-			<option value="@country">@country</option>
-		}
-	</select>
+	<AutoComplete 
+	@bind-Value="departureCountry"
+	TItem="Country"
+	DataProvider="CountryProvider"
+	PropertyName="Name"
+	Placeholder="Select departure country"
+	OnChanged="(Country selected) => OnDepartureCountryChanged(selected)"
+	>
+
+	</AutoComplete>
 </div>
 
+@*Departure City*@
 <div class="Choose departure city">
 	<label for="city">Choose departure city:</label>
-	<select id="city" @bind="departureCity">
-		<option value="">Select a city</option>"
-		@foreach (var city in cities)
-		{
-			<option value="@city">@city</option>
-		}
-	</select>
+	<AutoComplete 
+	@bind-Value="departureCity"
+	TItem="City"
+	DataProvider="FromCityProvider"
+	PropertyName="Name"
+	Placeholder="Select departure city"
+	OnChanged="(City selected) => OnDepartureCityChanged(selected)">
+	</AutoComplete>
 </div>
 
-<div class="Choose destination country">
+@*Departure Date - Moved to flight search*@
+@* <div class="Choose Departure date">
+	<label for="departure">Choose departure date</label>
+	<input id="departureDate" type="datetime-local" @bind="departureDate" />
+</div> *@
+
+@*Destination Country*@
+@* <div class="Choose destination country">
 	<label for="country">Choose destination country:</label>
-	<select id="country" @onchange="LoadCitiesFromDestinationCountry">
+	<select id="country" @onchange="OnDestinationCountryChanged">
 		<option value="">Select a country</option>
 		@foreach (var country in countries)
 		{
-			<option value="@country">@country</option>
+			<option value="@country.Value">@country.Key</option>
 		}
 	</select>
-</div>
+</div> *@
+
+<label for="country">Choose destination country:</label>
+<AutoComplete @bind-Value="destinationCountry"
+TItem="Country"
+DataProvider="CountryProvider"
+PropertyName="Name"
+Placeholder="Select departure country"
+OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
+
+</AutoComplete>
 
 <div class="Choose destination city">
 	<label for="city">Choose destination city:</label>
-	<select id="city" @bind="destinationCity">
-		<option value="">Select a city</option>"
-		@foreach (var city in cities)
+	<AutoComplete @bind-Value="destinationCity"
+	TItem="City"
+	DataProvider="ToCityProvider"
+	PropertyName="Name"
+	Placeholder="Select departure city"
+	OnChanged="(City selected) => OnDestinationCityChanged(selected)">
+	</AutoComplete>
+</div>
+
+@*Flight Search*@
+<div>
+
+	<label>From</label>
+	<input @bind-value="From" />
+
+	<label>To</label>
+	<input @bind-value="To" />
+
+	<label>Departure date</label>
+	<input type="date" @onchange="flightDepartureChanged" min="@MinimumDate" placeholder="@MinimumDate" />
+
+	<label>Return date</label>
+	<input type="date" min="@MinimumDate" @onchange="flightReturnChanged" placeholder="@MinimumDate" />
+
+	<button @onclick="Check">Search Flight</button>
+
+	@if (Flights != null)
+	{
+		<div>
+			<label>Sort by</label>
+			<!-- If we had more time, we would add sorting functionality -->
+
+			<select class="flightoffers" @onchange="selectFlightHandler">
+
+				@foreach (var flight in Flights)
+				{
+					@* Horrible visualization method, fix in soon future*@
+					<option value="@flight.Identifier">
+						<GotorzProject.Client.Component.FlightOffer FlightDTO="flight" />
+					</option>
+				}
+
+			</select>
+		</div>
+	}
+	@if (Loading)
+	{
+		<Spinner />
+	}
+</div>
+
+@*Hotel*@
+<div class="Choose Hotel">
+	<label for="hotel">Choose hotel:</label>
+	<select id="hotel" @bind="hotel">
+		<option value="">Select a hotel</option>
+		@foreach (var hotel in hotels)
 		{
-			<option value="@city">@city</option>
+			<option value="@hotel">@hotel</option>
 		}
 	</select>
 </div>
+
+@*CheckIn*@
+<div class="Choose check in"
+	<label for="return">Choose check in</label>
+	<input id="returnDate" type="datetime-local" @onchange="OnHotelCheckInTimeChanged"/>
+</div>
+
+@*CheckOut*@
+<div class="Choose check out"
+	<label for="return">Choose check out</label>
+	<input id="returnDate" type="datetime-local" @onchange="OnHotelCheckOutTimeChanged"/>
+</div>
+
+@*Return Date - Return date in flight search suffices*@
+@* <div class="Choose return date"
+	<label for="return">Choose return date</label>
+	<input id="returnDate" type="datetime-local" @bind="returnDate"/>
+</div> *@
 
 <div>
 	<button class="styled-button" @onclick="CreateTravelPackage">Create Package</button>
@@ -69,149 +170,200 @@
 	background-color: #4CAF50;
 	cursor: pointer;
 	}
+
+	.flightoffers > div:nth-child(even){
+	background-color:gray;
+	}
 </style>
 
 
 @code {
-	private string depatureCountry;
+	private string departureCountry;
 	private string departureCity;
+	private string hotel;
+	private double price;
 	private string destinationCountry;
 	private string destinationCity;
 	private string packageInfo;
-	private List<string> countries = new List<string>();
-	private List<string> cities = new List<string>();
+
+
+	private DateTime departureDate = DateTime.Now;
+	private DateTime returnDate = DateTime.Now;
+
+	private DateTime checkIn = DateTime.Now;
+	private DateTime checkOut = DateTime.Now;
+
+	private BaseFlightDTO? selectedFlight = default!;
+
+	private List<Country> countries = new();
+
+	private List<City> departureCities = new List<City>();
+	private List<City> destinationCities = new List<City>();
+	private List<string> hotels = new List<string>();
 	private string errorMessage;
 
+	private bool Loading = false;
+	private string MinimumDate = DateTime.Now.ToString("yyyy-MM-dd");
+	public DateOnly SelectedDate { get; set; }
 
+	public List<BaseFlightDTO> Flights { get; set; } = default!;
 
-	private async Task OnCountriesChanged(ChangeEventArgs e)
-	{
-		depatureCountry = e.Value.ToString();
-		await LoadDepartureCountries(depatureCountry);
-		
-	}
-	
-	private async Task OnDestinationCountriesChanged(ChangeEventArgs e)
-	{
-		destinationCountry = e.Value.ToString();
-		await LoadDestinationCountries(depatureCountry);
-		
-	}
+	public string From { get; set; }
+	public string To { get; set; }
 
-	//Henter en liste af afgangslande
-	private async Task LoadDepartureCountries(string depatureCountry)
-	{
-		var response = await Http.GetFromJsonAsync<List<string>>($"https://country-state-city-search-rest-api.p.rapidapi.com/allcountries={depatureCountry}");
-
-		if (response != null)
-		{
-			cities = response;
-		}
-		else
-		{
-			cities.Clear();
-		}
-
+	private void flightDepartureChanged(ChangeEventArgs e){
+		Console.WriteLine(e.Value.ToString());
+		departureDate = DateTime.Parse(e.Value.ToString());
+		checkIn = DateTime.Parse(e.Value.ToString());
 	}
 
-	//Henter en liste af destinationslande
-	private async Task LoadDestinationCountries(string destinationCountry)
-	{
-		var response = await Http.GetFromJsonAsync<List<string>>($"https://country-state-city-search-rest-api.p.rapidapi.com/allcountries={destinationCountry}");
+	private void flightReturnChanged(ChangeEventArgs e){
+		returnDate = DateTime.Parse(e.Value.ToString());
+		checkOut = DateTime.Parse(e.Value.ToString());
+	}
 
-		if (response != null)
-		{
-			cities = response;
+
+	private async Task OnHotelCheckInTimeChanged(ChangeEventArgs e)
+	{
+		checkIn = DateTime.Parse(e.Value.ToString());
+
+		hotels = await LoadHotelsFromCity(destinationCity, destinationCountry);
+	}
+
+	private async Task OnHotelCheckOutTimeChanged(ChangeEventArgs e)
+	{
+		checkOut = DateTime.Parse(e.Value.ToString());
+		hotels = await LoadHotelsFromCity(destinationCity, destinationCountry);
+	}
+
+
+	private async Task<AutoCompleteDataProviderResult<Country>> CountryProvider(AutoCompleteDataProviderRequest<Country> request)
+	{
+
+		if(countries.Count==0){
+			Console.WriteLine("Yep yep");
 		}
-		else
-		{
-			cities.Clear();
+
+		Console.WriteLine(request.Filter.Value);
+		Console.WriteLine(countries.Count);
+		return await Task.FromResult(request.ApplyTo(countries.OrderBy(country => country.Name)));
+	}
+
+	private async Task<AutoCompleteDataProviderResult<City>> FromCityProvider(AutoCompleteDataProviderRequest<City> request)
+	{
+		return await Task.FromResult(request.ApplyTo(departureCities));
+	}
+
+	private async Task<AutoCompleteDataProviderResult<City>> ToCityProvider(AutoCompleteDataProviderRequest<City> request)
+	{
+		return await Task.FromResult(request.ApplyTo(destinationCities));
+	}
+
+	private async Task Check()
+	{
+		Loading = true;
+
+		Console.WriteLine($"api/Flights/Single?from={From}&to={To}&departure={departureDate.ToString("yyyy-MM-dd")}");
+		var response = await Http.GetAsync($"api/Flights/Single?from={From}&to={To}&departure={departureDate.ToString("yyyy-MM-dd")}");
+		Loading = false;
+		try{
+			Flights = await response.Content.ReadFromJsonAsync<List<BaseFlightDTO>>();
+		} catch (Exception e){
+			Console.WriteLine("Stuff happend");
 		}
+	}
+
+	//Gemmer valgt afrejseland
+	private async Task OnDepartureCountryChanged(Country country)
+	{
+		departureCities = await LoadCitiesFromCountry(country.IsoCode);
+	}
+
+	//Gemmer valgt destinationsland
+	private async Task OnDestinationCountryChanged(Country country)
+	{
+		destinationCities = await LoadCitiesFromCountry(country.IsoCode);
+	}
+
+	//Gemmer valgt hotel
+	private async Task OnDestinationCityChanged(City city)
+	{
+
+		To = city.Name;
+	}
+
+	//Overfører valgt afrejse by til flight søgning
+	private void OnDepartureCityChanged(City city)
+	{
+		From = city.Name;
+	}
+
+
+
+	//Henter en liste af byer fra et land
+	private async Task<List<City>> LoadCitiesFromCountry(string country)
+	{
+		var response = await Http.GetFromJsonAsync<List<string>>($"api/Location/getCities?country={country}");
+
+		var result = new List<City>();
+		foreach (var i in response) {
+			result.Add(new City { Name = i });
+		}
+		return result;
+	}
+
+	//Fetching hotels from selected city
+	private async Task<List<string>> LoadHotelsFromCity(string destinationCity, string destinationCountry)
+	{
+		Console.WriteLine("yes?");
+		if (string.IsNullOrEmpty(destinationCity) || string.IsNullOrEmpty(destinationCountry))
+		{
+			Console.WriteLine("Destination city or country was empty.");
+			return new List<string>();
+		}
+
+		if (checkIn < DateTime.Today || checkIn >= checkOut)
+		{
+			Console.WriteLine("Invalid check-in or check-out date.");
+			return new List<string>(); // we cant allow malformed message to be sent to server, s this will cause a crash
+		}
+
+		string formattedCheckIn = checkIn.ToString("yyyy-MM-dd");
+		string formattedCheckOut = checkOut.ToString("yyyy-MM-dd");
+
+		// Console.WriteLine($"Req hotels for location: {encodedCountry}, {encodedCity}, Check in: {formattedCheckIn}, check out: {formattedCheckOut}");
+
+		Console.WriteLine("please god work");
+
+		var location = HttpUtility.UrlEncode($"{countries.FirstOrDefault(x => x.IsoCode == destinationCountry).Name} {destinationCity}");
+
+		var response = await Http.GetFromJsonAsync<List<Hotel>>($"api/Hotel/GetHotels?location={location}&checkIn={formattedCheckIn}&checkOut={formattedCheckOut}");
+
+		var result = response.Select(hotel => hotel.Name).ToList();
+
+		return result ?? new List<string>();
 
 	}
 
-	//Henter byer baseret på valg af afgangsland
-	private async Task LoadCitiesFromDepartureCountry(ChangeEventArgs e)
-	{
-		string country = e.Value.ToString();
-		Console.WriteLine(country);
-
-		if (string.IsNullOrEmpty(country))
-		{
-			cities.Clear();
-			return;
-		}
-
-		try
-		{
-			var requestData = new CountryRequest { Country = country };
-			var response = await Http.PostAsJsonAsync("https://countriesnow.space/api/v0.1/countries/cities", requestData);
-
-			if (response.IsSuccessStatusCode)
-			{
-				
-				var result = await response.Content.ReadFromJsonAsync<CitiesResponse>();
-				cities = result?.Data ?? new List<string>();
-				errorMessage = "";
-			}
-			else
-			{
-				errorMessage = $"Fejl ved hentning af byer: {response.ReasonPhrase}";
-				cities.Clear();
-			}
-		}
-		catch (Exception ex)
-		{
-			errorMessage = $"Fejl ved hentning af byer: {ex.Message}";
-			cities.Clear();
-		}
-
+	private void selectFlightHandler(ChangeEventArgs e){
+		string flightToken = e.Value.ToString();
+		selectedFlight = Flights.Find((flight) => flight.Identifier == flightToken);
+		Console.WriteLine(selectedFlight.Identifier);
 	}
-
-	//Henter byer baseret på valg af destinationsland
-	private async Task LoadCitiesFromDestinationCountry(ChangeEventArgs e)
-	{
-		string destinationCountry = e.Value.ToString();
-		Console.WriteLine(destinationCountry);
-
-		if (string.IsNullOrEmpty(destinationCountry))
-		{
-			cities.Clear();
-			return;
-		}
-
-		try
-		{
-			var requestData = new CountryRequest { Country = destinationCountry };
-			var response = await Http.PostAsJsonAsync("https://countriesnow.space/api/v0.1/countries/cities", requestData);
-
-			if (response.IsSuccessStatusCode)
-			{
-
-				var result = await response.Content.ReadFromJsonAsync<CitiesResponse>();
-				cities = result?.Data ?? new List<string>();
-				errorMessage = "";
-			}
-			else
-			{
-				errorMessage = $"Fejl ved hentning af byer: {response.ReasonPhrase}";
-				cities.Clear();
-			}
-		}
-		catch (Exception ex)
-		{
-			errorMessage = $"Fejl ved hentning af byer: {ex.Message}";
-			cities.Clear();
-		}
-
-	}
-
 
 
 	//Opret pakke
 	private async Task CreateTravelPackage()
 	{
-		var travelPackage = new TravelPackage(departureCity, departureCity);
+		var travelPackage = new TravelPackageDTO(){
+			DestinationCity = destinationCity,
+			DestinationCountry = destinationCountry,
+			Hotel = hotel,
+			Price = price,
+			DepartureDate = departureDate,
+			ReturnDate = returnDate,
+
+		};
 
 		var response = await Http.PostAsJsonAsync("api/TravelPackages/createPackage", travelPackage);
 
@@ -231,51 +383,70 @@
 			var response = await Http.GetAsync(Http.BaseAddress+"api/Location/GetCountries");
 			if (response.IsSuccessStatusCode)
 			{
-				countries = await response.Content.ReadFromJsonAsync<List<string>>();
+				var res = await response.Content.ReadFromJsonAsync<List<Country>>();
+				// bit weird but alas
+				countries = res;
+
 			}
 		}
 	}
 
-	public class TravelPackage
-	{
-		
-		public int Id { get; set; }
-		public string DestinationCity { get; set; }
-		public string DestinationCountry { get; set; }
-		public string Hotel { get; set; }
-		public double Price { get; set; }
-		public DateTime Departure { get; set; }
-		public DateTime Return { get; set; }
-
-		//Midlertidig constructor med begrænset info
-		public TravelPackage(string destinationCity, string destinationCountry)
-		{
-			DestinationCity = destinationCity;
-			DestinationCountry = destinationCountry;
-		}
-
-		//Den egentlige constructor, når page virker
-		public void UpdatedTravelPackage(int paymentID, string destinationCity, string destinationCountry, string hotel, double price, DateTime departure, DateTime @return)
-		{
-			DestinationCity = destinationCity;
-			DestinationCountry = destinationCountry;
-			Hotel = hotel;
-			Price = price;
-			Departure = departure;
-			Return = @return;
-		}
+	public class City{
+		public string Name { get; set; }
 	}
 
-	public class CitiesResponse
+	public class Country
 	{
-		public bool Error { get; set; }  // Hvis API'et returnerer en fejl
-		public string Msg { get; set; }   // Fejlmeddelelse (hvis relevant)
-		public List<string> Data { get; set; }   // Liste af byer
+		[JsonPropertyName("name")]
+		public string Name { get; set; }
+
+		[JsonPropertyName("isoCode")]
+		public string IsoCode { get; set; }
+
+		[JsonPropertyName("flag")]
+		public string Flag { get; set; }
+
+		[JsonPropertyName("phonecode")]
+		public string PhoneCode { get; set; }
+
+		[JsonPropertyName("currency")]
+		public string Currency { get; set; }
+
+		[JsonPropertyName("latitude")]
+		public string Latitude { get; set; }
+
+		[JsonPropertyName("longitude")]
+		public string Longitude { get; set; }
+
 	}
 
-	public class CountryRequest
+	public class TotalPrice
 	{
-		public string Country { get; set; }
+		public double Value { get; set; }
+		public string Currency { get; set; }
+	}
+
+	public class PricePerNight
+	{
+		public double Value { get; set; }
+		public string Currency { get; set; }
+	}
+
+	public class Hotel
+	{
+		public string Name { get; set; }
+		public string Beds { get; set; }
+		public TotalPrice TotalPrice { get; set; }
+		public PricePerNight PricePerNight { get; set; }
+		public double Rating { get; set; }
+		public string RatingDesc { get; set; }
+		public int RatingAmount { get; set; }
+		public string ImageSource { get; set; }
+	}
+
+	public class HotelList
+	{
+		public List<Hotel> Hotels { get; set; }
 	}
 
 

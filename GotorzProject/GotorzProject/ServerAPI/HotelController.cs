@@ -23,10 +23,17 @@ namespace GotorzProject.ServerAPI
         public async Task<IActionResult> GetHotels([FromQuery] string location, [FromQuery] string checkIn, [FromQuery] string checkOut)
         {
             if (_hotelProvider == null)
+            {
+                Console.WriteLine("Here?");
                 throw new InvalidConfigurationException("Hotel Provider was not provided 🤡");
+            }
+
+
 
             DateOnly arrival = DateOnly.Parse(checkIn);
             DateOnly depart = DateOnly.Parse(checkOut);
+
+            Console.WriteLine("Gets here");
 
             var result = await _hotelProvider.GetHotels(location, arrival, depart);
 
@@ -35,6 +42,7 @@ namespace GotorzProject.ServerAPI
 
             var json =  JsonSerializer.Serialize(result);
 
+            Console.WriteLine("also here");
             return Ok(json);
         }
     }

@@ -33,6 +33,7 @@ namespace GotorzProject.ServerAPI
 
             var result = new List<string>();
 
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
             if (response.IsSuccessStatusCode)
             {
                 var countriesList = await response.Content.ReadFromJsonAsync<List<Country>>();

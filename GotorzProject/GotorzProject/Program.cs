@@ -167,12 +167,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // internal service setup
 
 
-// HttpClientFactory skibidi
+// BookingCOM HttpClient
 builder.Services.AddHttpClient("BookingCOM", client =>
 {
     client.BaseAddress = new("https://"+configuration.GetValue<string>("APIKeys:BookingCOM:Host"));
     client.DefaultRequestHeaders.Add("x-rapidapi-host", configuration.GetValue<string>("APIKeys:BookingCOM:Host"));
     client.DefaultRequestHeaders.Add("x-rapidapi-key", configuration.GetValue<string>("APIKeys:BookingCOM:Key"));
+});
+
+// Location HttpClient
+builder.Services.AddHttpClient("Location", client =>
+{
+    client.BaseAddress = new("https://" + configuration.GetValue<string>("APIKeys:Location:Host"));
+    client.DefaultRequestHeaders.Add("x-rapidapi-host", configuration.GetValue<string>("APIKeys:Location:Host"));
+    client.DefaultRequestHeaders.Add("x-rapidapi-key", configuration.GetValue<string>("APIKeys:Location:Key"));
 });
 
 builder.Services.AddScoped<IFlightProvider, BookingFlightProvider>();

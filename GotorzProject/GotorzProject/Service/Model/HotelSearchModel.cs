@@ -1,6 +1,6 @@
 ﻿namespace GotorzProject.Service.Model.Hotel
 {
-    
+
     public class HotelSearchModel
     {
         public bool status { get; set; }
