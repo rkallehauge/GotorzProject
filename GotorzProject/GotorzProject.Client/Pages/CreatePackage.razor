@@ -102,17 +102,19 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 			<label>Sort by</label>
 			<!-- If we had more time, we would add sorting functionality -->
 
-			<select class="flightoffers" @onchange="selectFlightHandler">
+			<div style="overflow-y:scroll; max-height:200px;">
+
 
 				@foreach (var flight in Flights)
 				{
 					@* Horrible visualization method, fix in soon future*@
-					<option value="@flight.Identifier">
-						<GotorzProject.Client.Component.FlightOffer FlightDTO="flight" />
-					</option>
+					<div>
+						<GotorzProject.Client.Component.FlightOffer FlightDTO="flight"/>
+						<Button @onclick="()=> selectFlightHandler(flight.Identifier)">Select</Button>
+					</div>
 				}
 
-			</select>
+			</div>
 		</div>
 	}
 	@if (Loading)
@@ -345,9 +347,9 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 
 	}
 
-	private void selectFlightHandler(ChangeEventArgs e){
-		string flightToken = e.Value.ToString();
-		selectedFlight = Flights.Find((flight) => flight.Identifier == flightToken);
+	private void selectFlightHandler(string flightIdentifier){
+		
+		selectedFlight = Flights.Find((flight) => flight.Identifier == flightIdentifier);
 		Console.WriteLine(selectedFlight.Identifier);
 	}
 
