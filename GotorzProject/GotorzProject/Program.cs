@@ -102,14 +102,14 @@ if(dbType == "PostgreSQL")
     //.CreateLogger());
 }
 
-Console.WriteLine(connectionString);
+Console.WriteLine(connString);
 
 //builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //    options.UseSqlServer(connectionString), ServiceLifetime.Scoped
 //);
 // We are currently using PostgreSQL on server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString), ServiceLifetime.Scoped
+    options.UseNpgsql(connString), ServiceLifetime.Scoped
 );
 
 
