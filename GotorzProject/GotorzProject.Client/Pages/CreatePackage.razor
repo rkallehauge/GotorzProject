@@ -212,6 +212,7 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 	public string To { get; set; }
 
 	private void flightDepartureChanged(ChangeEventArgs e){
+		Console.WriteLine(e.Value.ToString());
 		departureDate = DateTime.Parse(e.Value.ToString());
 		checkIn = DateTime.Parse(e.Value.ToString());
 	}
@@ -262,8 +263,8 @@ OnChanged="(Country selected) => OnDestinationCountryChanged(selected)">
 	{
 		Loading = true;
 
-		Console.WriteLine($"api/Flights/Single?from={From}&to={To}&departure={SelectedDate.ToString("yyyy-MM-dd")}");
-		var response = await Http.GetAsync($"api/Flights/Single?from={From}&to={To}&departure={SelectedDate.ToString()}");
+		Console.WriteLine($"api/Flights/Single?from={From}&to={To}&departure={departureDate.ToString("yyyy-MM-dd")}");
+		var response = await Http.GetAsync($"api/Flights/Single?from={From}&to={To}&departure={departureDate.ToString("yyyy-MM-dd")}");
 		Loading = false;
 		try{
 			Flights = await response.Content.ReadFromJsonAsync<List<BaseFlightDTO>>();
