@@ -8,6 +8,9 @@ namespace GotorzProject.Model
         [Key]
         public int Id { get; set; }
 
+        [Required]
+        public TravelPackage TravelPackage { get; set; }
+
         public enum OrderStatuses
         {
             Created,

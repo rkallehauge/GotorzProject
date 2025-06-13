@@ -28,8 +28,6 @@ namespace GotorzProject.ServerAPI
         {
             var result = await _signInManager.PasswordSignInAsync(login.Email, login.Password, false, false);
 
-            
-
             if (!result.Succeeded) return BadRequest(new LoginResult { Successful = false, Error = "Username and password are invalid." });
 
             var claims = new List<Claim>()
@@ -51,6 +49,7 @@ namespace GotorzProject.ServerAPI
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSecurityKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expiry = DateTime.Now.AddDays(Convert.ToInt32(_configuration["JwtExpiryInDays"]));
+            //var expiry = DateTime.Now.AddSeconds(25); // apprently DateTime.Now is timezone relevant? -2 hours are "added" to expiry for some reason
 
             Console.WriteLine($"claims.Length {claims.Count}");
 

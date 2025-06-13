@@ -16,6 +16,9 @@ using GotorzProject.Service;
 using GotorzProject.Service.Misc;
 using System.Diagnostics;
 using System.Configuration;
+using Serilog;
+using Microsoft.Extensions.Configuration;
+using Serilog.Sinks.MSSqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSyncfusionBlazor();
@@ -57,7 +60,47 @@ Console.WriteLine("All config KVPS");
 string dbType = "PostgreSQL";
 //string dbType = "MSSql";
 
-var connectionString = configuration.GetConnectionString(dbType);
+var connString = configuration.GetConnectionString(dbType);
+
+Debug.WriteLine(connString);
+Debug.WriteLine(connString);
+Debug.WriteLine(connString);
+Debug.WriteLine(connString);
+Debug.WriteLine(connString);
+// TODO : in future, migrate this to use mssql, because we fucking have to, fuck you microsoft
+// Configure Serilog dynamically using the connection string
+if(dbType == "PostgreSQL")
+{
+
+    Log.Logger = new LoggerConfiguration()
+    //.ReadFrom.Configuration(configuration)
+    .WriteTo.PostgreSQL(connString, tableName: "Logs", needAutoCreateTable: true)
+    .CreateLogger();
+
+    //builder.Services.AddSingleton(new LoggerConfiguration()
+    //.ReadFrom.Configuration(configuration)
+    //.WriteTo.PostgreSQL(connString, "Logs")  // Directly use the connection string here
+    //.CreateLogger()); 
+
+    builder.Host.UseSerilog(); // ???
+
+} else if(dbType == "MSSql")
+{
+    // This also needs to be fixed if we for some reason decide to use MSSql, for now, we just use PostgreSQL and ignore this
+    // Configure Serilog dynamically using the connection string for MSSQL
+
+    // Removed because causing errors because of misconfiguration
+    // Also this is not a must have feature, as logging is already implemented through console
+    // Also when this application is registered as a service, it's conosole output will be persisted in a logfile, which is basically what we were trying to do with database logging
+
+    //builder.Services.AddSingleton(new LoggerConfiguration()
+    //.ReadFrom.Configuration(configuration)
+    //.WriteTo.MSSqlServer(
+    //    connectionString : connString,
+    //    sinkOptions: new MSSqlServerSinkOptions { TableName= "Logs"}
+    //    )
+    //.CreateLogger());
+}
 
 Console.WriteLine(connectionString);
 

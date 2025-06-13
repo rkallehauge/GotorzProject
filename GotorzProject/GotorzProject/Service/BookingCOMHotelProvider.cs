@@ -27,17 +27,30 @@ namespace GotorzProject.Service
         // get hotels from generic search query
         public async Task<IEnumerable<BaseHotelRoomDTO>> GetHotels(string location, DateOnly checkin, DateOnly checkout)
         {
-
+            if(checkin >= checkout)
+            {
+                throw new ArgumentException("Check in cannot be equal to or greather than checkout.");
+            }
 
             string locationSearchEndpoint = apiBase + "searchDestination";
             string hotelSearchEndpoint = apiBase + "searchHotels";
 
             string locationQuery = $"{locationSearchEndpoint}?query={location}";
+            Console.WriteLine(locationQuery);
 
             var locationResponse = await _httpClient.GetAsync(locationQuery);
+            locationResponse.EnsureSuccessStatusCode();
+
+            Console.WriteLine("Location Search");
+            Console.WriteLine(await locationResponse.Content.ReadAsStringAsync());
+
             LocationSearchModel? lsm = await locationResponse.Content.ReadFromJsonAsync<LocationSearchModel>();
-            if (lsm == null || lsm.Status != true || lsm.Data.Count==0)
+
+            if (lsm == null || lsm.Status != true || lsm.Data.Count == 0)
             {
+                //if (lsm == null) Console.WriteLine("lsm was null");
+                //if (lsm.Status != true) Console.WriteLine("lsm was false");
+                //if (lsm.Data.Count <= 0) Console.WriteLine($"Count was {lsm.Data.Count}");
                 return null;
             }
 
@@ -60,16 +73,24 @@ namespace GotorzProject.Service
             var hotelQuery = hotelSearchEndpoint + Helper.ToQueryString(param);
 
 
-            //Console.WriteLine(hotelQuery);
+            Console.WriteLine(hotelQuery);
             //return null;
             //Console.WriteLine(hotelQuery);
 
             var hotelResponse = await _httpClient.GetAsync(hotelQuery);
             hotelResponse.EnsureSuccessStatusCode();
 
-            //Console.WriteLine(await hotelResponse.Content.ReadAsStringAsync());
+
+            Console.WriteLine("Hotel Search Model");
+            Console.WriteLine(await hotelResponse.Content.ReadAsStringAsync());
 
             var hotels = await hotelResponse.Content.ReadFromJsonAsync<HotelSearchModel>();
+
+            if(hotels.data.hotels.Length == 0)
+            {
+                // no hotels found
+                return null;
+            }
 
             List<BaseHotelRoomDTO> result = new();
 
@@ -93,7 +114,7 @@ namespace GotorzProject.Service
                     PricePerNight = new()
                     {
                         Currency = hotel.property.priceBreakdown.grossPrice.currency,
-                        Value = (hotel.property.priceBreakdown.grossPrice.value / dates ) 
+                        Value = (hotel.property.priceBreakdown.grossPrice.value / dates)
                     },
 
                     Rating = hotel.property.reviewScore,
@@ -121,4 +142,8 @@ namespace GotorzProject.Service
             throw new NotImplementedException();
         }
     }
+
+
+
+
 }

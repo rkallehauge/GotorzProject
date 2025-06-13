@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
+using System.IdentityModel.Tokens.Jwt;
+
+
 namespace GotorzProject.Service
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
@@ -30,6 +33,18 @@ namespace GotorzProject.Service
                 return new AuthenticationState(new ClaimsPrincipal(
                     new ClaimsIdentity()));
             }
+
+            JwtSecurityTokenHandler handler = new();
+            var token = handler.ReadJwtToken(savedToken);
+            Console.WriteLine(DateTime.Now);
+            Console.WriteLine(token.ValidTo);
+            if(DateTime.Now >= token.ValidTo)
+            {
+                MarkUserAsLoggedOut();
+                return new AuthenticationState(new ClaimsPrincipal(
+                    new ClaimsIdentity()));
+            }
+
 
             // set bearer token into default request headers
             // this sends the auth token with every request
@@ -60,6 +75,7 @@ namespace GotorzProject.Service
         {
             var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
             var authState = Task.FromResult(new AuthenticationState(anonymousUser));
+            _httpClient.DefaultRequestHeaders.Authorization = null;
             NotifyAuthenticationStateChanged(authState);
         }
 

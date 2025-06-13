@@ -35,12 +35,14 @@ namespace GotorzProject.Service.Model.Flight
             foreach (var fo in this.data.flightOffers)
             {
                 BaseFlightDTO flight = new BaseFlightDTO();
+
+                flight.Identifier = fo.token; // Set identifier, sadly this ID type is somewhat unique per api provider
+
                 // This task might need optimization
                 foreach (var item in fo.segments)
                 {
                     foreach (var leg in item.legs)
                     {
-
                         if (flight.FlightLegs == null)
                         {
                             flight.FlightLegs = new();
@@ -51,7 +53,8 @@ namespace GotorzProject.Service.Model.Flight
                             Carrier = new()
                             {
                                 Iata = leg.carriers.First(),
-                                Name = CarrierCodeToName(leg.carriers.First())
+                                Name = CarrierCodeToName(leg.carriers.First()),
+                                IconWebSource = leg.carriersData.First().logo
                             },
                             FromAirportCode = leg.departureAirport.code,
                             FromAirportName = leg.departureAirport.name,
@@ -64,6 +67,8 @@ namespace GotorzProject.Service.Model.Flight
                 flight.Type = fo.tripType;
                 flight.StartAirport = flight.FlightLegs.First().FromAirportName;
                 flight.EndAirport = flight.FlightLegs.Last().ToAirportName;
+
+                flight.Price = fo.unifiedPriceBreakdown.price.units;
 
                 results.Add(flight);
             }

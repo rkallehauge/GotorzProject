@@ -15,5 +15,10 @@ namespace GotorzProject.Model.ObjectRelationMapping
         {
 
         }
+
+        public ApplicationDbContext()
+        {
+
+        }
     }
 }
