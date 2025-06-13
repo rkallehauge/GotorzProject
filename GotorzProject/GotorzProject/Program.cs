@@ -105,6 +105,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //    options.UseNpgsql(connectionString), ServiceLifetime.Scoped
 //);
 
+Console.WriteLine("testetstweteteasrdtaert");
+Console.WriteLine("testetstweteteasrdtaert");
+Console.WriteLine("testetstweteteasrdtaert");
 // API Key Testing 
 bool apiConfigError = false;
 List<string> apiConfigErrors = new();
@@ -133,18 +136,6 @@ if (apiConfigError)
     //throw new ConfigurationErrorsException($"Following errors occurred:\n{string.Join(Environment.NewLine, apiConfigErrors)}");
 }
 // API Key Testing
-
-
-
-
-
-// Location HttpClient
-builder.Services.AddHttpClient("Location", client =>
-{
-    client.BaseAddress = new("https://" + configuration.GetValue<string>("APIKeys:Location:Host"));
-    client.DefaultRequestHeaders.Add("x-rapidapi-host", configuration.GetValue<string>("APIKeys:Location:Host"));
-    client.DefaultRequestHeaders.Add("x-rapidapi-key", configuration.GetValue<string>("APIKeys:Location:Key"));
-});
 
 builder.Services.AddIdentity<CustomUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();

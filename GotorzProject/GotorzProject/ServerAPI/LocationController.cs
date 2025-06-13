@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using GotorzProject.Service;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql.Replication;
 using NuGet.Versioning;
@@ -27,10 +28,9 @@ namespace GotorzProject.ServerAPI
         [HttpGet("getCountries")]
         public async Task<IActionResult> GetContries()
         {
-
+            
             // Get countries 
             var response = await Http.GetAsync("/allcountries");
-
             var result = new List<string>();
 
             Console.WriteLine(await response.Content.ReadAsStringAsync());
