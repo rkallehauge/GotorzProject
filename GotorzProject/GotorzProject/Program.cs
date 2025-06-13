@@ -72,17 +72,17 @@ Debug.WriteLine(connString);
 if(dbType == "PostgreSQL")
 {
 
-    Log.Logger = new LoggerConfiguration()
-    //.ReadFrom.Configuration(configuration)
-    .WriteTo.PostgreSQL(connString, tableName: "Logs", needAutoCreateTable: true)
-    .CreateLogger();
+    //Log.Logger = new LoggerConfiguration()
+    ////.ReadFrom.Configuration(configuration)
+    //.WriteTo.PostgreSQL(connString, tableName: "Logs", needAutoCreateTable: true)
+    //.CreateLogger();
 
-    //builder.Services.AddSingleton(new LoggerConfiguration()
-    //.ReadFrom.Configuration(configuration)
-    //.WriteTo.PostgreSQL(connString, "Logs")  // Directly use the connection string here
-    //.CreateLogger()); 
+    ////builder.Services.AddSingleton(new LoggerConfiguration()
+    ////.ReadFrom.Configuration(configuration)
+    ////.WriteTo.PostgreSQL(connString, "Logs")  // Directly use the connection string here
+    ////.CreateLogger()); 
 
-    builder.Host.UseSerilog(); // ???
+    //builder.Host.UseSerilog(); // ???
 
 } else if(dbType == "MSSql")
 {
