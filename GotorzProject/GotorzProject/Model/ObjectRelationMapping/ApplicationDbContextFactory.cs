@@ -24,7 +24,7 @@ namespace GotorzProject.Model.ObjectRelationMapping
 
             if(dbType == "MSSql")
             {
-                optionsBuilder.UseSqlServer(connectionString); // Or UseNpgsql, etc.
+                //optionsBuilder.UseSqlServer(connectionString); // Or UseNpgsql, etc.
             }
             else if (dbType == "PostgreSQL")
             {
